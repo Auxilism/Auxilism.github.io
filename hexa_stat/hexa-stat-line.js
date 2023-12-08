@@ -142,7 +142,7 @@ class HexaStatLine {
     // Not using setter function because this should be used specifically to hijack the leveling system
     setLevel(level) {
         if (level > HexaStatLine.MAX_LEVEL) {
-            throw new RangeError("Levelling hexa stat above known max.")
+            throw new RangeError(`Levelling hexa stat above known max of ${HexaStatLine.MAX_LEVEL}`)
         }
         this.#level = level;
     }

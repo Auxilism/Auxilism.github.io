@@ -1,6 +1,4 @@
 class HexaStatMatrix {
-
-
     // All of type HexaStatTypeFDPair
     static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
         HexaStatCore.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
@@ -10,7 +8,7 @@ class HexaStatMatrix {
         let hexaStatCoresResults = [];
         let totalFDFragmentRatio = 0;
 
-        for (let i = 0; i < numTrials; ++i) {
+        for (let i = 0; i < numTrials; i++) {
             let hexaStatCore = new HexaStatCore();
             hexaStatCore.levelUpTo(20);
             hexaStatCore.optimise();
@@ -50,18 +48,18 @@ class HexaStatMatrix {
                         <center>
                             Average: <b>${fdFragmentRatioAvg}</b><br>
                             Median: <b>${fdFragmentRatioMedian}</b> at<br>
-                            <p style="border-width:1px; border-style:solid;">${hexaStatCoreMedian.getInfo()}</p>
+                            <p style="border-width:1px; border-style:solid;">${hexaStatCoreMedian.getInfo(true)}</p>
                             Range: <b>${minFdFragmentRatio}</b> to <b>${maxFdFragmentRatio}</b>
                         </center>
                     </td>
                     <td>
                         <center>
                             75% chance of: <b>${fdFragmentRatio75th}</b> at
-                            <p style="border-width:1px; border-style:solid;">${hexaStatCore75th.getInfo()}</p>
+                            <p style="border-width:1px; border-style:solid;">${hexaStatCore75th.getInfo(true)}</p>
                             85% chance of: <b>${fdFragmentRatio85th}</b> at
-                            <p style="border-width:1px; border-style:solid;">${hexaStatCore85th.getInfo()}</p>
+                            <p style="border-width:1px; border-style:solid;">${hexaStatCore85th.getInfo(true)}</p>
                             95% chance of: <b>${fdFragmentRatio95th}</b> at
-                            <p style="border-width:1px; border-style:solid;">${hexaStatCore95th.getInfo()}</p>
+                            <p style="border-width:1px; border-style:solid;">${hexaStatCore95th.getInfo(true)}</p>
                         </center>
                     </td>
                 </tr>
@@ -75,17 +73,20 @@ class HexaStatMatrix {
         currHexaStatCore.setLevels(mainLevel, addStat1Level, addStat2Level);
         currHexaStatCore.optimise();
 
-        let minFD = currHexaStatCore.getTotalFDPercent();
-        let minFDHexaStatCore = currHexaStatCore;
+        // Don't overwrite the values of the current core
+        let tempHexaStatCore = new HexaStatCore();
+        tempHexaStatCore.setLevels(5, 7, 8);
+        let minFD = tempHexaStatCore.getTotalFDPercent();
+        let minFDHexaStatCore = tempHexaStatCore;
         let maxFD = minFD;
         let maxFDHexaStatCore = minFDHexaStatCore;
 
         // t stands for theoretical
-        for (let tMainLevel = 0; tMainLevel <= HexaStatLine.MAX_LEVEL; ++tMainLevel) {
+        for (let tMainLevel = 0; tMainLevel <= HexaStatLine.MAX_LEVEL; tMainLevel++) {
             // If the sum of all levels is 20,
             // If main=0, addStat1 can only be 10
             // If main=1, addStat1 can be 9 to 10
-            for (let tAddStat1Level = HexaStatLine.MAX_LEVEL - tMainLevel; tAddStat1Level <= HexaStatLine.MAX_LEVEL; ++tAddStat1Level) {
+            for (let tAddStat1Level = HexaStatLine.MAX_LEVEL - tMainLevel; tAddStat1Level <= HexaStatLine.MAX_LEVEL; tAddStat1Level++) {
                 let tAddStat2Level = HexaStatCore.MAX_LEVEL_SUM - tMainLevel - tAddStat1Level;
                 // Don't overwrite the values of the other cores
                 let tempHexaStatCore = new HexaStatCore();
@@ -104,9 +105,38 @@ class HexaStatMatrix {
             }
         }
 
-        return `${currHexaStatCore.getInfo()}<br>
-        ${minFDHexaStatCore.getInfo()}<br>
-        ${maxFDHexaStatCore.getInfo()}<br>
+        return `
+        <table class="table table-bordered" style="width: auto;">
+            <tbody>
+                <tr>
+                    <td style="vertical-align: middle;">
+                        Current optimised FD:<br>
+                        (core level ${mainLevel + addStat1Level + addStat2Level})
+                    </td>
+                    <td>
+                        ${currHexaStatCore.getInfo(false)}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;">
+                        Theoretical min optimised FD:<br>
+                        (core level ${HexaStatCore.MAX_LEVEL_SUM})
+                    </td>
+                    <td>
+                        ${minFDHexaStatCore.getInfo(false)}
+                    </td>
+                </tr>
+                <tr>
+                    <td style="vertical-align: middle;">
+                        Theoretical max optimised FD:<br>
+                        (core level ${HexaStatCore.MAX_LEVEL_SUM})
+                    </td>
+                    <td>
+                        ${maxFDHexaStatCore.getInfo(false)}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         `;
     }
 }

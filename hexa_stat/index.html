@@ -19,6 +19,7 @@
     <script src="main.js"></script>
 
     <div class="container" id="input_fields" style="width: fit-content">
+        <a href="wallOfText.html">FAQ/Explanations/Credits</a>
         <h1>Simulate hexa stat rolling or calculate optimisations</h1>
         For each stat, put the % of FD they would give.<br>
         E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x
@@ -28,30 +29,30 @@
                     <tr>
                         <td>
                             FD% per 5 raw att<br>
-                            <input id="fdPerAttUnit" type="number" step="0.000000001" value="0.163">%<br>
+                            <input id="fdPerAttUnit" type="number" step=0.000000001 value=0.163>%<br>
                         </td>
                         <td>
                             FD% per 100 flat stat<br>
-                            <input id="fdPerFlatStatUnit" type="number" step="0.000000001" value="0.149">%<br>
+                            <input id="fdPerFlatStatUnit" type="number" step=0.000000001 value=0.149>%<br>
                             (48 for xenon, 2100 for da)
                         </td>
                         <td>
                             FD% per 0.35% crit dmg<br>
-                            <input id="fdPerCritDmgUnit" type="number" step="0.000000001" value="0.142">%
+                            <input id="fdPerCritDmgUnit" type="number" step=0.000000001 value=0.142>%
                         </td>
                     </tr>
                     <tr>
                         <td>
                             FD% per 1% boss dmg<br>
-                            <input id="fdPerBossDmgUnit" type="number" step="0.000000001" value="0.134">%
+                            <input id="fdPerBossDmgUnit" type="number" step=0.000000001 value=0.134>%
                         </td>
                         <td>
                             FD% per 0.75% dmg<br>
-                            <input id="fdPerDmgUnit" type="number" step="0.000000001" value="0.100">%
+                            <input id="fdPerDmgUnit" type="number" step=0.000000001 value=0.100>%
                         </td>
                         <td>
                             FD% per 1% ied<br>
-                            <input id="fdPerIEDUnit" type="number" step="0.000000001" value="0.084">%
+                            <input id="fdPerIEDUnit" type="number" step=0.000000001 value=0.084>%
                         </td>
                     </tr>
                 </tbody>
@@ -62,19 +63,19 @@
             </select>
             <br><br>
             <div id="simulateInputsContainer">
-                Number of trials: <input id="numTrials" type="number" step="1" value="1000"><br>
+                Number of trials: <input id="numTrials" type="number" value=1000><br>
             </div>
             <div id="optimiseGivenInputsContainer" hidden="true">
-                Main level: <input id="mainLvlOptimiseGiven" type="number" value="5"><br>
-                Additional stat1 level: <input id="addStat1LvlOptimiseGiven" type="number" value="8"><br>
-                Additional stat2 level: <input id="addStat2LvlOptimiseGiven" type="number" value="7"><br>
+                Main level: <input id="mainLvlOptimiseGiven" type="number" value=5><br>
+                Additional stat1 level: <input id="addStat1LvlOptimiseGiven" type="number" value=8 min=0><br>
+                Additional stat2 level: <input id="addStat2LvlOptimiseGiven" type="number" value=7><br>
             </div>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>
         </form>
         Result:
-        <p id="debugCounter"></p>
         <div id="result"></div>
+        <p id="debugCounter"></p>
     </div>
 </body>
 
