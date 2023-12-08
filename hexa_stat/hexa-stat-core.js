@@ -1,7 +1,7 @@
 class HexaStatLineIndex {
     static MainStat = new HexaStatLineIndex(0);
-    static AdditionalStat1 = new HexaStatLineIndex(1);
-    static AdditionalStat2 = new HexaStatLineIndex(2);
+    static AddStat1 = new HexaStatLineIndex(1);
+    static AddStat2 = new HexaStatLineIndex(2);
 
     #index;
     constructor(index) {
@@ -14,14 +14,14 @@ class HexaStatLineIndex {
 }
 
 class HexaStatCore {
-    static get #MAX_LEVEL_SUM() { return 20; }
+    static get MAX_LEVEL_SUM() { return 20; }
     #currLevelSum = 0;
 
     static #hexaStatTypeFDPairs = [];
 
     #hexaStatLines = [new HexaStatLine(HexaStatCore.#hexaStatTypeFDPairs[HexaStatLineIndex.MainStat.index], true),
-    new HexaStatLine(HexaStatCore.#hexaStatTypeFDPairs[HexaStatLineIndex.AdditionalStat1.index]),
-    new HexaStatLine(HexaStatCore.#hexaStatTypeFDPairs[HexaStatLineIndex.AdditionalStat2.index])];
+    new HexaStatLine(HexaStatCore.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat1.index]),
+    new HexaStatLine(HexaStatCore.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat2.index])];
 
     #additionalFragmentsCost = 0;
     get additionalFragmentsCost() {
@@ -31,6 +31,10 @@ class HexaStatCore {
     // All of type HexaStatTypeFDPair
     static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
         HexaStatCore.#hexaStatTypeFDPairs = [attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD];
+    }
+
+    getFdFragmentRatio() {
+        return this.getTotalFDPercent() / this.#additionalFragmentsCost;
     }
 
     getTotalFDPercent() {
@@ -71,7 +75,7 @@ class HexaStatCore {
     }
 
     levelUpTo(targetLevelSum) {
-        if (targetLevelSum > HexaStatCore.#MAX_LEVEL_SUM) {
+        if (targetLevelSum > HexaStatCore.MAX_LEVEL_SUM) {
             throw new EvalError("Leveling hexa stat core above known max.");
         }
         for (let i = this.#currLevelSum; i < targetLevelSum; ++i) {
@@ -80,7 +84,7 @@ class HexaStatCore {
     }
 
     levelUp() {
-        if (this.#currLevelSum == HexaStatCore.#MAX_LEVEL_SUM) {
+        if (this.#currLevelSum == HexaStatCore.MAX_LEVEL_SUM) {
             throw new EvalError("Leveling hexa stat core above known max.");
         }
 
@@ -96,24 +100,24 @@ class HexaStatCore {
         }
 
         // Else the main did not level up (either due to maxed or failed chance)
-        if (!this.#hexaStatLines[HexaStatLineIndex.AdditionalStat1.index].canLevelUp()) {
+        if (!this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].canLevelUp()) {
             // Additional stat1 is maxed, so level the other
-            this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AdditionalStat2.index]);
+            this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AddStat2.index]);
             return;
         }
-        else if (!this.#hexaStatLines[HexaStatLineIndex.AdditionalStat2.index].canLevelUp()) {
+        else if (!this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].canLevelUp()) {
             // Additional stat2 is maxed, so level the other
-            this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AdditionalStat1.index]);
+            this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AddStat1.index]);
             return;
         }
         else {
             // Try the 50-50 between the two additional stats
             let roll = Math.random() * 100;
             if (roll < 50) {
-                this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AdditionalStat1.index]);
+                this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AddStat1.index]);
             }
             else {
-                this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AdditionalStat2.index]);
+                this.#levelUpStat(this.#hexaStatLines[HexaStatLineIndex.AddStat2.index]);
             }
         }
     }
@@ -125,8 +129,8 @@ class HexaStatCore {
         }
         let maxFD = this.getTotalFDPercent();
         let maxFDTypeFDCombination = [this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair,
-        this.#hexaStatLines[HexaStatLineIndex.AdditionalStat1.index].typeFDPair,
-        this.#hexaStatLines[HexaStatLineIndex.AdditionalStat2.index].typeFDPair];
+        this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair,
+        this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair];
 
         // 6 possibilites
         for (let mainStatTypeIndex = 0; mainStatTypeIndex < HexaStatCore.#hexaStatTypeFDPairs.length; ++mainStatTypeIndex) {
@@ -143,8 +147,8 @@ class HexaStatCore {
                     }
 
                     this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair = HexaStatCore.#hexaStatTypeFDPairs[mainStatTypeIndex];
-                    this.#hexaStatLines[HexaStatLineIndex.AdditionalStat1.index].typeFDPair = HexaStatCore.#hexaStatTypeFDPairs[addStat1TypeIndex];
-                    this.#hexaStatLines[HexaStatLineIndex.AdditionalStat2.index].typeFDPair = HexaStatCore.#hexaStatTypeFDPairs[addStat2TypeIndex];
+                    this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair = HexaStatCore.#hexaStatTypeFDPairs[addStat1TypeIndex];
+                    this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair = HexaStatCore.#hexaStatTypeFDPairs[addStat2TypeIndex];
                     let currFD = this.getTotalFDPercent();
 
                     if (currFD > maxFD) {
@@ -167,6 +171,25 @@ class HexaStatCore {
     #levelUpStat(statLine) {
         statLine.levelUp();
         this.#currLevelSum += 1;
+    }
+
+    getInfo() {
+        return `
+        FD%: ${formatNumberForPrint(this.getTotalFDPercent())}, Fragments: ${this.#additionalFragmentsCost}<br>
+        Main: lvl ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].level} ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair.type.name}<br>
+        Additional Stat1: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair.type.name}<br>
+        Additional Stat2: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair.type.name}
+        `;
+    }
+
+    // Not using setter function because this should be used specifically to hijack the leveling system
+    setLevels(mainLevel, addStat1Level, addStat2Level) {
+        if (mainLevel + addStat1Level + addStat2Level > HexaStatCore.MAX_LEVEL_SUM) {
+            throw new EvalError("Leveling hexa stat core above known max.");
+        }
+        this.#hexaStatLines[HexaStatLineIndex.MainStat.index].setLevel(mainLevel);
+        this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].setLevel(addStat1Level);
+        this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].setLevel(addStat2Level);
     }
 
     printInfo() {

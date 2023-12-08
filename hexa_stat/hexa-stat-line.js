@@ -17,20 +17,32 @@ class HexaStatTypeFDPair {
 }
 
 class HexaStatLine {
-    static get #MAX_LEVEL() { return 10; }
+    static get MAX_LEVEL() { return 10; }
 
     #level = 0;
-    typeFDPair;
+    #typeFDPair;
     #isMain = false;
 
     constructor(typeFDPair, isMain = false) {
-        this.typeFDPair = typeFDPair;
+        this.#typeFDPair = typeFDPair;
         this.#isMain = isMain;
+    }
+
+    get typeFDPair() {
+        return this.#typeFDPair;
+    }
+
+    set typeFDPair(newTypeFDPair) {
+        this.#typeFDPair = newTypeFDPair;
+    }
+
+    get level() {
+        return this.#level;
     }
 
     getTotalFDPercent() {
         if (!this.#isMain) {
-            return this.#level * this.typeFDPair.fdPerUnit;
+            return this.#level * this.#typeFDPair.fdPerUnit;
         }
 
         // Else accumulate the units
@@ -38,19 +50,19 @@ class HexaStatLine {
         for (let i = 1; i <= this.#level; i++) {
             totalUnits += this.#getNumUnitsPerMainLevel(i);
         }
-        return totalUnits * this.typeFDPair.fdPerUnit;
+        return totalUnits * this.#typeFDPair.fdPerUnit;
 
     }
 
     levelUp() {
         this.#level += 1;
-        if (this.#level > HexaStatLine.#MAX_LEVEL) {
+        if (this.#level > HexaStatLine.MAX_LEVEL) {
             throw new RangeError("Levelling hexa stat above known max.")
         }
     }
 
     canLevelUp() {
-        if (this.#level == HexaStatLine.#MAX_LEVEL) {
+        if (this.#level == HexaStatLine.MAX_LEVEL) {
             return false;
         }
         return true;
@@ -127,7 +139,15 @@ class HexaStatLine {
         }
     }
 
+    // Not using setter function because this should be used specifically to hijack the leveling system
+    setLevel(level) {
+        if (level > HexaStatLine.MAX_LEVEL) {
+            throw new RangeError("Levelling hexa stat above known max.")
+        }
+        this.#level = level;
+    }
+
     printInfo() {
-        console.log("Type:", this.typeFDPair.type, "Level:", this.#level, "FD:", this.getTotalFDPercent());
+        console.log("Type:", this.#typeFDPair.type, "Level:", this.#level, "FD:", this.getTotalFDPercent());
     }
 }

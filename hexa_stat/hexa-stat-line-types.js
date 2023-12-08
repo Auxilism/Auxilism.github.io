@@ -1,10 +1,10 @@
 class HexaStatLineType {
-  static Att = new HexaStatLineType('Att');
-  static FlatStat = new HexaStatLineType('FlatStat');
-  static CritDmg = new HexaStatLineType('CritDmg');
-  static BossDmg = new HexaStatLineType('BossDmg');
-  static Dmg = new HexaStatLineType('Dmg');
-  static IED = new HexaStatLineType('IED');
+  static Att = new HexaStatLineType('att');
+  static FlatStat = new HexaStatLineType('flat stat');
+  static CritDmg = new HexaStatLineType('crit dmg');
+  static BossDmg = new HexaStatLineType('boss dmg');
+  static Dmg = new HexaStatLineType('dmg');
+  static IED = new HexaStatLineType('ied');
 
   #name;
   constructor(name) {

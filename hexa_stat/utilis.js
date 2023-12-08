@@ -8,14 +8,7 @@ function fdMultiplierToPercent(fdMultiplier) {
     return (fdMultiplier - 1) * 100;
 }
 
-function sortNumberArray(numberArray) {
-    // Changes the array within, no need to return
-    // Taken from https://www.w3schools.com/js/js_array_sort.asp
-    numberArray.sort(function(a, b){return a - b});
-}
-
-function percentileFromSortedArray(array, percentileAsWholeNumber)
-{
+function percentileFromSortedArray(array, percentileAsWholeNumber) {
     if (percentileAsWholeNumber < 0 || percentileAsWholeNumber > 100) {
         throw new EvalError("Percentile cannot be less than 0% or more than 100%");
     }
@@ -23,4 +16,8 @@ function percentileFromSortedArray(array, percentileAsWholeNumber)
     let maxIndex = array.length - 1;
     let index = Math.floor(maxIndex * percentileAsWholeNumber / 100);
     return array[index];
+}
+
+function formatNumberForPrint(number) {
+    return (number).toFixed(5);
 }
