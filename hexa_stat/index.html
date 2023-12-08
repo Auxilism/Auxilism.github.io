@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexa stat calculator</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+    <script src="js/bootstrap.js"></script>
+
+    <script src="utilis.js"></script>
+    <script src="hexa-stat-line-types.js"></script>
+    <script src="hexa-stat-line.js"></script>
+    <script src="hexa-stat-core.js"></script>
+    <script src="hexa-stat-matrix.js"></script>
+    <script src="main.js"></script>
+
+    <div class="container" id = "input_fields" style="width: fit-content">
+        <h1>Simulate hexa stat rolling or calculate optimisations</h1>
+        For each stat, put the % of FD they would give.<br>
+        E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x
+        <table class="table table-bordered" style="width: auto;">
+            <tbody>
+                <tr>
+                    <td>
+                        FD% per 5 raw att<br>
+                        <input id="fdPerAttUnit" type="number" value="0.163">%<br>
+                    </td>
+                    <td>
+                        FD% per 100 flat stat<br>
+                        <input id="fdPerFlatStatUnit" type="number" value="0.149">%<br>
+                        (48 for xenon, 2100 for da)
+                    </td>
+                    <td>
+                        FD% per 0.35% crit dmg<br>
+                        <input id="fdPerCritDmgUnit" type="number" value="0.142">%
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        FD% per 1% boss dmg<br>
+                        <input id="fdPerBossDmgUnit" type="number" value="0.134">%
+                    </td>
+                    <td>
+                        FD% per 0.75% dmg<br>
+                        <input id="fdPerDmgUnit" type="number" value="0.100">%
+                    </td>
+                    <td>
+                        FD% per 1% ied<br>
+                        <input id="fdPerIEDUnit" type="number" value="0.084">%
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        Operation type: <select id="calculationType">
+            <option id='simulate' value="simulate">Simluate rolling</option>
+            <option id='optimiseGiven' value="optimiseGiven">Optimise for given levels</option>
+        </select><br><br>
+        Number trials: <input id="numTrials" type="number" value="1000"><br>
+        <button id="calculate" type="button">Calculate</button><hr>
+        Result:
+        <div id="result"></div>
+    </div>
+</body>
+</html>
