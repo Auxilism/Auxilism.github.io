@@ -14,13 +14,13 @@
     <script src="utilis.js"></script>
     <script src="hexa-stat-line-types.js"></script>
     <script src="hexa-stat-line.js"></script>
-    <script src="hexa-stat-core.js"></script>
+    <script src="hexa-stat-node.js"></script>
     <script src="hexa-stat-matrix.js"></script>
     <script src="main.js"></script>
 
     <div class="container" id="input_fields" style="width: fit-content">
         <a href="wallOfText.html">FAQ/Explanations/Credits</a>
-        <h1>Simulate hexa stat rolling or calculate optimisations</h1>
+        <h1>Simulate Hexa Stat Node rolling or calculate optimisations</h1>
         For each stat, put the % of FD they would give.<br>
         E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x
         <form onsubmit="return false">
@@ -57,8 +57,10 @@
                     </tr>
                 </tbody>
             </table>
+            If the FD%s aren't known, I recommend using <a href="http://tiny.cc/maplestorycalculators" target="_blank" rel="noopener noreferrer">http://tiny.cc/maplestorycalculators</a> (they have a free version) to fill in the character's stats.<br>
+            <br>
             Operation type: <select id="calculationType">
-                <option id='simulate' value="simulate">Simluate rolling</option>
+                <option id='simulate' value="simulate">Simulate rolling</option>
                 <option id='optimiseGiven' value="optimiseGiven">Optimise for given levels</option>
             </select>
             <br><br>

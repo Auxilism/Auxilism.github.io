@@ -23,14 +23,14 @@ document.addEventListener("DOMContentLoaded", function () {
             let responseHTML = "";
             if (calculationType == simulateKey) {
                 let numTrials = Number(document.getElementById("numTrials").value);
-                responseHTML = HexaStatMatrix.simulateHexaStatCores(numTrials);
+                responseHTML = HexaStatMatrix.simulateHexaStatNodes(numTrials);
             }
             else if (calculationType == optimiseGivenKey) {
                 // Do all casting to numbers or javascript would say 5+8+7 = 587
                 let mainLevel = Number(document.getElementById("mainLvlOptimiseGiven").value);
                 let addStat1Level = Number(document.getElementById("addStat1LvlOptimiseGiven").value);
                 let addStat2Level = Number(document.getElementById("addStat2LvlOptimiseGiven").value);
-                responseHTML = HexaStatMatrix.optimiseGivenHexaStatCore(mainLevel, addStat1Level, addStat2Level);
+                responseHTML = HexaStatMatrix.optimiseGivenHexaStatNode(mainLevel, addStat1Level, addStat2Level);
             }
             document.getElementById("result").innerHTML = responseHTML;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${calculationType} ${counter}`;
