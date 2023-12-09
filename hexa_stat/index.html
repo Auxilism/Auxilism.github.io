@@ -21,7 +21,8 @@
     <div class="container" id="input_fields" style="width: fit-content">
         <a href="wallOfText.html">FAQ/Explanations/Credits</a>
         <h1>Simulate Hexa Stat Node rolling or calculate optimisations</h1>
-        For each stat, put the % of FD they would give.<br>
+        <hr>
+        For each stat, put the % of FD they would give <b>as if no hexa stat is applied</b>.<br>
         E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x
         <form onsubmit="return false">
             <table class="table table-bordered" style="width: auto;">
@@ -61,16 +62,18 @@
             <br>
             Operation type: <select id="calculationType">
                 <option id='simulate' value="simulate">Simulate rolling</option>
-                <option id='optimiseGiven' value="optimiseGiven">Optimise for given levels</option>
+                <option id='optimiseGiven' value="calculateTheoretical">Calculate theoretical node FD%s</option>
             </select>
             <br><br>
             <div id="simulateInputsContainer">
-                Number of trials: <input id="numTrials" type="number" value=1000><br>
+                Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
+                Need to unlock node: <input type="checkbox" id="needsUnlockInput" checked="true"><br>
+                Target node level: <input id="targetNodeLevelInput" type="number" value="20"><br>
             </div>
-            <div id="optimiseGivenInputsContainer" hidden="true">
-                Main level: <input id="mainLvlOptimiseGiven" type="number" value=5><br>
-                Additional stat1 level: <input id="addStat1LvlOptimiseGiven" type="number" value=8 min=0><br>
-                Additional stat2 level: <input id="addStat2LvlOptimiseGiven" type="number" value=7><br>
+            <div id="currentNodeLevelsInputContainer" hidden="true">
+                Current main stat level: <input id="currentMainLevelInput" type="number" value=0 min=0><br>
+                Current additional stat1 level: <input id="currentAddStat1LevelInput" type="number" value=0 min=0><br>
+                Current additional stat2 level: <input id="currentAddStat2LevelInput" type="number" value=0 min=0><br>
             </div>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>

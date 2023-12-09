@@ -4,24 +4,33 @@ class HexaStatMatrix {
         HexaStatNode.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
     }
 
-    static simulateHexaStatNodes(numTrials) {
+    static simulateHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
+        let currHexaStatNode = new HexaStatNode(needsUnlock);
+        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
+        currHexaStatNode.optimise();
+
         let hexaStatNodesResults = [];
         let totalFDFragmentRatio = 0;
 
         for (let i = 0; i < numTrials; i++) {
-            let hexaStatNode = new HexaStatNode();
-            hexaStatNode.levelUpTo(20);
+            let hexaStatNode = new HexaStatNode(needsUnlock);
+            hexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
+            hexaStatNode.levelUpTo(targetNodeLevel);
             hexaStatNode.optimise();
             hexaStatNodesResults.push(hexaStatNode);
 
-            totalFDFragmentRatio += hexaStatNode.getTotalFDPercent() / hexaStatNode.additionalFragmentsCost;
+            totalFDFragmentRatio += HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode);
         }
         let fdFragmentRatioAvg = formatNumberForPrint(totalFDFragmentRatio / numTrials);
 
         // Sort by FD per fragment ratio
-        hexaStatNodesResults.sort(function (a, b) { return a.getTotalFDPercent() / a.additionalFragmentsCost - b.getTotalFDPercent() / b.additionalFragmentsCost });
-        let minFdFragmentRatio = formatNumberForPrint(hexaStatNodesResults[0].getFdFragmentRatio());
-        let maxFdFragmentRatio = formatNumberForPrint(hexaStatNodesResults[numTrials - 1].getFdFragmentRatio());
+        // FD percent is compared to the current node, so need to convert back and forth
+        hexaStatNodesResults.sort(function (a, b) { return (HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, a))
+            - (HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, b)) });
+        let minHexaStatNode = hexaStatNodesResults[0];
+        let minFdFragmentRatio = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, minHexaStatNode));
+        let maxHexaStatNode = hexaStatNodesResults[numTrials-1];
+        let maxFdFragmentRatio = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, maxHexaStatNode));
 
         let hexaStatNodeMedian = percentileFromSortedArray(hexaStatNodesResults, 50);
         // We want the worse case, so take 25th percentile from smallest to biggest
@@ -29,12 +38,25 @@ class HexaStatMatrix {
         let hexaStatNode85th = percentileFromSortedArray(hexaStatNodesResults, 100 - 85);
         let hexaStatNode95th = percentileFromSortedArray(hexaStatNodesResults, 100 - 95);
 
-        let fdFragmentRatioMedian = formatNumberForPrint(hexaStatNodeMedian.getFdFragmentRatio());
-        let fdFragmentRatio75th = formatNumberForPrint(hexaStatNode75th.getFdFragmentRatio());
-        let fdFragmentRatio85th = formatNumberForPrint(hexaStatNode85th.getFdFragmentRatio());
-        let fdFragmentRatio95th = formatNumberForPrint(hexaStatNode95th.getFdFragmentRatio());
+        let fdFragmentRatioMedian = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNodeMedian));
+        let fdFragmentRatio75th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode75th));
+        let fdFragmentRatio85th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode85th));
+        let fdFragmentRatio95th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode95th));
 
         return `
+        <table class="table table-bordered" style="width: auto;">
+            <tbody>
+                <tr>
+                    <td style="vertical-align: middle;">
+                        Current optimised FD:<br>
+                        (node level ${currMainLevel + currAddStat1Level + currAddStat2Level})
+                    </td>
+                    <td>
+                        ${currHexaStatNode.getInfo(false)}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         <table class="table table-bordered" style="width: auto;">
             <tbody>
                 <th>
@@ -68,13 +90,13 @@ class HexaStatMatrix {
         `;
     }
 
-    static optimiseGivenHexaStatNode(mainLevel, addStat1Level, addStat2Level) {
-        let currHexaStatNode = new HexaStatNode();
-        currHexaStatNode.setLevels(mainLevel, addStat1Level, addStat2Level);
+    static calculateTheoreticalHexaStatNodeFDs(currMainLevel, currAddStat1Level, currAddStat2Level) {
+        let currHexaStatNode = new HexaStatNode(false);
+        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
         currHexaStatNode.optimise();
 
         // Don't overwrite the values of the current node
-        let tempHexaStatNode = new HexaStatNode();
+        let tempHexaStatNode = new HexaStatNode(false);
         tempHexaStatNode.setLevels(5, 7, 8);
         let minFD = tempHexaStatNode.getTotalFDPercent();
         let minFDHexaStatNode = tempHexaStatNode;
@@ -89,7 +111,7 @@ class HexaStatMatrix {
             for (let tAddStat1Level = HexaStatLine.MAX_LEVEL - tMainLevel; tAddStat1Level <= HexaStatLine.MAX_LEVEL; tAddStat1Level++) {
                 let tAddStat2Level = HexaStatNode.MAX_LEVEL_SUM - tMainLevel - tAddStat1Level;
                 // Don't overwrite the values of the other nodes
-                let tempHexaStatNode = new HexaStatNode();
+                let tempHexaStatNode = new HexaStatNode(false);
                 tempHexaStatNode.setLevels(tMainLevel, tAddStat1Level, tAddStat2Level);
                 tempHexaStatNode.optimise();
                 let tempFD = tempHexaStatNode.getTotalFDPercent();
@@ -111,7 +133,7 @@ class HexaStatMatrix {
                 <tr>
                     <td style="vertical-align: middle;">
                         Current optimised FD:<br>
-                        (node level ${mainLevel + addStat1Level + addStat2Level})
+                        (node level ${currMainLevel + currAddStat1Level + currAddStat2Level})
                     </td>
                     <td>
                         ${currHexaStatNode.getInfo(false)}

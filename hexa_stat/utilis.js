@@ -8,6 +8,13 @@ function fdMultiplierToPercent(fdMultiplier) {
     return (fdMultiplier - 1) * 100;
 }
 
+function getPercentBetweenFdPercents(oldFDPercent, newFDPercent) {
+    let oldFDMultipler = fdPercentToMultiplier(oldFDPercent);
+    let newFDMultiplier = fdPercentToMultiplier(newFDPercent);
+    // E.g. oldFDPercent = 10, newFDPercent = 20, returned is 9.0909
+    return fdMultiplierToPercent(newFDMultiplier / oldFDMultipler);
+}
+
 function percentileFromSortedArray(array, percentileAsWholeNumber) {
     if (percentileAsWholeNumber < 0 || percentileAsWholeNumber > 100) {
         throw new EvalError("Percentile cannot be less than 0% or more than 100%");

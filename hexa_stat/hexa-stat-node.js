@@ -14,25 +14,36 @@ class HexaStatLineIndex {
 }
 
 class HexaStatNode {
-    static get MAX_LEVEL_SUM() { return 20; }
-    #currLevelSum = 0;
-
+    static MAX_LEVEL_SUM=20;
+    static #UNLOCK_COST=10;
     static #hexaStatTypeFDPairs = [];
-
-    #hexaStatLines = [new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.MainStat.index], true),
-    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat1.index]),
-    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat2.index])];
-
-    #additionalFragmentsCost = 0;
-    get additionalFragmentsCost() {
-        return this.#additionalFragmentsCost;
-    }
 
     // All of type HexaStatTypeFDPair
     static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
         HexaStatNode.#hexaStatTypeFDPairs = [attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD];
         // Sort the stat types by highest FD to lowest FD, for type optimisation if the hexa stat line's FD is 0
         HexaStatNode.#hexaStatTypeFDPairs.sort(function (a, b) { return b.fdPerUnit - a.fdPerUnit });
+    }
+
+    static getFDFragmentRatioBetweenNodes(oldHexaStatNode, newHexaStatNode) {
+        return getPercentBetweenFdPercents(oldHexaStatNode.getTotalFDPercent(), newHexaStatNode.getTotalFDPercent()) / newHexaStatNode.additionalFragmentsCost;
+    }
+
+    #hexaStatLines = [new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.MainStat.index], true),
+    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat1.index]),
+    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat2.index])];
+
+    #currLevelSum = 0;
+    #additionalFragmentsCost = 0;
+
+    #needsUnlock;
+    constructor(needsUnlock) {
+        this.#needsUnlock = needsUnlock;
+        this.#additionalFragmentsCost = this.#needsUnlock ? HexaStatNode.#UNLOCK_COST : 0;
+    }
+
+    get additionalFragmentsCost() {
+        return this.#additionalFragmentsCost;
     }
 
     getFdFragmentRatio() {
@@ -78,7 +89,7 @@ class HexaStatNode {
 
     levelUpTo(targetLevelSum) {
         if (targetLevelSum > HexaStatNode.MAX_LEVEL_SUM) {
-            throw new EvalError("Leveling hexa stat node above known max.");
+            throw new EvalError(`Leveling hexa stat node above known max of ${HexaStatNode.MAX_LEVEL_SUM}`);
         }
         for (let i = this.#currLevelSum; i < targetLevelSum; i++) {
             this.levelUp();
@@ -205,6 +216,7 @@ class HexaStatNode {
         this.#hexaStatLines[HexaStatLineIndex.MainStat.index].setLevel(mainLevel);
         this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].setLevel(addStat1Level);
         this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].setLevel(addStat2Level);
+        this.#currLevelSum = mainLevel + addStat1Level + addStat2Level;
     }
 
     printInfo() {

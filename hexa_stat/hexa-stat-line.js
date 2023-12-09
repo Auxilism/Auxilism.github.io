@@ -17,7 +17,7 @@ class HexaStatTypeFDPair {
 }
 
 class HexaStatLine {
-    static get MAX_LEVEL() { return 10; }
+    static MAX_LEVEL=10;
 
     #level = 0;
     #typeFDPair;
