@@ -142,7 +142,7 @@ class HexaStatMatrix {
                 <tr>
                     <td style="vertical-align: middle;">
                         Theoretical min optimised FD:<br>
-                        (node level ${HexaStatNode.MAX_LEVEL_SUM})
+                        (node level 0->${HexaStatNode.MAX_LEVEL_SUM})
                     </td>
                     <td>
                         ${minFDHexaStatNode.getInfo(false)}
@@ -151,7 +151,7 @@ class HexaStatMatrix {
                 <tr>
                     <td style="vertical-align: middle;">
                         Theoretical max optimised FD:<br>
-                        (node level ${HexaStatNode.MAX_LEVEL_SUM})
+                        (node level 0->${HexaStatNode.MAX_LEVEL_SUM})
                     </td>
                     <td>
                         ${maxFDHexaStatNode.getInfo(false)}

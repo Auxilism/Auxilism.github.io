@@ -14,17 +14,76 @@
     <div class="container">
         <a href="index.html">Calculator</a>
         <h2>
-            FAQ
+            FAQ:
         </h2>
-            // TODO
+        <h5>
+            What are Hexa Stats?
+        </h5>
+        <p>
+            Hexa Stats are part of the Sixth job advancement that came in Nov 2023 (GMS).<br>
+            There is a page from the KMS wiki on Hexa Stats: <a href="https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2" target="_blank" rel="noopener noreferrer">https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2</a><br>
+            Kobe also did a video on Hexa Stats: <a href="https://www.youtube.com/watch?v=U7bmPlch6o8" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=U7bmPlch6o8</a><br>
+        </p>
         <h2>
-            Explanations<br>
+            Changelog:
         </h2>
-            // TODO
+            10 Dec 2023: First version publicly released.
         <h2>
-            Tasks to do:
+            Tasks:
         </h2>
-            // TODO
+        <h5>
+            Known and plan to do:
+        </h5>
+            To be added to.
+        <h5>
+            Known but not doing yet:
+        </h4>
+        <ol>
+            <h6>
+                <li>
+                    Optimise for multiple stat nodes
+                </li>
+            </h6>
+            <p>
+                The current FD optimisation only happens for one stat node where each stat's calculation is individual and then can be multiplied with each other.<br>
+                This would result in the wrong FD calculation if two stat nodes are multiplied with each other instead of adding all their individual stat units first, then multiplying their respective FD totals.<br>
+                I plan to remake the calculation when KMS has more stat nodes unlocked (currently only 1 is available in Dec 2023), to see if the way the stat nodes interact with each other is different from how I'm thinking of them now.<br>
+            </p>
+            <h6>
+                <li>
+                    Make a better UI.
+                </li>
+            </h6>
+            <p>
+                I'm just lazy to learn more about frontend at this point of time.<br>
+                This repository is open source, so if somebody wants to make a pull request I would be open to merging it.
+            </p>
+        </ol>
+        <h2>
+            Explanations:
+        </h2>
+            <p>
+                These are here for people to check my logic so that if I am operating on wrong assumptions, they can be corrected.
+            </p>
+        <h5>
+            How the FD% is calculated for a stat type given 1 unit of FD%:
+        </h5>
+        <p>
+            With ied being one source, every stat type increases the FD% they give linearly. So after getting the number of units the stat level would give, multiply that by the FD% per unit input. 
+        </p>
+        <h5>
+            How the FD% is calculated for the whole stat node:
+        </h5>
+        <p>
+            Other than boss dmg and dmg being additive with each other, every other stat (att, stat, crit dmg, ied) is independent of each other. After adding the FD% of boss damage and damage, everything can be multiplied with each other.
+        </p>
+        <h5>
+            How the FD%:Fragment ratio is calculated if there are current levels:
+        </h5>
+        <p>
+            The FD% increase from upgrading a non-zero stat node is not subtractive, i.e. going from a current FD% of 2.5% to 3.0% does not mean gaining 0.5% FD, but 1.03/1.025 = 0.4878% FD.<br>
+            So if simulating a stat node that has current levels, the amount of FD% gained is diminishing but the fragment costs are still additive, resulting in lower ratios.
+        </p>
         <h2>
             Credits<br>
         </h2>
@@ -32,7 +91,8 @@
             Also thank you to them for confirming that I can look at the original UI code and which library to use, it really helped me to get a working UI.<br>
             It still looks very basic, because of my own decision to not think too much on the frontend.<br>
             <br>
-            Values of leveling stat lines are taken from: <a href="https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4" target="_blank" rel="noopener noreferrer">https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4</a>
+            Values of levelling stat lines are taken from: <a href="https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4" target="_blank" rel="noopener noreferrer">https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4</a><br>
+            Damage formulas for stat types are taken from: <a href="https://strategywiki.org/wiki/MapleStory/Formulas" target="_blank" rel="noopener noreferrer">https://strategywiki.org/wiki/MapleStory/Formulas</a><br>
     </div>
 </body>
 
