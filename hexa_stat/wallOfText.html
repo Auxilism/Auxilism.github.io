@@ -84,6 +84,12 @@
             The FD% increase from upgrading a non-zero stat node is not subtractive, i.e. going from a current FD% of 2.5% to 3.0% does not mean gaining 0.5% FD, but 1.03/1.025 = 0.4878% FD.<br>
             So if simulating a stat node that has current levels, the amount of FD% gained is diminishing but the fragment costs are still additive, resulting in lower ratios.
         </p>
+        <h5>
+            The decision to split up FD% for boss dmg and dmg, instead of just multiplying boss dmg's FD% by 0.75 for dmg:
+        </h5>
+        <p>
+            The math would work out if we consider only calculating for hitting against bosses. But I wanted to keep it open for if people wanted to optimise for mobbing so they can put 0 FD% for boss dmg, while dmg still having some value.
+        </p>
         <h2>
             Credits<br>
         </h2>
