@@ -25,8 +25,12 @@ class HexaStatNode {
         HexaStatNode.#hexaStatTypeFDPairs.sort(function (a, b) { return b.fdPerUnit - a.fdPerUnit });
     }
 
+    static getFDPercentBetweenNodes(oldHexaStatNode, newHexaStatNode) {
+        return getPercentBetweenFdPercents(oldHexaStatNode.getTotalFDPercent(), newHexaStatNode.getTotalFDPercent());
+    }
+
     static getFDFragmentRatioBetweenNodes(oldHexaStatNode, newHexaStatNode) {
-        return getPercentBetweenFdPercents(oldHexaStatNode.getTotalFDPercent(), newHexaStatNode.getTotalFDPercent()) / newHexaStatNode.additionalFragmentsCost;
+        return HexaStatNode.getFDPercentBetweenNodes(oldHexaStatNode, newHexaStatNode) / newHexaStatNode.additionalFragmentsCost;
     }
 
     #hexaStatLines = [new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.MainStat.index], true),

@@ -24,21 +24,59 @@
             There is a page from the KMS wiki on Hexa Stats: <a href="https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2" target="_blank" rel="noopener noreferrer">https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2</a><br>
             Kobe also did a video on Hexa Stats: <a href="https://www.youtube.com/watch?v=U7bmPlch6o8" target="_blank" rel="noopener noreferrer">https://www.youtube.com/watch?v=U7bmPlch6o8</a><br>
         </p>
+        <h5>
+            How much would it take to reach x level on main stat?
+        </h5>
+        <p>
+            The page from the KMS wiki on Hexa Stats addresses this: <a href="https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2.1" target="_blank" rel="noopener noreferrer">https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2.1</a><br>
+            Hence I do not currently feel the need to add this calculation/simulation in.<br>
+        </p>
         <h2>
             Changelog:
         </h2>
-            10 Dec 2023: First version publicly released.
+            11 Dec 2023:
+            <ul>
+                <li>Added FD% statistics alongside the ratios.</li>
+                <li>Added more to FAQ and tasks section.</li>
+            </ul>
+            10 Dec 2023:
+            <ul>
+                <li>First version publicly released.</li>
+            </ul>
         <h2>
             Tasks:
         </h2>
         <h5>
             Known and plan to do:
         </h5>
-            To be added to.
+        <ol>
+            <h6>
+                <li>
+                    Compare FD% between two Hexa Stat Nodes
+                </li>
+            </h6>
+        </ol>
         <h5>
             Known but not doing yet:
         </h4>
         <ol>
+            <h6>
+                <li>
+                    Add an option to input the actual stat values for each type (att/stat/crit dmg/boss dmg/dmg/ied) and calculate their FD% per unit from that.
+                </li>
+            </h6>
+            <p>
+                I'll admit that I didn't think about this until it was raised as a suggestion. However, after pondering about it, I don't think it would be that straightforward as it sounds:
+                <ul>
+                    <li>Attack would have to be input from adding the sources in the stat window, but ignoring the potentials (can't just read off the total).</li>
+                    <li>Total secondary stat would be needed as well, since that is factored into the 'stat value' for damage output.</li>
+                    <li>Additional inputs from the user would be needed for Xenon and DA since their stat formulas are different. This would also make this calculator unable to support a class with a totally new formula until implemented.</li>
+                    <li>Finally, the input would have to be when fully buffed, e.g. gskills, potions, fams, etc.</li>
+                </ul>
+                So I'm not really talking about the logic to implement, but more so that users would have to prepare more to input more fields.
+                Using the generic calculator <a href="http://tiny.cc/maplestorycalculators" target="_blank" rel="noopener noreferrer">linked</a> would save those fields upon reopening, but this webpage would need users to input everything again.<br>
+                Hence I don't think I'll implement it currently, but if many people think it would be better to ask for the actual stat numbers, then I'll look into that.
+            </p>
             <h6>
                 <li>
                     Optimise for multiple stat nodes
