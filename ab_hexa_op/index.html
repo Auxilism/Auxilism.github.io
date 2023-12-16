@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<link rel="stylesheet" href="css/bootstrap.css">
+<script src="js/bootstrap.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Current version 4.4.1 -->
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/2.0.1/chartjs-plugin-zoom.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB Hexa skill calculator</title>
+</head>
+
+<body>
+    <script src="utilis.js"></script>
+    <script src="hexa-skill.js"></script>
+    <script src="hexa-mastery-node.js"></script>
+    <script src="hexa-boost-node.js"></script>
+    <script src="hexa-origin-node.js"></script>
+    <script src="hexa-skill-matrix.js"></script>
+    <script src="main.js"></script>
+
+    <div class="container" id="input_fields" style="width: fit-content">
+        <a href="wallOfText.html">FAQ/Explanations/Credits</a>
+        <h1>Calculate ways of optimising hexa matrix for Angelic Buster</h1>
+        <hr>
+        For each skill, put the total damage they did in the BA's column.<br>
+        For now, this works under the assumption that <b>only level 1 origin is unlocked</b>.
+        <form onsubmit="return false">
+            <table class="table table-bordered" style="width: auto;">
+                <tbody>
+                    <tr>
+                        <td>
+                            BA total damage<br>
+                            <input id="baTotal" type="number" step=1 value=177178798204033><br>
+                            (everything, including skills not listed here)
+                        </td>
+                        <td>
+                            Grand Finale total<br>
+                            <input id="gfTotal" type="number" step=1 value=9613844770590><br>
+                            (no Cheering Balloons)
+                        </td>
+                        <td>
+                            Cheering Balloons total<br>
+                            <input id="cbTotal" type="number" step=1 value=12904838293467><br>
+                            (not Seekers)
+                        </td>
+                        <td>
+                            Trinity total<br>
+                            <input id="trinityTotal" type="number" step=1 value=68375556116735><br>
+                            (not Fusion)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Spotlight total<br>
+                            <input id="spotlightTotal" type="number" step=1 value=16005646714652>
+                        </td>
+                        <td>
+                            Mascot total<br>
+                            <input id="mascotTotal" type="number" step=1 value=9327669026500>
+                        </td>
+                        <td>
+                            Sparkle Burst total<br>
+                            <input id="sbTotal" type="number" step=1 value=8534118929278>
+                        </td>
+                        <td>
+                            Trinity Fusion total<br>
+                            <input id="tfTotal" type="number" step=1 value=7350389933992><br>
+                            (not Trinity)
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            For origin ied/boss boost at lvl 10/20/30<br>
+            E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x<br>
+            <table class="table table-bordered" style="width: auto;">
+                <tbody>
+                    <tr>
+                        <td>
+                            FD% per 1% boss dmg<br>
+                            <input id="fdPerBossDmgUnit" type="number" step=0.000000001 value=0.1189767995>%
+                        </td>
+                        <td>
+                            FD% per 1% ied<br>
+                            <input id="fdPerIEDUnit" type="number" step=0.000000001 value=0.04217567029>%
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
+            <hr>
+        </form>
+        Result:
+        <div id="result">
+            <canvas id="resultsChart"></canvas>
+            <button id="resetZoom" hidden=true>Reset zoom</button>
+        </div>
+        <p id="debugCounter"></p>
+    </div>
+</body>
+
+</html>

@@ -121,11 +121,11 @@ class HexaStatMatrix {
                     </td>
                     <td>
                         <center>
-                            75% chance for: <b>${fd75th}</b> at
+                            75% chance for: <b>${fd75th}%</b> at
                             <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode75th.getInfo(true)}</p>
-                            85% chance for: <b>${fd85th}</b> at
+                            85% chance for: <b>${fd85th}%</b> at
                             <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode85th.getInfo(true)}</p>
-                            95% chance for: <b>${fd95th}</b> at
+                            95% chance for: <b>${fd95th}%</b> at
                             <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode95th.getInfo(true)}</p>
                         </center>
                     </td>
