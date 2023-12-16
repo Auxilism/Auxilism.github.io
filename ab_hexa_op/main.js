@@ -25,33 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 fdPerBossDmgUnit, fdPerIEDUnit);
             HexaSkillMatrix.computeOptimalPaths();
 
-            const xyValues = [
-                {x:50, y:7},
-                {x:65, y:8},
-                {x:70, y:8},
-                {x:80, y:9},
-                {x:90, y:9},
-                {x:100, y:9},
-                {x:110, y:10},
-                {x:120, y:11},
-                {x:130, y:14},
-                {x:140, y:14},
-                {x:150, y:15}
-              ];
-            var xyValues2 = [
-                {x:50, y:8},
-                {x:65, y:8},
-                {x:70, y:8},
-                {x:80, y:9},
-                {x:90, y:9},
-                {x:100, y:9},
-                {x:110, y:10},
-                {x:120, y:11},
-                {x:130, y:14},
-                {x:140, y:14},
-                {x:150, y:15}
-              ];
-
             if (chartRef != null) {
                 chartRef.destroy()
             }
@@ -59,30 +32,35 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "scatter",
             data: {
                 datasets: [
-                //{
-                //    label: "Best remaining ratio",
-                //    borderColor: "red",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.RemainingBestRatio)
-                //},
-                //{
-                //    label: "Next ratio",
-                //    borderColor: "blue",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextRatio)
-                //},
-                //{
-                //    label: "Minimum loss in ratio",
-                //    borderColor: "green",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
-                //},
                 {
-                    label: "red line",
-                    borderColor: "red",
+                    label: "Bob original",
+                    borderColor: "black",
                     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BobOriginal)
                 },
+                //{
+                //    label: "Next skill ratio",
+                //    borderColor: "purple",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestSkillRatio)
+                //},
                 {
-                    label: "blue line",
+                    label: "Best remaining skill ratio",
+                    borderColor: "orange",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
+                },
+                {
+                    label: "Minimum loss in overall ratio",
+                    borderColor: "green",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
+                },
+                {
+                    label: "Next overall ratio",
                     borderColor: "blue",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestSkillRatio)
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
+                },
+                {
+                    label: "Best remaining overall ratio",
+                    borderColor: "red",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
                 },
             ]
             },
@@ -130,7 +108,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             });
             document.getElementById("resetZoom").hidden = false;
-
+            
+            document.getElementById("resultPaths").innerHTML = `
+                <b><font color='black'>Bob original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BobOriginal)}
+                <br><br>
+                <b><font color='orange'>Best remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
+                <br><br>
+                <b><font color='green'>Minimum loss in overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.MinRatioLoss)}
+                <br><br>
+                <b><font color='blue'>Next overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.NextOverallRatio)}
+                <br><br>
+                <b><font color='red'>Best remaining overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BestRemainingOverallRatio)}
+            `;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${counter}`;
         }
         catch (err) {

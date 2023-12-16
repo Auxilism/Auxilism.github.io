@@ -113,10 +113,10 @@ class HexaStatMatrix {
                     </td>
                     <td>
                         <center>
-                            Average: <b>${fdAvg}</b><br>
-                            Median: <b>${fdMedian}</b> at<br>
+                            Average: <b>${fdAvg}%</b><br>
+                            Median: <b>${fdMedian}%</b> at<br>
                             <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeMedian.getInfo(true)}</p>
-                            Range: <b>${minFd}</b> to <b>${maxFd}</b>
+                            Range: <b>${minFd}%</b> to <b>${maxFd}%</b>
                         </center>
                     </td>
                     <td>
