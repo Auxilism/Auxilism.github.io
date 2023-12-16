@@ -10,7 +10,7 @@ class HexaMasteryNode extends HexaSkill {
             super(hexaSkillName, skillTotal, HexaMasteryNode.#TrinityMaxLevel, HexaSkillFDOperationType.Add);
         }
         else {
-            alert("Unknown mastery node being processed");
+            throw new TypeError("Unknown mastery node being processed");
         }
     }
 
@@ -25,7 +25,7 @@ class HexaMasteryNode extends HexaSkill {
         if (this.hexaSkillName == HexaSkillName.Trinity) {
             return this.#getTrinityScalingAtLevel(level) / HexaMasteryNode.#TrinityBaseScale;
         }
-        alert("Unknown mastery node being processed");
+        throw new TypeError("Unknown mastery node being processed");
     }
 
     getFragmentCostAtLevel(level) {
@@ -95,7 +95,7 @@ class HexaMasteryNode extends HexaSkill {
                 return 250;
 
             default:
-                alert("Getting unknown fragment cost");
+                throw new RangeError("Getting unknown fragment cost");
         }
     }
 }

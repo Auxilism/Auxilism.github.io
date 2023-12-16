@@ -160,7 +160,7 @@ class HexaOriginNode extends HexaSkill {
                 return 500;
 
             default:
-                alert("Getting unknown fragment cost");
+                throw new RangeError("Getting unknown fragment cost");
         }
     }
 }

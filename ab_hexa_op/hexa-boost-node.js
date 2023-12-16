@@ -19,7 +19,7 @@ class HexaBoostNode extends HexaSkill {
                 super(hexaSkillName, skillTotal, HexaBoostNode.#FusionMaxLevel, HexaSkillFDOperationType.Add);
                 break;
             default:
-                alert("Unknown boost node being processed");
+                throw new TypeError("Unknown boost node being processed");
         }
     }
 
@@ -93,7 +93,7 @@ class HexaBoostNode extends HexaSkill {
                 return 1.60;
 
             default:
-                alert("Getting unknown boost multiplier");
+                throw new RangeError("Getting unknown boost multiplier");
         }
     }
 
@@ -164,7 +164,7 @@ class HexaBoostNode extends HexaSkill {
                 return 375;
 
             default:
-                alert("Getting unknown fragment cost");
+                throw new RangeError("Getting unknown fragment cost");
         }
     }
 }

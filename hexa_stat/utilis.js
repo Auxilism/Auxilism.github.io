@@ -26,5 +26,5 @@ function percentileFromSortedArray(array, percentileAsWholeNumber) {
 }
 
 function formatNumberForPrint(number) {
-    return (number).toFixed(5);
+    return (number).toFixed(8);
 }

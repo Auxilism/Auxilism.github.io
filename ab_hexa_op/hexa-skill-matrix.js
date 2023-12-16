@@ -1,5 +1,5 @@
 class HexaSkillLevellingInfo {
-    static getNewLevellingArray () {
+    static getNewLevellingArray() {
         let currLevels = new Array(HexaSkillName.Values.length);
         for (let i = 0; i < currLevels.length; ++i) {
             currLevels[i] = new HexaSkillLevellingInfo();
@@ -9,7 +9,7 @@ class HexaSkillLevellingInfo {
         return currLevels;
     }
 
-    constructor (currLevel = 0, canLevel = true) {
+    constructor(currLevel = 0, canLevel = true) {
         this.currLevel = currLevel;
         this.canLevel = canLevel;
     }
@@ -18,16 +18,16 @@ class HexaSkillLevellingInfo {
 class HexaSkillLevelInfo {
     #hexaSkillName;
     #level;
-    constructor (hexaSkillName, level) {
+    constructor(hexaSkillName, level) {
         this.#hexaSkillName = hexaSkillName;
         this.#level = level;
     }
 
-    get hexaSkillName () {
+    get hexaSkillName() {
         return this.#hexaSkillName;
     }
 
-    get level () {
+    get level() {
         return this.#level;
     }
 }
@@ -92,139 +92,40 @@ class HexaSkillMatrix {
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // First, compute when searching for highest ratios spanning all levels
-        while(HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel) {
-
-            let maxFDFragmentRatio = 0;
-            let skillToLevel = null;
-            let newSkillLevel = 0;
-
-            let skillNameIterator = HexaSkillName.Values.values();
-            for (let skillName of skillNameIterator) {
-                // Don't try to compute for a skill that can't be levelled
-                if (currLevels[skillName.index].canLevel == false) {
-                    continue;
-                }
-                let proposedLevels = Array(currLevels.length);
-                for (let i = 0; i < proposedLevels.length; ++i) {
-                    proposedLevels[i] = currLevels[i].currLevel;
-                }
-
-                // Try to level this specific skillName
-                let currSkillLevel = proposedLevels[skillName.index];
-                proposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
-                let currFDFragmentRatio = HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(proposedLevels);
-
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
-                    maxFDFragmentRatio = currFDFragmentRatio;
-                    skillToLevel = skillName;
-                    newSkillLevel = proposedLevels[skillName.index];
-                }
-            }
-
-            let oldSkillLevel = currLevels[skillToLevel.index].currLevel;
-            currLevels[skillToLevel.index].currLevel = newSkillLevel;
-            if (newSkillLevel == HexaSkillMatrix.#HexaSkillArray[skillToLevel.index].maxLevel) {
-                currLevels[skillToLevel.index].canLevel = false;
-            }
-
-            // Push each level to the path
-            for (let i = oldSkillLevel + 1; i <= newSkillLevel; i++) {
-                HexaSkillMatrix.#bestRemainingOverallRatioPath.push(new HexaSkillLevelInfo(skillToLevel, i));
-            }
-        }
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BestRemainingOverallRatio,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateBestRemainingOverallRatio,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
         currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // Now search using next ratios only
         // Hijack trinity 1 or it would be hard to pick
         currLevels[HexaSkillName.Trinity.index].currLevel = 1;
         HexaSkillMatrix.#nextOverallRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
-        while(HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel) {
-            let maxFDFragmentRatio = 0;
-            let skillToLevel = null;
-            let newSkillLevel = 0;
-
-            let skillNameIterator = HexaSkillName.Values.values();
-            for (let skillName of skillNameIterator) {
-                // Don't try to compute for a skill that can't be levelled
-                if (currLevels[skillName.index].canLevel == false) {
-                    continue;
-                }
-                let proposedLevels = Array(currLevels.length);
-                for (let i = 0; i < proposedLevels.length; ++i) {
-                    proposedLevels[i] = currLevels[i].currLevel;
-                }
-
-                // Try to level this specific skillName
-                // Only look 1 ahead
-                proposedLevels[skillName.index] += 1;
-                let currFDFragmentRatio = HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(proposedLevels);
-
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
-                    maxFDFragmentRatio = currFDFragmentRatio;
-                    skillToLevel = skillName;
-                    newSkillLevel = proposedLevels[skillName.index];
-                }
-            }
-
-            currLevels[skillToLevel.index].currLevel = newSkillLevel;
-            if (newSkillLevel == HexaSkillMatrix.#HexaSkillArray[skillToLevel.index].maxLevel) {
-                currLevels[skillToLevel.index].canLevel = false;
-            }
-
-            // Push new level to the path
-            HexaSkillMatrix.#nextOverallRatioPath.push(new HexaSkillLevelInfo(skillToLevel, newSkillLevel));
-        }
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.NextOverallRatio,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateNextOverallRatio,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
         currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // Now search backwards from max, finding the skill with the minimal loss
         for (let i = 0; i < currLevels.length; i++) {
             currLevels[i].currLevel = HexaSkillMatrix.#HexaSkillArray[i].maxLevel;
         }
-        // Keep going till we are 1 GF+1 something else only
-        while(HexaSkillMatrix.#getTotalCurrentLevel(currLevels) > 2) {
-            let maxFDFragmentRatio = 0;
-            let skillToLevel = null;
-            let newSkillLevel = 0;
-
-            let skillNameIterator = HexaSkillName.Values.values();
-            for (let skillName of skillNameIterator) {
-                // Don't try to compute for a skill that can't be levelled
-                if (currLevels[skillName.index].canLevel == false) {
-                    continue;
-                }
-                let proposedLevels = Array(currLevels.length);
-                for (let i = 0; i < proposedLevels.length; ++i) {
-                    proposedLevels[i] = currLevels[i].currLevel;
-                }
-
-                // Try to delevel this specific skill
-                proposedLevels[skillName.index] -= 1;
-                let currFDFragmentRatio = HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(proposedLevels);
-
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
-                    maxFDFragmentRatio = currFDFragmentRatio;
-                    skillToLevel = skillName;
-                    newSkillLevel = proposedLevels[skillName.index];
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.MinRatioLoss,
+            currLevels, HexaSkillMatrix.#backwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateMinRatioLoss,
+            totalMaxLevel, HexaSkillMatrix.#backwardSkillLevellingAndCheck);
+        // Find the last skill that is not delevelled or the total fragment cost would be 0
+        let skillNameIterator = HexaSkillName.Values.values();
+        for (let skillName of skillNameIterator) {
+            if (skillName != HexaSkillName.GF) {
+                let currSkillLevel = currLevels[skillName.index].currLevel;
+                if (currSkillLevel > 0) {
+                    HexaSkillMatrix.#minRatioLossPath.push(new HexaSkillLevelInfo(skillName, currSkillLevel));
                 }
             }
-
-            let oldSkillLevel = currLevels[skillToLevel.index].currLevel;
-            currLevels[skillToLevel.index].currLevel = newSkillLevel;
-            if (skillToLevel == HexaSkillName.GF) {
-                // Stop GF at 1
-                if (newSkillLevel == 1) {
-                    currLevels[skillToLevel.index].canLevel = false;
-                }
-            }
-            // Any other skill at 0
-            else if (newSkillLevel == 0) {
-                currLevels[skillToLevel.index].canLevel = false;
-            }
-
-            // Push old level to the path, since we came down from that
-            HexaSkillMatrix.#minRatioLossPath.push(new HexaSkillLevelInfo(skillToLevel, oldSkillLevel));
         }
-        HexaSkillMatrix.#minRatioLossPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
         // Since we backward computed, reverse the path
         HexaSkillMatrix.#minRatioLossPath.reverse();
 
@@ -233,112 +134,20 @@ class HexaSkillMatrix {
         // Hijack trinity 1 or it would be hard to pick
         currLevels[HexaSkillName.Trinity.index].currLevel = 1;
         HexaSkillMatrix.#highestSkillRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
-        while(HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel) {
-            let maxFDFragmentRatio = 0;
-            let skillToLevel = null;
-            let newSkillLevel = 0;
-
-            let skillNameIterator = HexaSkillName.Values.values();
-            for (let skillName of skillNameIterator) {
-                // Don't try to compute for a skill that can't be levelled
-                if (currLevels[skillName.index].canLevel == false) {
-                    continue;
-                }
-                let proposedLevels = Array(currLevels.length);
-                for (let i = 0; i < proposedLevels.length; ++i) {
-                    proposedLevels[i] = currLevels[i].currLevel;
-                }
-
-                // Try to level this specific skillName
-                // Only look 1 ahead
-                proposedLevels[skillName.index] += 1;
-                let currFDFragmentRatio = HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(proposedLevels[skillName.index]);
-
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
-                    maxFDFragmentRatio = currFDFragmentRatio;
-                    skillToLevel = skillName;
-                    newSkillLevel = proposedLevels[skillName.index];
-                }
-            }
-
-            currLevels[skillToLevel.index].currLevel = newSkillLevel;
-            if (newSkillLevel == HexaSkillMatrix.#HexaSkillArray[skillToLevel.index].maxLevel) {
-                currLevels[skillToLevel.index].canLevel = false;
-            }
-
-            // Push new level to the path
-            HexaSkillMatrix.#highestSkillRatioPath.push(new HexaSkillLevelInfo(skillToLevel, newSkillLevel));
-        }
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestSkillRatio,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateHighestSkillRatio,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
         currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // Now search for the highest remaining FD:Fragment ratio within the skills
-        while(HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel) {
-            let maxFDFragmentRatio = 0;
-            let skillToLevel = null;
-            let newSkillLevel = 0;
-
-            let skillNameIterator = HexaSkillName.Values.values();
-            for (let skillName of skillNameIterator) {
-                // Don't try to compute for a skill that can't be levelled
-                if (currLevels[skillName.index].canLevel == false) {
-                    continue;
-                }
-                let proposedLevels = Array(currLevels.length);
-                for (let i = 0; i < proposedLevels.length; ++i) {
-                    proposedLevels[i] = currLevels[i].currLevel;
-                }
-
-                // Try to level this specific skillName
-                let currSkillLevel = proposedLevels[skillName.index];
-                proposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);;
-                let currFDFragmentRatio = HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(proposedLevels[skillName.index]);
-
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
-                    maxFDFragmentRatio = currFDFragmentRatio;
-                    skillToLevel = skillName;
-                    newSkillLevel = proposedLevels[skillName.index];
-                }
-            }
-
-            let oldSkillLevel = currLevels[skillToLevel.index].currLevel;
-            currLevels[skillToLevel.index].currLevel = newSkillLevel;
-            if (newSkillLevel == HexaSkillMatrix.#HexaSkillArray[skillToLevel.index].maxLevel) {
-                currLevels[skillToLevel.index].canLevel = false;
-            }
-            // Push each level to the path
-            for (let i = oldSkillLevel + 1; i <= newSkillLevel; i++) {
-                HexaSkillMatrix.#highestRemainingSkillRatioPath.push(new HexaSkillLevelInfo(skillToLevel, i));
-            }
-        }
-
-
-        //console.log(HexaSkillMatrix.#bestRemainingOverallRatioPath);
-        //for (let i = 0; i < HexaSkillMatrix.#bestRemainingOverallRatioPath.length; ++i) {
-        //    console.log(HexaSkillMatrix.#bestRemainingOverallRatioPath[i].hexaSkillName.name, HexaSkillMatrix.#bestRemainingOverallRatioPath[i].level);
-        //}
-        //console.log(HexaSkillMatrix.#nextOverallRatioPath);
-        //console.log(HexaSkillMatrix.#minRatioLossPath);
-        //console.log(HexaSkillMatrix.#bobOriginalPath);
-        //console.log(HexaSkillMatrix.#highestSkillRatioPath);
-        //console.log(HexaSkillMatrix.#highestRemainingSkillRatioPath);
-        //for (let i = 0; i <= 11; ++i) {
-        //    console.log(i);
-        //    console.log("Spotlight");
-        //    console.log("FD%", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Spotlight.index].getFDPercentAtLevel(i));
-        //    console.log("total frag", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Spotlight.index].getTotalFragmentCostForLevel(i));
-        //    console.log("ratio", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Spotlight.index].getFDFragmentRatioAtLevel(i));
-        //    console.log("Trinity");
-        //    console.log("FD%", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].getFDPercentAtLevel(i));
-        //    console.log("total frag", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].getTotalFragmentCostForLevel(i));
-        //    console.log("ratio", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].getFDFragmentRatioAtLevel(i));
-        //    console.log("GF");
-        //    console.log("FD%", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getFDPercentAtLevel(i));
-        //    console.log("total frag", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getTotalFragmentCostForLevel(i));
-        //    console.log("ratio", HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getFDFragmentRatioAtLevel(i));
-        //}
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestRemainingSkillRatio,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
     }
 
-    static #getPathForMethod (method) {
+    static #getPathForMethod(method) {
         switch (method) {
             case HexaSkillOptimisationMethod.BestRemainingOverallRatio:
                 return HexaSkillMatrix.#bestRemainingOverallRatioPath;
@@ -353,11 +162,113 @@ class HexaSkillMatrix {
             case HexaSkillOptimisationMethod.HighestRemainingSkillRatio:
                 return HexaSkillMatrix.#highestRemainingSkillRatioPath;
             default:
-                alert("Unknown method called in HexaSkillMatrix.getGraphData");
+                throw new TypeError("Unknown method called in HexaSkillMatrix.getGraphData");
         }
     }
 
-    static getGraphData (method) {
+    // exitConditionFunction takes (Array<HexaSkillLevellingInfo>, int) to decide when to stop making the path
+    // fdFragmentRatioCalculationFunction takes (Array<int>, HexaSkillName) to return the FD:Fragment ratio
+    // levelSkillAndCheckFunction takes (Array<HexaSkillLevellingInfo>, HexaSkillName, int, Array<HexaSkillLevelInfo>) to add the skill change and decide when to stop changing that skill
+    static #computePathForMethod(method, currLevels, exitConditionFunction, fdFragmentRatioCalculationFunction, totalMaxLevel, levelSkillAndCheckFunction) {
+        let path = HexaSkillMatrix.#getPathForMethod(method);
+        while (exitConditionFunction(currLevels, totalMaxLevel)) {
+            let maxFDFragmentRatio = 0;
+            let skillToLevel = null;
+            let newSkillLevel = 0;
+
+            let skillNameIterator = HexaSkillName.Values.values();
+            for (let skillName of skillNameIterator) {
+                // Don't try to compute for a skill that can't be levelled
+                if (currLevels[skillName.index].canLevel == false) {
+                    continue;
+                }
+                // Make a copy so the original levels are not touched until this loop of finding the best skill to level finishes
+                let proposedLevels = Array(currLevels.length);
+                for (let i = 0; i < proposedLevels.length; ++i) {
+                    proposedLevels[i] = currLevels[i].currLevel;
+                }
+
+                // Try this specific skillName
+                let currFDFragmentRatio = fdFragmentRatioCalculationFunction(proposedLevels, skillName);
+                if (currFDFragmentRatio > maxFDFragmentRatio) {
+                    maxFDFragmentRatio = currFDFragmentRatio;
+                    skillToLevel = skillName;
+                    newSkillLevel = proposedLevels[skillName.index];
+                }
+            }
+
+            levelSkillAndCheckFunction(currLevels, skillToLevel, newSkillLevel, path);
+        }
+    }
+
+    static #calculateBestRemainingOverallRatio (currProposedLevels, skillName) {
+        let currSkillLevel = currProposedLevels[skillName.index];
+        currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
+        return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
+    }
+
+    static #calculateNextOverallRatio (currProposedLevels, skillName) {
+        currProposedLevels[skillName.index] += 1;
+        return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
+    }
+
+    static #calculateMinRatioLoss (currProposedLevels, skillName) {
+        currProposedLevels[skillName.index] -= 1;
+        return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
+    }
+
+    static #calculateHighestSkillRatio (currProposedLevels, skillName) {
+        currProposedLevels[skillName.index] += 1;
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index]);
+    }
+
+    static #calculateHighestRemainingSkillRatio (currProposedLevels, skillName) {
+        let currSkillLevel = currProposedLevels[skillName.index];
+        currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index]);
+    }
+
+    static #forwardLevellingExitCondition (currLevels, totalMaxLevel) {
+        return HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel;
+    }
+
+    static #backwardLevellingExitCondition (currLevels, totalMaxLevel) {
+        // Keep going till we are (GF 1)+(something else 1) only
+        return HexaSkillMatrix.#getTotalCurrentLevel(currLevels) > 2;
+    }
+
+    static #forwardSkillLevellingAndCheck(currLevels, skillToLevel, newSkillLevel, path) {
+        let oldSkillLevel = currLevels[skillToLevel.index].currLevel;
+        currLevels[skillToLevel.index].currLevel = newSkillLevel;
+
+        // Push each new level to the path
+        for (let i = oldSkillLevel + 1; i <= newSkillLevel; i++) {
+            path.push(new HexaSkillLevelInfo(skillToLevel, i));
+        }
+        if (newSkillLevel == HexaSkillMatrix.#HexaSkillArray[skillToLevel.index].maxLevel) {
+            currLevels[skillToLevel.index].canLevel = false;
+        }
+    }
+
+    static #backwardSkillLevellingAndCheck(currLevels, skillToLevel, newSkillLevel, path) {
+        let oldSkillLevel = currLevels[skillToLevel.index].currLevel;
+        currLevels[skillToLevel.index].currLevel = newSkillLevel;
+
+        // Push old level to the path, since we came down from that
+        path.push(new HexaSkillLevelInfo(skillToLevel, oldSkillLevel));
+        if (skillToLevel == HexaSkillName.GF) {
+            // Stop GF at 1
+            if (newSkillLevel == 1) {
+                currLevels[skillToLevel.index].canLevel = false;
+            }
+        }
+        // Any other skill at 0
+        else if (newSkillLevel == 0) {
+            currLevels[skillToLevel.index].canLevel = false;
+        }
+    }
+
+    static getGraphData(method) {
         let path = HexaSkillMatrix.#getPathForMethod(method);
 
         let xyData = [];
@@ -369,17 +280,16 @@ class HexaSkillMatrix {
             currLevels[path[i].hexaSkillName.index] = path[i].level;
             let currFD = HexaSkillMatrix.#getFDPercentOfProposedLevels(currLevels);
             let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
-            xyData.push({x:currTotalFragments, y:currFD});
+            xyData.push({ x: currTotalFragments, y: currFD });
         }
-        //console.log(xyData);
         return xyData;
     }
 
-    static #hexaSkillLevelInfoToString (hexaSkillLevelInfo) {
+    static #hexaSkillLevelInfoToString(hexaSkillLevelInfo) {
         return hexaSkillLevelInfo.hexaSkillName.name + " " + hexaSkillLevelInfo.level;
     }
 
-    static getSkillOrder (method) {
+    static getSkillOrder(method) {
         let path = HexaSkillMatrix.#getPathForMethod(method);
 
         let skillOrder = "";
@@ -399,7 +309,7 @@ class HexaSkillMatrix {
     }
 
     // proposedLevels is a list of int
-    static #getFDPercentOfProposedLevels (proposedLevels) {
+    static #getFDPercentOfProposedLevels(proposedLevels) {
         let totalFDPercent = 0;
         // Do additive types first
         for (let i = 0; i < HexaSkillMatrix.#HexaSkillArray.length; ++i) {
@@ -418,7 +328,7 @@ class HexaSkillMatrix {
     }
 
     // proposedLevels is a list of int
-    static #getTotalFragmentsOfProposedLevels (proposedLevels) {
+    static #getTotalFragmentsOfProposedLevels(proposedLevels) {
         let totalFragments = 0;
         for (let i = 0; i < HexaSkillMatrix.#HexaSkillArray.length; ++i) {
             totalFragments += HexaSkillMatrix.#HexaSkillArray[i].getTotalFragmentCostForLevel(proposedLevels[i]);
@@ -427,13 +337,13 @@ class HexaSkillMatrix {
     }
 
     // proposedLevels is a list of int
-    static #getTotaFDFragRatioOfProposedLevels (proposedLevels) {
-        return HexaSkillMatrix.#getFDPercentOfProposedLevels(proposedLevels) 
-        / HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(proposedLevels);
+    static #getTotaFDFragRatioOfProposedLevels(proposedLevels) {
+        return HexaSkillMatrix.#getFDPercentOfProposedLevels(proposedLevels)
+            / HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(proposedLevels);
     }
 
     // currLevels is a list of HexaSkillLevellingInfo
-    static #getTotalCurrentLevel (currLevels) {
+    static #getTotalCurrentLevel(currLevels) {
         let totalLevel = 0;
         for (let i = 0; i < currLevels.length; ++i) {
             totalLevel += currLevels[i].currLevel;

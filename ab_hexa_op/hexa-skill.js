@@ -100,7 +100,7 @@ class HexaSkill {
 
     // Should return 1.something, like 1.1 to mean 10% increase from the base skill
     getSkillMultiplierAtLevel(level) {
-        alert("Unimplemented function HexaSkill.getSkillMultiplierAtLevel called");
+        throw new TypeError("Unimplemented function HexaSkill.getSkillMultiplierAtLevel called");
     }
 
     _getScaledUpTotalAtLevel(level) {
@@ -130,7 +130,7 @@ class HexaSkill {
     }
 
     getFragmentCostAtLevel(level) {
-        alert("Unimplemented function HexaSkill.getFragmentCostAtLevel called");
+        throw new TypeError("Unimplemented function HexaSkill.getFragmentCostAtLevel called");
     }
 
     getFDFragmentRatioAtLevel(level) {

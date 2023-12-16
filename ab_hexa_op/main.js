@@ -33,20 +33,20 @@ document.addEventListener("DOMContentLoaded", function () {
             data: {
                 datasets: [
                 {
-                    label: "Bob original",
+                    label: "Boosty original",
                     borderColor: "black",
                     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BobOriginal)
+                },
+                {
+                    label: "Highest remaining skill ratio",
+                    borderColor: "orange",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
                 },
                 //{
                 //    label: "Next skill ratio",
                 //    borderColor: "purple",
                 //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestSkillRatio)
                 //},
-                {
-                    label: "Best remaining skill ratio",
-                    borderColor: "orange",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
-                },
                 {
                     label: "Minimum loss in overall ratio",
                     borderColor: "green",
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("resultPaths").innerHTML = `
                 <b><font color='black'>Bob original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BobOriginal)}
                 <br><br>
-                <b><font color='orange'>Best remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
+                <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
                 <br><br>
                 <b><font color='green'>Minimum loss in overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.MinRatioLoss)}
                 <br><br>
