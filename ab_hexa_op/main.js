@@ -47,21 +47,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 //    borderColor: "purple",
                 //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestSkillRatio)
                 //},
-                {
-                    label: "Minimum loss in overall ratio",
-                    borderColor: "green",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
-                },
-                {
-                    label: "Next overall ratio",
-                    borderColor: "blue",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
-                },
-                {
-                    label: "Best remaining overall ratio",
-                    borderColor: "red",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
-                },
+                //{
+                //    label: "Minimum loss in overall ratio",
+                //    borderColor: "green",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
+                //},
+                //{
+                //    label: "Next overall ratio",
+                //    borderColor: "blue",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
+                //},
+                //{
+                //    label: "Best remaining overall ratio",
+                //    borderColor: "red",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
+                //},
             ]
             },
             options: {
