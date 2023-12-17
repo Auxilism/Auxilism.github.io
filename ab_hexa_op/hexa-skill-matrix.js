@@ -40,6 +40,8 @@ class HexaSkillOptimisationMethod {
     static BoostyCurrentOriginal = new HexaSkillOptimisationMethod('BoostyCurrentOriginal');
     static HighestSkillRatio = new HexaSkillOptimisationMethod('HighestSkillRatio');
     static HighestRemainingSkillRatio = new HexaSkillOptimisationMethod('HighestRemainingSkillRatio');
+    static HijackHexaStatPath = new HexaSkillOptimisationMethod('HijackHexaStatPath');
+    static BobTest = new HexaSkillOptimisationMethod('BobTest');
 
     #name;
     constructor(name) {
@@ -60,6 +62,8 @@ class HexaSkillMatrix {
     static #boostyCurrentOriginalPath = [];
     static #highestSkillRatioPath = [];
     static #highestRemainingSkillRatioPath = [];
+    static #hijackHexaStatPath = [];
+    static #bobTestPath = [];
 
     static init(baTotal, gfTotal, cbTotal, trinityTotal,
         spotlightTotal, mascotTotal, sbTotal, tfTotal,
@@ -84,11 +88,14 @@ class HexaSkillMatrix {
         HexaSkillMatrix.#boostyCurrentOriginalPath = [];
         HexaSkillMatrix.#highestSkillRatioPath = [];
         HexaSkillMatrix.#highestRemainingSkillRatioPath = [];
+        HexaSkillMatrix.#hijackHexaStatPath = [];
+        HexaSkillMatrix.#bobTestPath = [];
     }
 
     static computeOptimalPaths() {
         HexaSkillMatrix.#populateBoostyPrevOriginal();
         HexaSkillMatrix.#populateBoostyCurrentOriginal();
+        HexaSkillMatrix.#populateBobTest();
         let totalMaxLevel = 0;
         let skillIterator = HexaSkillMatrix.#HexaSkillArray.values();
         for (let skill of skillIterator) {
@@ -151,6 +158,26 @@ class HexaSkillMatrix {
             currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
             HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
             totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
+
+        let pathToCopy = HexaSkillMatrix.#boostyCurrentOriginalPath;
+        let hexaStatInsertIndex = 19;
+        let hexaStatInsertIndex2 = 20;
+        for (let i = 0; i < pathToCopy.length; ++i) {
+            if (i == hexaStatInsertIndex) {
+                for (let j = 1; j <= 10; j++) {
+                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
+                }
+            }
+            if (i == hexaStatInsertIndex2) {
+                for (let j = 11; j <= 20; j++) {
+                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
+                }
+            }
+            if (pathToCopy[i].hexaSkillName != HexaSkillName.HexaStat) {
+                HexaSkillMatrix.#hijackHexaStatPath.push(pathToCopy[i]);
+            }
+        }
     }
 
     static #getPathForMethod(method) {
@@ -169,6 +196,10 @@ class HexaSkillMatrix {
                 return HexaSkillMatrix.#highestSkillRatioPath;
             case HexaSkillOptimisationMethod.HighestRemainingSkillRatio:
                 return HexaSkillMatrix.#highestRemainingSkillRatioPath;
+            case HexaSkillOptimisationMethod.HijackHexaStatPath:
+                return HexaSkillMatrix.#hijackHexaStatPath;
+            case HexaSkillOptimisationMethod.BobTest:
+                return HexaSkillMatrix.#bobTestPath;
             default:
                 throw new TypeError("Unknown method called in HexaSkillMatrix.getPathForMethod");
         }
@@ -209,38 +240,61 @@ class HexaSkillMatrix {
         }
     }
 
-    static #calculateBestRemainingOverallRatio (currProposedLevels, skillName) {
+    static #calculateBestRemainingOverallRatio(currProposedLevels, skillName) {
         let currSkillLevel = currProposedLevels[skillName.index];
         currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
         return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
     }
 
-    static #calculateNextOverallRatio (currProposedLevels, skillName) {
+    static #calculateNextOverallRatio(currProposedLevels, skillName) {
         currProposedLevels[skillName.index] += 1;
         return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
     }
 
-    static #calculateMinRatioLoss (currProposedLevels, skillName) {
+    static #calculateMinRatioLoss(currProposedLevels, skillName) {
         currProposedLevels[skillName.index] -= 1;
         return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
     }
 
-    static #calculateHighestSkillRatio (currProposedLevels, skillName) {
+    static #calculateHighestSkillRatio(currProposedLevels, skillName) {
         currProposedLevels[skillName.index] += 1;
-        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index]);
+
+        let levelsWithoutMultType = Array(currProposedLevels.length);
+        for (let i = 0; i < currProposedLevels.length; i++) {
+            if (HexaSkillMatrix.#HexaSkillArray[i].hexaSkillFDOperationType == HexaSkillFDOperationType.Mult) {
+                levelsWithoutMultType[i] = 0;
+            }
+            else {
+                levelsWithoutMultType[i] = currProposedLevels[i];
+            }
+        }
+        let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
+
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
     }
 
-    static #calculateHighestRemainingSkillRatio (currProposedLevels, skillName) {
+    static #calculateHighestRemainingSkillRatio(currProposedLevels, skillName) {
         let currSkillLevel = currProposedLevels[skillName.index];
         currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
-        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index]);
+        let levelsWithoutMultType = Array(currProposedLevels.length);
+        for (let i = 0; i < currProposedLevels.length; i++) {
+            if (HexaSkillMatrix.#HexaSkillArray[i].hexaSkillFDOperationType == HexaSkillFDOperationType.Mult) {
+                levelsWithoutMultType[i] = 0;
+            }
+            else {
+                levelsWithoutMultType[i] = currProposedLevels[i];
+            }
+        }
+        let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
+
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
     }
 
-    static #forwardLevellingExitCondition (currLevels, totalMaxLevel) {
+    static #forwardLevellingExitCondition(currLevels, totalMaxLevel) {
         return HexaSkillMatrix.#getTotalCurrentLevel(currLevels) < totalMaxLevel;
     }
 
-    static #backwardLevellingExitCondition (currLevels, totalMaxLevel) {
+    static #backwardLevellingExitCondition(currLevels, totalMaxLevel) {
         // Keep going till we are (GF 1)+(something else 1) only
         return HexaSkillMatrix.#getTotalCurrentLevel(currLevels) > 2;
     }
@@ -756,5 +810,33 @@ class HexaSkillMatrix {
         HexaSkillMatrix.#boostyCurrentOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 28));
         HexaSkillMatrix.#boostyCurrentOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 29));
         HexaSkillMatrix.#boostyCurrentOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 30));
+    }
+
+    static #populateBobTest() {
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 1));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 3));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 4));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 5));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 6));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 7));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 8));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 9));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 10));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 11));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 12));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 13));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 14));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 15));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 16));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 17));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 18));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 19));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 20));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 2));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 2));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 1));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 1));
+        HexaSkillMatrix.#bobTestPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 1));
     }
 }

@@ -6,10 +6,10 @@ class HexaSkillName {
     static SparkleBurst = new HexaSkillName('Sparkle Burst', 4);
     static Fusion = new HexaSkillName('Fusion', 5);
     static HexaStat = new HexaSkillName('Hexa Stat', 6)
-    
+
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
-        HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
-        HexaSkillName.HexaStat
+    HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
+    HexaSkillName.HexaStat
     ];
 
     #name;
@@ -85,8 +85,7 @@ class HexaSkill {
         this._totalFragmentCostArray = [];
         this._totalFDFragmentRatioArray = [];
         // Computes the whole array to max lvl
-        for (let i = 0; i <= this.#maxLevel; ++i)
-        {
+        for (let i = 0; i <= this.#maxLevel; ++i) {
             let fdPercent = this.#calcFDPercentAtLevel(i);
             let fragCost = this.#calcTotalFragmentCostForLevel(i);
             this._fdPercentArray.push(fdPercent);
@@ -120,8 +119,7 @@ class HexaSkill {
 
     #calcTotalFragmentCostForLevel(level) {
         let totalFragments = 0;
-        for (let i = 0; i < level; ++i)
-        {
+        for (let i = 0; i < level; ++i) {
             totalFragments += this.getFragmentCostAtLevel(i);
         }
         return totalFragments;
@@ -135,8 +133,18 @@ class HexaSkill {
         throw new TypeError("Unimplemented function HexaSkill.getFragmentCostAtLevel called");
     }
 
-    getFDFragmentRatioAtLevel(level) {
-        return this._totalFDFragmentRatioArray[level];
+    getFDFragmentRatioAtLevel(level, currFDPercent) {
+        switch (this.#hexaSkillFDOperationType) {
+            case HexaSkillFDOperationType.Add:
+                return this._totalFDFragmentRatioArray[level];
+            case HexaSkillFDOperationType.Mult:
+                let totalMult = fdPercentToMultiplier(this._fdPercentArray[level]) * fdPercentToMultiplier(currFDPercent);
+                let totalFDPercent = fdMultiplierToPercent(totalMult);
+                let actualFDPercent = totalFDPercent - currFDPercent;
+                return actualFDPercent / this._totalFragmentCostArray[level];
+            default:
+                throw new TypeError("Unknown operation type in HexaSkill.getFDFragmentRatioAtLevel");
+        }
     }
 
     getNextHighestFDFragmentRatioIndex(currLevel) {

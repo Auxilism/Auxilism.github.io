@@ -44,30 +44,40 @@ document.addEventListener("DOMContentLoaded", function () {
                     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyCurrentOriginal)
                 },
                 {
+                    label: "Hijack hexa stat",
+                    borderColor: "purple",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HijackHexaStatPath)
+                },
+                {
                     label: "Highest remaining skill ratio",
                     borderColor: "orange",
                     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
                 },
                 //{
+                //    label: "Bob test",
+                //    borderColor: "red",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BobTest)
+                //},
+                //{
                 //    label: "Next skill ratio",
                 //    borderColor: "purple",
                 //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestSkillRatio)
                 //},
-                //{
-                //    label: "Minimum loss in overall ratio",
-                //    borderColor: "green",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
-                //},
-                //{
-                //    label: "Next overall ratio",
-                //    borderColor: "blue",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
-                //},
-                //{
-                //    label: "Best remaining overall ratio",
-                //    borderColor: "red",
-                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
-                //},
+                {
+                    label: "Minimum loss in overall ratio",
+                    borderColor: "green",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
+                },
+                {
+                    label: "Next overall ratio",
+                    borderColor: "blue",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
+                },
+                {
+                    label: "Best remaining overall ratio",
+                    borderColor: "red",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
+                },
             ]
             },
             options: {
@@ -116,6 +126,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             document.getElementById("resultPaths").innerHTML = `
                 <b><font color='black'>Bob original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyCurrentOriginal)}
+                <br><br>
+                <b><font color='purple'>Hijack hexa stat:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HijackHexaStatPath)}
                 <br><br>
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
                 <br><br>
