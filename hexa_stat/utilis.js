@@ -26,5 +26,6 @@ function percentileFromSortedArray(array, percentileAsWholeNumber) {
 }
 
 function formatNumberForPrint(number) {
-    return (number).toFixed(8);
+    // + gets rid of trailing zeros
+    return +(number).toFixed(8);
 }

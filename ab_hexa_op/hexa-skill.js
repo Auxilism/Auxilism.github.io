@@ -5,9 +5,11 @@ class HexaSkillName {
     static Mascot = new HexaSkillName('Mascot', 3);
     static SparkleBurst = new HexaSkillName('Sparkle Burst', 4);
     static Fusion = new HexaSkillName('Fusion', 5);
+    static HexaStat = new HexaSkillName('Hexa Stat', 6)
     
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
-        HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion
+        HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
+        HexaSkillName.HexaStat
     ];
 
     #name;
@@ -53,9 +55,9 @@ class HexaSkill {
     #otherSkillsTotal;
     #hexaSkillFDOperationType;
 
-    #fdPercentArray;
-    #totalFragmentCostArray;
-    #totalFDFragmentRatioArray;
+    _fdPercentArray;
+    _totalFragmentCostArray;
+    _totalFDFragmentRatioArray;
 
     constructor(hexaSkillName, skillTotal, maxLevel, hexaSkillFDOperationType) {
         this.#hexaSkillName = hexaSkillName;
@@ -79,22 +81,22 @@ class HexaSkill {
     }
 
     compute() {
-        this.#fdPercentArray = [];
-        this.#totalFragmentCostArray = [];
-        this.#totalFDFragmentRatioArray = [];
+        this._fdPercentArray = [];
+        this._totalFragmentCostArray = [];
+        this._totalFDFragmentRatioArray = [];
         // Computes the whole array to max lvl
         for (let i = 0; i <= this.#maxLevel; ++i)
         {
             let fdPercent = this.#calcFDPercentAtLevel(i);
             let fragCost = this.#calcTotalFragmentCostForLevel(i);
-            this.#fdPercentArray.push(fdPercent);
-            this.#totalFragmentCostArray.push(fragCost);
+            this._fdPercentArray.push(fdPercent);
+            this._totalFragmentCostArray.push(fragCost);
 
             // Don't divide by 0
             if (fragCost == 0) {
                 fragCost = 1;
             }
-            this.#totalFDFragmentRatioArray.push(fdPercent / fragCost);
+            this._totalFDFragmentRatioArray.push(fdPercent / fragCost);
         }
     }
 
@@ -113,7 +115,7 @@ class HexaSkill {
     }
 
     getFDPercentAtLevel(level) {
-        return this.#fdPercentArray[level];
+        return this._fdPercentArray[level];
     }
 
     #calcTotalFragmentCostForLevel(level) {
@@ -126,7 +128,7 @@ class HexaSkill {
     }
 
     getTotalFragmentCostForLevel(level) {
-        return this.#totalFragmentCostArray[level];
+        return this._totalFragmentCostArray[level];
     }
 
     getFragmentCostAtLevel(level) {
@@ -134,12 +136,12 @@ class HexaSkill {
     }
 
     getFDFragmentRatioAtLevel(level) {
-        return this.#totalFDFragmentRatioArray[level];
+        return this._totalFDFragmentRatioArray[level];
     }
 
     getNextHighestFDFragmentRatioIndex(currLevel) {
         // The current level is the current index, so look at the remaining 1 after it
-        let remainingArray = this.#totalFDFragmentRatioArray.slice(currLevel + 1);
+        let remainingArray = this._totalFDFragmentRatioArray.slice(currLevel + 1);
         let offsetOfRemainingMax = indexOfMax(remainingArray);
         return currLevel + offsetOfRemainingMax + 1;
     }

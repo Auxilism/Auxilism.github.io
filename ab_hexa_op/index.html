@@ -19,6 +19,7 @@
     <script src="hexa-mastery-node.js"></script>
     <script src="hexa-boost-node.js"></script>
     <script src="hexa-origin-node.js"></script>
+    <script src="converted-hexa-stat-to-skill.js"></script>
     <script src="hexa-skill-matrix.js"></script>
     <script src="main.js"></script>
 
@@ -95,10 +96,11 @@
             <hr>
         </form>
         Results:
-        <div id="result">
+        <div id="result" hidden="true">
             <canvas id="resultsChart"></canvas>
-            <button id="resetZoom" hidden=true>Reset zoom</button><br>
+            <button id="resetZoom">Reset zoom</button><br>
             <br>
+            Numbers in brackets are the total fragments spent so far.
             <p id="resultPaths"></div>
         </div>
         <p id="debugCounter"></p>

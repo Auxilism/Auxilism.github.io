@@ -12,6 +12,7 @@ class HexaStatMatrix {
         let hexaStatNodesResults = [];
         let totalFDFragmentRatio = 0;
         let totalFD = 0;
+        let totalFragments = 0;
 
         for (let i = 0; i < numTrials; i++) {
             let hexaStatNode = new HexaStatNode(needsUnlock);
@@ -22,9 +23,11 @@ class HexaStatMatrix {
 
             totalFDFragmentRatio += HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode);
             totalFD += HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, hexaStatNode);
+            totalFragments += hexaStatNode.additionalFragmentsCost;
         }
         let fdFragmentRatioAvg = formatNumberForPrint(totalFDFragmentRatio / numTrials);
         let fdAvg = formatNumberForPrint(totalFD / numTrials);
+        let fragmentsAvg = formatNumberForPrint(totalFragments / numTrials);
 
         // Sort by FD per fragment ratio
         // FD percent is compared to the current node, so need to convert back and forth
@@ -113,7 +116,7 @@ class HexaStatMatrix {
                     </td>
                     <td>
                         <center>
-                            Average: <b>${fdAvg}%</b><br>
+                            Average: <b>${fdAvg}%</b> over ${fragmentsAvg} fragments<br>
                             Median: <b>${fdMedian}%</b> at<br>
                             <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeMedian.getInfo(true)}</p>
                             Range: <b>${minFd}%</b> to <b>${maxFd}%</b>

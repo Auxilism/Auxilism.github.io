@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 fdPerBossDmgUnit, fdPerIEDUnit);
             HexaSkillMatrix.computeOptimalPaths();
 
+            document.getElementById("result").hidden = false;
             if (chartRef != null) {
                 chartRef.destroy()
             }
@@ -32,15 +33,15 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "scatter",
             data: {
                 datasets: [
-                {
-                    label: "Boosty previous original",
-                    borderColor: "black",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BobOriginal1)
-                },
+                //{
+                //    label: "Boosty previous original",
+                //    borderColor: "black",
+                //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyPrevOriginal)
+                //},
                 {
                     label: "Boosty current original",
-                    borderColor: "green",
-                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BobOriginal2)
+                    borderColor: "black",
+                    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyCurrentOriginal)
                 },
                 {
                     label: "Highest remaining skill ratio",
@@ -112,10 +113,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             });
-            document.getElementById("resetZoom").hidden = false;
-            
+
             document.getElementById("resultPaths").innerHTML = `
-                <b><font color='black'>Bob original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BobOriginal2)}
+                <b><font color='black'>Bob original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyCurrentOriginal)}
                 <br><br>
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
                 <br><br>
