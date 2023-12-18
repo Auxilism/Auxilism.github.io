@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <br><br>
                 <b><font color='purple'>Hijack hexa stat:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HijackHexaStat)}
                 <br><br>
-                <b><font color='brown'>Boosty single ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostySingleOriginal)}
+                <b><font color='brown'>Boosty single original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostySingleOriginal)}
                 <br><br>
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
                 <br><br>
