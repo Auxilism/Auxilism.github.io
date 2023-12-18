@@ -42,6 +42,7 @@ class HexaSkillOptimisationMethod {
     static HighestRemainingSkillRatio = new HexaSkillOptimisationMethod('HighestRemainingSkillRatio');
     static HijackHexaStat = new HexaSkillOptimisationMethod('HijackHexaStat');
     static BoostySingleOriginal = new HexaSkillOptimisationMethod('BoostySingleOriginal');
+    static LowestFragmentCost = new HexaSkillOptimisationMethod('LowestFragmentCost');
 
     #name;
     constructor(name) {
@@ -62,8 +63,9 @@ class HexaSkillMatrix {
     static #boostyOverallOriginalPath = [];
     static #highestSkillRatioPath = [];
     static #highestRemainingSkillRatioPath = [];
-    static #hijackHexaStat = [];
-    static #boostySingleOriginal = [];
+    static #hijackHexaStatPath = [];
+    static #boostySingleOriginalPath = [];
+    static #lowestFragmentCostPath = [];
 
     static init(baTotal, gfTotal, cbTotal, trinityTotal,
         spotlightTotal, mascotTotal, sbTotal, tfTotal,
@@ -88,8 +90,9 @@ class HexaSkillMatrix {
         HexaSkillMatrix.#boostyOverallOriginalPath = [];
         HexaSkillMatrix.#highestSkillRatioPath = [];
         HexaSkillMatrix.#highestRemainingSkillRatioPath = [];
-        HexaSkillMatrix.#hijackHexaStat = [];
-        HexaSkillMatrix.#boostySingleOriginal = [];
+        HexaSkillMatrix.#hijackHexaStatPath = [];
+        HexaSkillMatrix.#boostySingleOriginalPath = [];
+        HexaSkillMatrix.#lowestFragmentCostPath = [];
     }
 
     static computeOptimalPaths() {
@@ -159,6 +162,13 @@ class HexaSkillMatrix {
             HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
             totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
+        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // Now search for the highest remaining FD:Fragment ratio within the skills
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.LowestFragmentCost,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateLowestFragmentCost,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
 
         let pathToCopy = HexaSkillMatrix.#boostyOverallOriginalPath;
         let hexaStatInsertIndex = 19;
@@ -166,16 +176,16 @@ class HexaSkillMatrix {
         for (let i = 0; i < pathToCopy.length; ++i) {
             if (i == hexaStatInsertIndex) {
                 for (let j = 1; j <= 10; j++) {
-                    HexaSkillMatrix.#hijackHexaStat.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
+                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
                 }
             }
             if (i == hexaStatInsertIndex2) {
                 for (let j = 11; j <= 20; j++) {
-                    HexaSkillMatrix.#hijackHexaStat.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
+                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
                 }
             }
             if (pathToCopy[i].hexaSkillName != HexaSkillName.HexaStat) {
-                HexaSkillMatrix.#hijackHexaStat.push(pathToCopy[i]);
+                HexaSkillMatrix.#hijackHexaStatPath.push(pathToCopy[i]);
             }
         }
     }
@@ -197,9 +207,11 @@ class HexaSkillMatrix {
             case HexaSkillOptimisationMethod.HighestRemainingSkillRatio:
                 return HexaSkillMatrix.#highestRemainingSkillRatioPath;
             case HexaSkillOptimisationMethod.HijackHexaStat:
-                return HexaSkillMatrix.#hijackHexaStat;
+                return HexaSkillMatrix.#hijackHexaStatPath;
             case HexaSkillOptimisationMethod.BoostySingleOriginal:
-                return HexaSkillMatrix.#boostySingleOriginal;
+                return HexaSkillMatrix.#boostySingleOriginalPath;
+            case HexaSkillOptimisationMethod.LowestFragmentCost:
+                return HexaSkillMatrix.#lowestFragmentCostPath;
             default:
                 throw new TypeError("Unknown method called in HexaSkillMatrix.getPathForMethod");
         }
@@ -288,6 +300,21 @@ class HexaSkillMatrix {
         let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
 
         return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
+    }
+
+    static #calculateLowestFragmentCost(currProposedLevels, skillName) {
+        let currSkillLevel = currProposedLevels[skillName.index];
+        currProposedLevels[skillName.index] += 1;
+
+        // This function has to return a higher number to be considered more
+        // But since now we want the lowest fragment cost to be considered, we subtract it from a huge number
+        let MAX_FRAGMENT_COST = 100000;
+        // Do it this way instead of getting just for that level because hexa stat does not have a stable table of costs
+        let proposedLevelFragmentCost = HexaSkillMatrix.#HexaSkillArray[skillName.index].getTotalFragmentCostForLevel(currProposedLevels[skillName.index]);
+        let currLevelFragmentCost = HexaSkillMatrix.#HexaSkillArray[skillName.index].getTotalFragmentCostForLevel(currSkillLevel);
+        let levelUpFragmentCost = proposedLevelFragmentCost - currLevelFragmentCost;
+
+        return MAX_FRAGMENT_COST - levelUpFragmentCost;
     }
 
     static #forwardLevellingExitCondition(currLevels, totalMaxLevel) {
@@ -813,204 +840,204 @@ class HexaSkillMatrix {
     }
 
     static #populateBoostySingleOriginal() {
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 1));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 2));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 3));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 30));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 4));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 5));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 6));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 7));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 8));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 9));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 10));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 11));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.GF, 30));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 12));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 13));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 14));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 15));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 16));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 17));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 18));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 19));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 20));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 30));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 21));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 22));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 23));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 24));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 25));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 30));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 26));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 30));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 27));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 28));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 29));
-        HexaSkillMatrix.#boostySingleOriginal.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 1));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 2));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 3));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 4));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 5));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 6));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 7));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 8));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 9));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 10));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 11));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.GF, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 12));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 13));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 14));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 15));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 16));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 17));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 18));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 19));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 20));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Spotlight, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 21));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 22));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 23));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 24));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 25));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Mascot, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 26));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.SparkleBurst, 30));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 27));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 28));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 29));
+        HexaSkillMatrix.#boostySingleOriginalPath.push(new HexaSkillLevelInfo(HexaSkillName.Fusion, 30));
     }
 }
