@@ -95,7 +95,7 @@ class HexaSkillMatrix {
         HexaSkillMatrix.#hijackHexaStatPath = [];
         HexaSkillMatrix.#boostySingleOriginalPath = [];
         HexaSkillMatrix.#lowestFragmentCostPath = [];
-        HexaSkillMatrix.boostyTestPath = [];
+        HexaSkillMatrix.#boostyHijackPath = [];
     }
 
     static computeOptimalPaths() {
@@ -277,7 +277,12 @@ class HexaSkillMatrix {
 
     static #calculateHighestSkillRatio(currProposedLevels, skillName) {
         currProposedLevels[skillName.index] += 1;
+        let currFDPercent = HexaSkillMatrix.#calculateFdPercentWithoutMultType(currProposedLevels);
 
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
+    }
+
+    static #calculateFdPercentWithoutMultType(currProposedLevels) {
         let levelsWithoutMultType = Array(currProposedLevels.length);
         for (let i = 0; i < currProposedLevels.length; i++) {
             if (HexaSkillMatrix.#HexaSkillArray[i].hexaSkillFDOperationType == HexaSkillFDOperationType.Mult) {
@@ -287,9 +292,7 @@ class HexaSkillMatrix {
                 levelsWithoutMultType[i] = currProposedLevels[i];
             }
         }
-        let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
-
-        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
+        return HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
     }
 
     static #calculateHighestRemainingSkillRatio(currProposedLevels, skillName) {
