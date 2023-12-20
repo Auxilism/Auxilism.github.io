@@ -110,6 +110,9 @@ class HexaSkillMatrix {
             skill.compute();
             totalMaxLevel += skill.maxLevel;
         }
+        for (let i = 0; i <= 30; ++i) {
+            console.log(HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getFDFragmentRatioAtLevel(i));
+        }
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // First, compute when searching for highest ratios spanning all levels
@@ -261,8 +264,10 @@ class HexaSkillMatrix {
 
     static #calculateBestRemainingOverallRatio(currProposedLevels, skillName) {
         let currSkillLevel = currProposedLevels[skillName.index];
-        currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
-        return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(currProposedLevels);
+        let testArray = currProposedLevels.slice();
+        testArray[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
+        currProposedLevels[skillName.index] += 1;
+        return HexaSkillMatrix.#getTotaFDFragRatioOfProposedLevels(testArray);
     }
 
     static #calculateNextOverallRatio(currProposedLevels, skillName) {
@@ -381,7 +386,6 @@ class HexaSkillMatrix {
             let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
             xyData.push({ x: currTotalFragments, y: currFD });
         }
-        console.log(xyData);
         return xyData;
     }
 
