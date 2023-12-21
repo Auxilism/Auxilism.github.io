@@ -110,9 +110,6 @@ class HexaSkillMatrix {
             skill.compute();
             totalMaxLevel += skill.maxLevel;
         }
-        for (let i = 0; i <= 30; ++i) {
-            console.log(HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getFDFragmentRatioAtLevel(i));
-        }
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // First, compute when searching for highest ratios spanning all levels
@@ -251,6 +248,7 @@ class HexaSkillMatrix {
 
                 // Try this specific skillName
                 let currFDFragmentRatio = fdFragmentRatioCalculationFunction(proposedLevels, skillName);
+                //console.log(skillToLevel, currFDFragmentRatio);
                 if (currFDFragmentRatio > maxFDFragmentRatio) {
                     maxFDFragmentRatio = currFDFragmentRatio;
                     skillToLevel = skillName;
@@ -281,10 +279,11 @@ class HexaSkillMatrix {
     }
 
     static #calculateHighestSkillRatio(currProposedLevels, skillName) {
+        let oldLevel = currProposedLevels[skillName.index];
         currProposedLevels[skillName.index] += 1;
         let currFDPercent = HexaSkillMatrix.#calculateFdPercentWithoutMultType(currProposedLevels);
 
-        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], oldLevel, currFDPercent);
     }
 
     static #calculateFdPercentWithoutMultType(currProposedLevels) {
@@ -314,7 +313,7 @@ class HexaSkillMatrix {
         }
         let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
 
-        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currFDPercent);
+        return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currSkillLevel, currFDPercent);
     }
 
     static #calculateLowestFragmentCost(currProposedLevels, skillName) {

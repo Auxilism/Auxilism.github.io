@@ -60,6 +60,7 @@ class HexaSkill {
     _fdPercentArray;
     _totalFragmentCostArray;
     _totalFDFragmentRatioArray;
+    #currRemainingFdFragmentRatioArray = [];
 
     constructor(hexaSkillName, skillTotal, maxLevel, hexaSkillFDOperationType) {
         this.#hexaSkillName = hexaSkillName;
@@ -98,6 +99,14 @@ class HexaSkill {
                 fragCost = 1;
             }
             this._totalFDFragmentRatioArray.push(fdPercent / fragCost);
+            this.#currRemainingFdFragmentRatioArray.push(fdPercent / fragCost);
+        }
+    }
+
+    reset() {
+        for (let i = 1; i <= this.maxLevel; i++) {
+            this.#currRemainingFdFragmentRatioArray[i] = (this._fdPercentArray[i] - this._fdPercentArray[currLevel])
+                / (this._totalFragmentCostArray[i] - this._totalFragmentCostArray[currLevel]);
         }
     }
 
@@ -138,31 +147,36 @@ class HexaSkill {
         throw new TypeError("Unimplemented function HexaSkill.getFragmentCostAtLevel called");
     }
 
-    getFDFragmentRatioAtLevel(level, currFDPercent) {
-        if (level > HexaSkill.LevelLimit) {
+    getFDFragmentRatioAtLevel(targetLevel, currLevel, currFDPercent) {
+        if (targetLevel > HexaSkill.LevelLimit) {
             throw new RangeError("Going above max hexa skill level in HexaSkill.getFDFragmentRatioAtLevel");
         }
         // If this hexa skill's max is 20, the ratio of 'lvl 21' should be the same as 20
-        if (level > this.#maxLevel) {
-            level = this.#maxLevel;
+        if (targetLevel > this.#maxLevel) {
+            targetLevel = this.#maxLevel;
         }
+        let remainingFdFragmentRatio = (this._fdPercentArray[targetLevel] - this._fdPercentArray[currLevel])
+        / (this._totalFragmentCostArray[targetLevel] - this._totalFragmentCostArray[currLevel]);
 
         switch (this.#hexaSkillFDOperationType) {
             case HexaSkillFDOperationType.Add:
-                return this._totalFDFragmentRatioArray[level];
+                return remainingFdFragmentRatio;
             case HexaSkillFDOperationType.Mult:
-                let totalMult = fdPercentToMultiplier(this._fdPercentArray[level]) * fdPercentToMultiplier(currFDPercent);
-                let totalFDPercent = fdMultiplierToPercent(totalMult);
-                let actualFDPercent = totalFDPercent - currFDPercent;
-                return actualFDPercent / this._totalFragmentCostArray[level];
+                let scaledRatio = remainingFdFragmentRatio * fdPercentToMultiplier(currFDPercent);
+                return scaledRatio;
             default:
                 throw new TypeError("Unknown operation type in HexaSkill.getFDFragmentRatioAtLevel");
         }
     }
 
     getNextHighestFDFragmentRatioIndex(currLevel) {
+        // Recompute the ratio array from currLevel onwards, using currLevel as the reference point
+        for (let i = currLevel + 1; i <= this.maxLevel; i++) {
+            this.#currRemainingFdFragmentRatioArray[i] = (this._fdPercentArray[i] - this._fdPercentArray[currLevel])
+                / (this._totalFragmentCostArray[i] - this._totalFragmentCostArray[currLevel]);
+        }
         // The current level is the current index, so look at the remaining 1 after it
-        let remainingArray = this._totalFDFragmentRatioArray.slice(currLevel + 1);
+        let remainingArray = this.#currRemainingFdFragmentRatioArray.slice(currLevel + 1);
         let offsetOfRemainingMax = indexOfMax(remainingArray);
         return currLevel + offsetOfRemainingMax + 1;
     }
