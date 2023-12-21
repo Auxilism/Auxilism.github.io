@@ -34,35 +34,35 @@ document.addEventListener("DOMContentLoaded", function () {
                 data: {
                     datasets: [
                         {
+                            label: "Highest remaining skill ratio",
+                            borderColor: "orange",
+                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
+                        },
+                        {
                             label: "Boosty hijack",
                             borderColor: "purple",
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
                         },
                         {
-                            label: "Highest remaining skill ratio",
-                            borderColor: "orange",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
+                            label: "Boosty overall original",
+                            borderColor: "black",
+                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyOverallOriginal)
                         },
-                        //{
-                        //    label: "Boosty overall original",
-                        //    borderColor: "black",
-                        //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyOverallOriginal)
-                        //},
-                        //{
-                        //    label: "Minimum loss in overall ratio",
-                        //    borderColor: "green",
-                        //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
-                        //},
-                        //{
-                        //    label: "Next overall ratio",
-                        //    borderColor: "blue",
-                        //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
-                        //},
-                        //{
-                        //    label: "Best remaining overall ratio",
-                        //    borderColor: "red",
-                        //    data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
-                        //},
+                        {
+                            label: "Minimum loss in overall ratio",
+                            borderColor: "green",
+                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
+                        },
+                        {
+                            label: "Next overall ratio",
+                            borderColor: "blue",
+                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
+                        },
+                        {
+                            label: "Best remaining overall ratio",
+                            borderColor: "red",
+                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
+                        },
                     ]
                 },
                 options: {
@@ -110,9 +110,9 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             document.getElementById("resultPaths").innerHTML = `
-                <b><font color='purple'>Boosty hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
-                <br><br>
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
+                <br><br>
+                <b><font color='purple'>Boosty hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
                 <br><br>
                 <b><font color='black'>Boosty overall original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyOverallOriginal)}
                 <br><br>
