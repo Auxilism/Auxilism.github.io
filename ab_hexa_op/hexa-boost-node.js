@@ -4,19 +4,19 @@ class HexaBoostNode extends HexaSkill {
     static #SparkBurstMaxLevel = 30;
     static #FusionMaxLevel = 30;
 
-    constructor(hexaSkillName, skillTotal) {
+    constructor(hexaSkillName, skillInputTotal) {
         switch (hexaSkillName) {
             case HexaSkillName.Spotlight:
-                super(hexaSkillName, skillTotal, HexaBoostNode.#SpotlightMaxLevel, HexaSkillFDOperationType.Add);
+                super(hexaSkillName, skillInputTotal, HexaBoostNode.#SpotlightMaxLevel, HexaSkillFDOperationType.Add);
                 break;
             case HexaSkillName.Mascot:
-                super(hexaSkillName, skillTotal, HexaBoostNode.#MascotMaxLevel, HexaSkillFDOperationType.Add);
+                super(hexaSkillName, skillInputTotal, HexaBoostNode.#MascotMaxLevel, HexaSkillFDOperationType.Add);
                 break;
             case HexaSkillName.SparkleBurst:
-                super(hexaSkillName, skillTotal, HexaBoostNode.#SparkBurstMaxLevel, HexaSkillFDOperationType.Add);
+                super(hexaSkillName, skillInputTotal, HexaBoostNode.#SparkBurstMaxLevel, HexaSkillFDOperationType.Add);
                 break;
             case HexaSkillName.Fusion:
-                super(hexaSkillName, skillTotal, HexaBoostNode.#FusionMaxLevel, HexaSkillFDOperationType.Add);
+                super(hexaSkillName, skillInputTotal, HexaBoostNode.#FusionMaxLevel, HexaSkillFDOperationType.Add);
                 break;
             default:
                 throw new TypeError("Unknown boost node being processed");

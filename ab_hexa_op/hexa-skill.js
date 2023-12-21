@@ -45,16 +45,16 @@ class HexaSkillFDOperationType {
 class HexaSkill {
     // This is different from individual maxLevel, and serves for overall computations
     static LevelLimit = 30;
-    static #BATotal;
+    static #BABaseTotal;
 
-    static init(baTotal) {
-        HexaSkill.#BATotal = baTotal;
+    static init(baBaseTotal) {
+        HexaSkill.#BABaseTotal = baBaseTotal;
     }
 
     #hexaSkillName;
     #maxLevel;
-    #skillTotal;
-    #otherSkillsTotal;
+    #skillBaseTotal;
+    #otherSkillsBaseTotal;
     #hexaSkillFDOperationType;
 
     _fdPercentArray;
@@ -62,13 +62,11 @@ class HexaSkill {
     _totalFDFragmentRatioArray;
     #currRemainingFdFragmentRatioArray = [];
 
-    constructor(hexaSkillName, skillTotal, maxLevel, hexaSkillFDOperationType) {
+    constructor(hexaSkillName, skillInputTotal, maxLevel, hexaSkillFDOperationType) {
         this.#hexaSkillName = hexaSkillName;
         this.#hexaSkillFDOperationType = hexaSkillFDOperationType;
         this.#maxLevel = maxLevel;
-        this.#skillTotal = skillTotal;
-
-        this.#otherSkillsTotal = HexaSkill.#BATotal - this.#skillTotal;
+        this.#skillBaseTotal = skillInputTotal;
     }
 
     get hexaSkillName() {
@@ -84,6 +82,8 @@ class HexaSkill {
     }
 
     compute() {
+        this.#otherSkillsBaseTotal = HexaSkill.#BABaseTotal - this.#skillBaseTotal;
+
         this._fdPercentArray = [];
         this._totalFragmentCostArray = [];
         this._totalFDFragmentRatioArray = [];
@@ -116,11 +116,11 @@ class HexaSkill {
     }
 
     _getScaledUpTotalAtLevel(level) {
-        return this.#skillTotal * this.getSkillMultiplierAtLevel(level);
+        return this.#skillBaseTotal * this.getSkillMultiplierAtLevel(level);
     }
 
     #calcFDPercentAtLevel(level) {
-        let overallMultiplier = (this._getScaledUpTotalAtLevel(level) + this.#otherSkillsTotal) / HexaSkill.#BATotal;
+        let overallMultiplier = (this._getScaledUpTotalAtLevel(level) + this.#otherSkillsBaseTotal) / HexaSkill.#BABaseTotal;
         return fdMultiplierToPercent(overallMultiplier);
     }
 
@@ -155,6 +155,10 @@ class HexaSkill {
         if (targetLevel > this.#maxLevel) {
             targetLevel = this.#maxLevel;
         }
+        if (targetLevel == currLevel) {
+            return 0;
+        }
+
         let remainingFdFragmentRatio = (this._fdPercentArray[targetLevel] - this._fdPercentArray[currLevel])
         / (this._totalFragmentCostArray[targetLevel] - this._totalFragmentCostArray[currLevel]);
 

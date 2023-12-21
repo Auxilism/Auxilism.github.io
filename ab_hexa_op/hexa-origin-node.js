@@ -17,13 +17,13 @@ class HexaOriginNode extends HexaSkill {
         HexaOriginNode.#fdPerIED = fdPerIED;
     }
 
-    #gfTotal;
-    #cbTotal;
-    constructor(hexaSkillName, gfTotal, cbTotal) {
-        super(hexaSkillName, gfTotal + cbTotal, HexaOriginNode.#GFMaxLevel, HexaSkillFDOperationType.Add);
+    #gfBaseTotal;
+    #cbBaseTotal;
+    constructor(hexaSkillName, gfInputTotal, cbInputTotal) {
+        super(hexaSkillName, gfInputTotal + cbInputTotal, HexaOriginNode.#GFMaxLevel, HexaSkillFDOperationType.Add);
 
-        this.#gfTotal = gfTotal;
-        this.#cbTotal = cbTotal;
+        this.#gfBaseTotal = gfInputTotal;
+        this.#cbBaseTotal = cbInputTotal;
     }
 
     #getSoundWavesScalingAtLevel(level) {
@@ -87,8 +87,8 @@ class HexaOriginNode extends HexaSkill {
     }
 
     _getScaledUpTotalAtLevel(level) {
-        let skillRawTotal = this.#gfTotal * this.#getGFSkillMultiplierAtLevel(level) +
-            this.#cbTotal * this.#getCheeringBalloonsSkillMultiplierAtLevel(level);
+        let skillRawTotal = this.#gfBaseTotal * this.#getGFSkillMultiplierAtLevel(level) +
+            this.#cbBaseTotal * this.#getCheeringBalloonsSkillMultiplierAtLevel(level);
         let additionalMultiplier = this.#getAdditionalMultiplierAtLevel(level);
         return skillRawTotal * additionalMultiplier;
     }

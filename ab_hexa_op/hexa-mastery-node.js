@@ -5,9 +5,9 @@ class HexaMasteryNode extends HexaSkill {
     static #HexaTrinityBaseScale = 630;
     static #HexaTrinityLevelScale = 13;
 
-    constructor(hexaSkillName, skillTotal) {
+    constructor(hexaSkillName, skillInputTotal) {
         if (hexaSkillName == HexaSkillName.Trinity) {
-            super(hexaSkillName, skillTotal, HexaMasteryNode.#TrinityMaxLevel, HexaSkillFDOperationType.Add);
+            super(hexaSkillName, skillInputTotal, HexaMasteryNode.#TrinityMaxLevel, HexaSkillFDOperationType.Add);
         }
         else {
             throw new TypeError("Unknown mastery node being processed");

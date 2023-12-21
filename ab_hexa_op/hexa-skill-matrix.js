@@ -69,19 +69,20 @@ class HexaSkillMatrix {
     static #lowestFragmentCostPath = [];
     static #boostyHijackPath = [];
 
-    static init(baTotal, gfTotal, cbTotal, trinityTotal,
-        spotlightTotal, mascotTotal, sbTotal, tfTotal,
+    static init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
+        trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
+        mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
         fdPerBossDmgUnit, fdPerIEDUnit) {
 
-        HexaSkill.init(baTotal);
+        HexaSkill.init(baInputTotal);
         HexaOriginNode.init(fdPerBossDmgUnit, fdPerIEDUnit);
         HexaSkillMatrix.#HexaSkillArray = [];
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfTotal, cbTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaMasteryNode(HexaSkillName.Trinity, trinityTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaMasteryNode(HexaSkillName.Trinity, trinityInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfInputTotal));
         // Hexa Stat has no base damage
         HexaSkillMatrix.#HexaSkillArray.push(new ConvertedHexaStatToSkill(HexaSkillName.HexaStat, 0));
 
@@ -109,6 +110,9 @@ class HexaSkillMatrix {
         for (let skill of skillIterator) {
             skill.compute();
             totalMaxLevel += skill.maxLevel;
+        }
+        for (let i = 1; i <= 30; ++i) {
+            console.log(HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].getFDFragmentRatioAtLevel(i, 1, 0));
         }
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
