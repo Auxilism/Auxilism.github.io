@@ -53,7 +53,8 @@ class HexaSkill {
 
     #hexaSkillName;
     #maxLevel;
-    #skillBaseTotal;
+    #skillInputTotal;
+    _skillBaseTotal;
     #otherSkillsBaseTotal;
     #hexaSkillFDOperationType;
 
@@ -64,9 +65,9 @@ class HexaSkill {
 
     constructor(hexaSkillName, skillInputTotal, maxLevel, hexaSkillFDOperationType) {
         this.#hexaSkillName = hexaSkillName;
-        this.#hexaSkillFDOperationType = hexaSkillFDOperationType;
+        this.#skillInputTotal = skillInputTotal;
         this.#maxLevel = maxLevel;
-        this.#skillBaseTotal = skillInputTotal;
+        this.#hexaSkillFDOperationType = hexaSkillFDOperationType;
     }
 
     get hexaSkillName() {
@@ -81,8 +82,13 @@ class HexaSkill {
         return this.#maxLevel;
     }
 
+    calcSkillBaseTotal(inputStartingLevel) {
+        this._skillBaseTotal = this.#skillInputTotal / this.getSkillMultiplierAtLevel(inputStartingLevel);
+        return this._skillBaseTotal;
+    }
+
     compute() {
-        this.#otherSkillsBaseTotal = HexaSkill.#BABaseTotal - this.#skillBaseTotal;
+        this.#otherSkillsBaseTotal = HexaSkill.#BABaseTotal - this._skillBaseTotal;
 
         this._fdPercentArray = [];
         this._totalFragmentCostArray = [];
@@ -103,20 +109,13 @@ class HexaSkill {
         }
     }
 
-    reset() {
-        for (let i = 1; i <= this.maxLevel; i++) {
-            this.#currRemainingFdFragmentRatioArray[i] = (this._fdPercentArray[i] - this._fdPercentArray[currLevel])
-                / (this._totalFragmentCostArray[i] - this._totalFragmentCostArray[currLevel]);
-        }
-    }
-
     // Should return 1.something, like 1.1 to mean 10% increase from the base skill
     getSkillMultiplierAtLevel(level) {
         throw new TypeError("Unimplemented function HexaSkill.getSkillMultiplierAtLevel called");
     }
 
     _getScaledUpTotalAtLevel(level) {
-        return this.#skillBaseTotal * this.getSkillMultiplierAtLevel(level);
+        return this._skillBaseTotal * this.getSkillMultiplierAtLevel(level);
     }
 
     #calcFDPercentAtLevel(level) {

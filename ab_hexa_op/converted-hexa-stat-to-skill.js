@@ -11,6 +11,11 @@ class ConvertedHexaStatToSkill extends HexaSkill {
         }
     }
 
+    calcSkillBaseTotal(inputStartingLevel) {
+        this._skillBaseTotal = 0;
+        return this._skillBaseTotal;
+    }
+
     compute() {
         this._fdPercentArray = [];
         this._totalFragmentCostArray = [];

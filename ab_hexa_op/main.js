@@ -25,8 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let sbCurrLevel = Number(document.getElementById("sbCurrLevel").value);
             let tfCurrLevel = Number(document.getElementById("tfCurrLevel").value);
 
-            console.log(gfCurrLevel, trinityCurrLevel, spotlightCurrLevel, mascotCurrLevel, sbCurrLevel, tfCurrLevel);
-
             let fdPerBossDmgUnit = Number(document.getElementById("fdPerBossDmgUnit").value);
             let fdPerIEDUnit = Number(document.getElementById("fdPerIEDUnit").value);
 
