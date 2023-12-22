@@ -69,21 +69,31 @@ class HexaSkillMatrix {
     static #lowestFragmentCostPath = [];
     static #boostyHijackPath = [];
 
-    static init(baTotal, gfTotal, cbTotal, trinityTotal,
-        spotlightTotal, mascotTotal, sbTotal, tfTotal,
+    static init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
+        trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
+        mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
         fdPerBossDmgUnit, fdPerIEDUnit) {
 
-        HexaSkill.init(baTotal);
         HexaOriginNode.init(fdPerBossDmgUnit, fdPerIEDUnit);
         HexaSkillMatrix.#HexaSkillArray = [];
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfTotal, cbTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaMasteryNode(HexaSkillName.Trinity, trinityTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaMasteryNode(HexaSkillName.Trinity, trinityInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfInputTotal));
         // Hexa Stat has no base damage
         HexaSkillMatrix.#HexaSkillArray.push(new ConvertedHexaStatToSkill(HexaSkillName.HexaStat, 0));
+
+        // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
+        baInputTotal -= (gfInputTotal + cbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].calcSkillBaseTotal(gfCurrLevel));
+        baInputTotal -= (trinityInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel));
+        baInputTotal -= (spotlightInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Spotlight.index].calcSkillBaseTotal(spotlightCurrLevel));
+        baInputTotal -= (mascotInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].calcSkillBaseTotal(mascotCurrLevel));
+        baInputTotal -= (sbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.SparkleBurst.index].calcSkillBaseTotal(sbCurrLevel));
+        baInputTotal -= (tfInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Fusion.index].calcSkillBaseTotal(tfCurrLevel));
+        // Don't need to revert hexa stat as that is universally applied
+        HexaSkill.init(baInputTotal);
 
         HexaSkillMatrix.#bestRemainingOverallRatioPath = [];
         HexaSkillMatrix.#nextOverallRatioPath = [];
@@ -248,7 +258,6 @@ class HexaSkillMatrix {
 
                 // Try this specific skillName
                 let currFDFragmentRatio = fdFragmentRatioCalculationFunction(proposedLevels, skillName);
-                //console.log(skillToLevel, currFDFragmentRatio);
                 if (currFDFragmentRatio > maxFDFragmentRatio) {
                     maxFDFragmentRatio = currFDFragmentRatio;
                     skillToLevel = skillName;
@@ -302,16 +311,8 @@ class HexaSkillMatrix {
     static #calculateHighestRemainingSkillRatio(currProposedLevels, skillName) {
         let currSkillLevel = currProposedLevels[skillName.index];
         currProposedLevels[skillName.index] = HexaSkillMatrix.#HexaSkillArray[skillName.index].getNextHighestFDFragmentRatioIndex(currSkillLevel);
-        let levelsWithoutMultType = Array(currProposedLevels.length);
-        for (let i = 0; i < currProposedLevels.length; i++) {
-            if (HexaSkillMatrix.#HexaSkillArray[i].hexaSkillFDOperationType == HexaSkillFDOperationType.Mult) {
-                levelsWithoutMultType[i] = 0;
-            }
-            else {
-                levelsWithoutMultType[i] = currProposedLevels[i];
-            }
-        }
-        let currFDPercent = HexaSkillMatrix.#getFDPercentOfProposedLevels(levelsWithoutMultType);
+
+        let currFDPercent = HexaSkillMatrix.#calculateFdPercentWithoutMultType(currProposedLevels);
 
         return HexaSkillMatrix.#HexaSkillArray[skillName.index].getFDFragmentRatioAtLevel(currProposedLevels[skillName.index], currSkillLevel, currFDPercent);
     }

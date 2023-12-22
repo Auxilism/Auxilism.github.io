@@ -7,21 +7,30 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             counter += 1;
 
-            let baTotal = Number(document.getElementById("baTotal").value);
-            let gfTotal = Number(document.getElementById("gfTotal").value);
-            let cbTotal = Number(document.getElementById("cbTotal").value);
-            let trinityTotal = Number(document.getElementById("trinityTotal").value);
+            let baInputTotal = Number(document.getElementById("baInputTotal").value);
+            let gfInputTotal = Number(document.getElementById("gfInputTotal").value);
+            let cbInputTotal = Number(document.getElementById("cbInputTotal").value);
+            let trinityInputTotal = Number(document.getElementById("trinityInputTotal").value);
 
-            let spotlightTotal = Number(document.getElementById("spotlightTotal").value);
-            let mascotTotal = Number(document.getElementById("mascotTotal").value);
-            let sbTotal = Number(document.getElementById("sbTotal").value);
-            let tfTotal = Number(document.getElementById("tfTotal").value);
+            let spotlightInputTotal = Number(document.getElementById("spotlightInputTotal").value);
+            let mascotInputTotal = Number(document.getElementById("mascotInputTotal").value);
+            let sbInputTotal = Number(document.getElementById("sbInputTotal").value);
+            let tfInputTotal = Number(document.getElementById("tfInputTotal").value);
+
+            let gfCurrLevel = Number(document.getElementById("gfCurrLevel").value);
+            let trinityCurrLevel = Number(document.getElementById("trinityCurrLevel").value);
+
+            let spotlightCurrLevel = Number(document.getElementById("spotlightCurrLevel").value);
+            let mascotCurrLevel = Number(document.getElementById("mascotCurrLevel").value);
+            let sbCurrLevel = Number(document.getElementById("sbCurrLevel").value);
+            let tfCurrLevel = Number(document.getElementById("tfCurrLevel").value);
 
             let fdPerBossDmgUnit = Number(document.getElementById("fdPerBossDmgUnit").value);
             let fdPerIEDUnit = Number(document.getElementById("fdPerIEDUnit").value);
 
-            HexaSkillMatrix.init(baTotal, gfTotal, cbTotal, trinityTotal,
-                spotlightTotal, mascotTotal, sbTotal, tfTotal,
+            HexaSkillMatrix.init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
+                trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
+                mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
                 fdPerBossDmgUnit, fdPerIEDUnit);
             HexaSkillMatrix.computeOptimalPaths();
 

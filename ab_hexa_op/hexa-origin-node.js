@@ -17,13 +17,28 @@ class HexaOriginNode extends HexaSkill {
         HexaOriginNode.#fdPerIED = fdPerIED;
     }
 
-    #gfTotal;
-    #cbTotal;
-    constructor(hexaSkillName, gfTotal, cbTotal) {
-        super(hexaSkillName, gfTotal + cbTotal, HexaOriginNode.#GFMaxLevel, HexaSkillFDOperationType.Add);
+    #gfInputTotal;
+    #gfBaseTotal;
+    #cbInputTotal;
+    #cbBaseTotal;
+    constructor(hexaSkillName, gfInputTotal, cbInputTotal) {
+        super(hexaSkillName, gfInputTotal + cbInputTotal, HexaOriginNode.#GFMaxLevel, HexaSkillFDOperationType.Add);
 
-        this.#gfTotal = gfTotal;
-        this.#cbTotal = cbTotal;
+        this.#gfInputTotal = gfInputTotal;
+        this.#cbInputTotal = cbInputTotal;
+    }
+
+    calcSkillBaseTotal(inputStartingLevel) {
+        // First revert the additional ied/boss multiplier
+        let additionalMultiplier = this.#getAdditionalMultiplierAtLevel(inputStartingLevel);
+        let gfInputNoAdditional = this.#gfInputTotal / additionalMultiplier;
+        let cbInputNoAdditional = this.#cbInputTotal / additionalMultiplier;
+
+        // Then revert the skill % multipliers
+        this.#gfBaseTotal = gfInputNoAdditional / this.#getGFSkillMultiplierAtLevel(inputStartingLevel);
+        this.#cbBaseTotal = cbInputNoAdditional / this.#getCheeringBalloonsSkillMultiplierAtLevel(inputStartingLevel);
+        this._skillBaseTotal = this.#gfBaseTotal + this.#cbBaseTotal;
+        return this._skillBaseTotal;
     }
 
     #getSoundWavesScalingAtLevel(level) {
@@ -87,8 +102,8 @@ class HexaOriginNode extends HexaSkill {
     }
 
     _getScaledUpTotalAtLevel(level) {
-        let skillRawTotal = this.#gfTotal * this.#getGFSkillMultiplierAtLevel(level) +
-            this.#cbTotal * this.#getCheeringBalloonsSkillMultiplierAtLevel(level);
+        let skillRawTotal = this.#gfBaseTotal * this.#getGFSkillMultiplierAtLevel(level) +
+            this.#cbBaseTotal * this.#getCheeringBalloonsSkillMultiplierAtLevel(level);
         let additionalMultiplier = this.#getAdditionalMultiplierAtLevel(level);
         return skillRawTotal * additionalMultiplier;
     }
