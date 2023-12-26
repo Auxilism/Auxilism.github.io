@@ -4,23 +4,30 @@ class HexaStatMatrix {
         HexaStatNode.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
     }
 
-    static simulateHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
-        let currHexaStatNode = new HexaStatNode(needsUnlock);
-        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
-        currHexaStatNode.optimise();
-
+    static getSimulatedHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
         let hexaStatNodesResults = [];
-        let totalFDFragmentRatio = 0;
-        let totalFD = 0;
-        let totalFragments = 0;
-
         for (let i = 0; i < numTrials; i++) {
             let hexaStatNode = new HexaStatNode(needsUnlock);
             hexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
             hexaStatNode.levelUpTo(targetNodeLevel);
             hexaStatNode.optimise();
             hexaStatNodesResults.push(hexaStatNode);
+        }
+        return hexaStatNodesResults;
+    }
 
+    static getSimulatedHexaStatNodesStatistics(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
+        let currHexaStatNode = new HexaStatNode(needsUnlock);
+        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
+        currHexaStatNode.optimise();
+
+        let hexaStatNodesResults = HexaStatMatrix.getSimulatedHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level);
+        let totalFDFragmentRatio = 0;
+        let totalFD = 0;
+        let totalFragments = 0;
+
+        for (let i = 0; i < numTrials; i++) {
+            let hexaStatNode = hexaStatNodesResults[i];
             totalFDFragmentRatio += HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode);
             totalFD += HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, hexaStatNode);
             totalFragments += hexaStatNode.additionalFragmentsCost;

@@ -25,8 +25,22 @@ document.addEventListener("DOMContentLoaded", function () {
             let sbCurrLevel = Number(document.getElementById("sbCurrLevel").value);
             let tfCurrLevel = Number(document.getElementById("tfCurrLevel").value);
 
+            let fdPerAttUnit = Number(document.getElementById("fdPerAttUnit").value);
+            let fdPerFlatStatUnit = Number(document.getElementById("fdPerFlatStatUnit").value);
+            let fdPerCritDmgUnit = Number(document.getElementById("fdPerCritDmgUnit").value);
             let fdPerBossDmgUnit = Number(document.getElementById("fdPerBossDmgUnit").value);
+            let fdPerDmgUnit = Number(document.getElementById("fdPerDmgUnit").value);
             let fdPerIEDUnit = Number(document.getElementById("fdPerIEDUnit").value);
+
+            let attFD = new HexaStatTypeFDPair(HexaStatLineType.Att, fdPerAttUnit);
+            let statFD = new HexaStatTypeFDPair(HexaStatLineType.FlatStat, fdPerFlatStatUnit);
+            let critDmgFD = new HexaStatTypeFDPair(HexaStatLineType.CritDmg, fdPerCritDmgUnit);
+            let bossDmgFD = new HexaStatTypeFDPair(HexaStatLineType.BossDmg, fdPerBossDmgUnit);
+            let dmgFD = new HexaStatTypeFDPair(HexaStatLineType.Dmg, fdPerDmgUnit);
+            let iedFD = new HexaStatTypeFDPair(HexaStatLineType.IED, fdPerIEDUnit);
+            HexaStatMatrix.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
+            let numTrials = Number(document.getElementById("numTrialsInput").value);
+            ConvertedHexaStatToSkill.init(numTrials);
 
             HexaSkillMatrix.init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,

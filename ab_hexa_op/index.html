@@ -21,6 +21,12 @@
     <script src="hexa-origin-node.js"></script>
     <script src="converted-hexa-stat-to-skill.js"></script>
     <script src="hexa-skill-matrix.js"></script>
+
+    <script src="../hexa_stat/hexa-stat-line-types.js"></script>
+    <script src="../hexa_stat/hexa-stat-line.js"></script>
+    <script src="../hexa_stat/hexa-stat-node.js"></script>
+    <script src="../hexa_stat/hexa-stat-matrix.js"></script>
+
     <script src="main.js"></script>
 
     <div class="container" id="input_fields" style="width: fit-content">
@@ -116,22 +122,43 @@
                     </tr>
                 </tbody>
             </table>
-            For origin ied/boss boost at lvl 10/20/30<br>
+            For origin ied/boss boost at lvl 10/20/30, and hexa stat<br>
             E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x<br>
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
                     <tr>
                         <td>
+                            FD% per 5 raw att<br>
+                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.1490071355>%<br>
+                        </td>
+                        <td>
+                            FD% per 100 flat stat<br>
+                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.1396896794>%<br>
+                            (48 for xenon, 2100 for da)
+                        </td>
+                        <td>
+                            FD% per 0.35% crit dmg<br>
+                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.109375>%
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             FD% per 1% boss dmg<br>
-                            <input id="fdPerBossDmgUnit" type="number" step=0.000000001 value=0.1189767995>%
+                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.1189767995>%
+                        </td>
+                        <td>
+                            FD% per 0.75% dmg<br>
+                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.08923259964>%
                         </td>
                         <td>
                             FD% per 1% ied<br>
-                            <input id="fdPerIEDUnit" type="number" step=0.000000001 value=0.04217567029>%
+                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.04217567029>%
                         </td>
                     </tr>
                 </tbody>
             </table>
+            Setting a high number of trials could make the simulation take a long time as the simulation is repeated for each Hexa Stat level.<br>
+            Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
             <b>Disclaimer: Due to Hexa Stat being random, the data here may not match your specific case. Only the average case is considered.</b><br>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>

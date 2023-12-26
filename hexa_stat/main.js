@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     currAddStat1Level = 0;
                     currAddStat2Level = 0;
                 }
-                responseHTML = HexaStatMatrix.simulateHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level);
+                responseHTML = HexaStatMatrix.getSimulatedHexaStatNodesStatistics(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level);
             }
             else if (calculationType == calculateTheoreticalKey) {
                 responseHTML = HexaStatMatrix.calculateTheoreticalHexaStatNodeFDs(currMainLevel, currAddStat1Level, currAddStat2Level);
