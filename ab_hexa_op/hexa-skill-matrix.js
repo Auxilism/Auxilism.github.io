@@ -258,7 +258,7 @@ class HexaSkillMatrix {
 
                 // Try this specific skillName
                 let currFDFragmentRatio = fdFragmentRatioCalculationFunction(proposedLevels, skillName);
-                if (currFDFragmentRatio > maxFDFragmentRatio) {
+                if (currFDFragmentRatio >= maxFDFragmentRatio) {
                     maxFDFragmentRatio = currFDFragmentRatio;
                     skillToLevel = skillName;
                     newSkillLevel = proposedLevels[skillName.index];
