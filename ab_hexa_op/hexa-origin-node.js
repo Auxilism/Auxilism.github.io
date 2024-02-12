@@ -1,11 +1,32 @@
 class HexaOriginNode extends HexaSkill {
-    // Taken from https://maplestory.fandom.com/wiki/Grand_Finale
-    static #SoundWavesBaseValue = 2400;
-    static #SoundWavesLevelScale = 80;
-    static #CannonRoarsBaseValue = 3600;
-    static #CannonRoarsLevelScale = 120;
-    static #CheeringBalloonsBaseValue = 500;
-    static #CheeringBalloonsLevelScale = 6;
+    // Taken from https://orangemushroom.net/2023/11/23/kms-ver-1-2-384-angelic-busters-comeback/
+    static #SoundWavesBaseValue = 2400; // TODO: get this value
+    static #SoundWavesLevelScale = 80; // TODO: get this value
+    static #CannonRoarsBaseValue = 3600; // TODO: get this value
+    static #CannonRoarsLevelScale = 120; // TODO: get this value
+    static #InitialCheeringBalloonsBaseValue = 500; // TODO: get this value
+    static #InitialCheeringBalloonsLevelScale = 6; // TODO: get this value
+    static #PostCheeringBalloonsBaseValue = 395; // TODO: get this value
+    static #PostCheeringBalloonsLevelScale = 6; // TODO: get this value
+    static #ExaltBalloonsScale = 1 - 0.45;
+
+    static #TotalCheeringBalloonsHits = 1000; // TODO: get this value
+    static #FinaleCheeringBalloonsHits = (25+10)*7; // 10 extra from exalt, all hitting their max of 7 times
+
+    // After grand finale animation,
+    // Assume 10s remaining of exalt, 20s without exalt for total of 30s of cheering balloons
+    // Exalt units: 10*7*2, for twice as many seekers spawned
+    // Non-exalt units: 20*6.03325407812
+    // Where 6.03... is 0.05+0.05*0.95*2+0.05*0.95^2*3+0.05*0.95^3*4+0.05*0.95^4*5+0.05*0.95^5*6+0.95^6*7,
+    // 5% chance of a balloon hitting once, 95%*5% chance of a balloon hitting twice, etc
+    static #ExaltCheeringBalloonsHitUnits = 10*7*2;
+    static #NonExaltCheeringBalloonsHitUnits = 20*6.03325407812;
+
+    // To calculate how many remaining balloon hits are exalted and non-exalted:
+    // Compute the scale according to the units, and apply after subtracting the initial 35 balloon hits
+    static #ExaltCheeringBalloonsHits = (HexaOriginNode.#TotalCheeringBalloonsHits - HexaOriginNode.#FinaleCheeringBalloonsHits) *
+    HexaOriginNode.#ExaltCheeringBalloonsHitUnits / (HexaOriginNode.#ExaltCheeringBalloonsHitUnits + HexaOriginNode.#NonExaltCheeringBalloonsHitUnits);
+    static #NonExaltCheeringBalloonsHits = HexaOriginNode.#TotalCheeringBalloonsHits - HexaOriginNode.#FinaleCheeringBalloonsHits - HexaOriginNode.#ExaltCheeringBalloonsHits;
 
     static #GFMaxLevel = 30;
 
@@ -21,6 +42,7 @@ class HexaOriginNode extends HexaSkill {
     #gfBaseTotal;
     #cbInputTotal;
     #cbBaseTotal;
+
     constructor(hexaSkillName, gfInputTotal, cbInputTotal) {
         super(hexaSkillName, gfInputTotal + cbInputTotal, HexaOriginNode.#GFMaxLevel, HexaSkillFDOperationType.Add);
 
@@ -65,7 +87,13 @@ class HexaOriginNode extends HexaSkill {
         if (level == 0) {
             return 0;
         }
-        return HexaOriginNode.#CheeringBalloonsBaseValue + HexaOriginNode.#CheeringBalloonsLevelScale * level;
+        let initialBalloonsScale = HexaOriginNode.#InitialCheeringBalloonsBaseValue + HexaOriginNode.#InitialCheeringBalloonsLevelScale * level;
+        let initialBalloonsTotal = HexaOriginNode.#FinaleCheeringBalloonsHits * initialBalloonsScale;
+
+        let postBalloonsScale = HexaOriginNode.#PostCheeringBalloonsBaseValue + HexaOriginNode.#PostCheeringBalloonsLevelScale * level;
+        let postExaltBalloonsTotal = HexaOriginNode.#ExaltCheeringBalloonsHits * postBalloonsScale * HexaOriginNode.#ExaltBalloonsScale;
+        let postNonExaltBalloonsTotal = HexaOriginNode.#NonExaltCheeringBalloonsHits * postBalloonsScale;
+        return initialBalloonsTotal + postExaltBalloonsTotal + postNonExaltBalloonsTotal;
     }
 
     #getCheeringBalloonsSkillMultiplierAtLevel(level) {
