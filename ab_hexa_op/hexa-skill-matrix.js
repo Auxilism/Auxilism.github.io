@@ -72,18 +72,19 @@ class HexaSkillMatrix {
     static init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
         trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
         mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
-        fdPerBossDmgUnit, fdPerIEDUnit) {
+        fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel) {
 
         HexaOriginNode.init(fdPerBossDmgUnit, fdPerIEDUnit);
         HexaSkillMatrix.#HexaSkillArray = [];
         HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaMasteryNode(HexaSkillName.Trinity, trinityInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaTrinity(trinityInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfInputTotal));
         // Hexa Stat has no base damage
         HexaSkillMatrix.#HexaSkillArray.push(new ConvertedHexaStatToSkill(HexaSkillName.HexaStat, 0));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaSeeker(seekerInputTotal));
 
         // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
         baInputTotal -= (gfInputTotal + cbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].calcSkillBaseTotal(gfCurrLevel));
@@ -92,6 +93,7 @@ class HexaSkillMatrix {
         baInputTotal -= (mascotInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].calcSkillBaseTotal(mascotCurrLevel));
         baInputTotal -= (sbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.SparkleBurst.index].calcSkillBaseTotal(sbCurrLevel));
         baInputTotal -= (tfInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Fusion.index].calcSkillBaseTotal(tfCurrLevel));
+        baInputTotal -= (seekerInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Seeker.index].calcSkillBaseTotal(seekerCurrLevel));
         // Don't need to revert hexa stat as that is universally applied
         HexaSkill.init(baInputTotal);
 

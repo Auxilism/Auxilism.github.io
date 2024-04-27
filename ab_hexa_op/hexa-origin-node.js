@@ -1,13 +1,13 @@
 class HexaOriginNode extends HexaSkill {
-    // Taken from https://orangemushroom.net/2023/11/23/kms-ver-1-2-384-angelic-busters-comeback/
-    static #SoundWavesBaseValue = 2400; // TODO: get this value
-    static #SoundWavesLevelScale = 80; // TODO: get this value
-    static #CannonRoarsBaseValue = 3600; // TODO: get this value
-    static #CannonRoarsLevelScale = 120; // TODO: get this value
-    static #InitialCheeringBalloonsBaseValue = 500; // TODO: get this value
-    static #InitialCheeringBalloonsLevelScale = 6; // TODO: get this value
-    static #PostCheeringBalloonsBaseValue = 395; // TODO: get this value
-    static #PostCheeringBalloonsLevelScale = 6; // TODO: get this value
+    // Taken from https://en.namu.wiki/w/%EC%97%94%EC%A0%A4%EB%A6%AD%EB%B2%84%EC%8A%A4%ED%84%B0/%EC%8A%A4%ED%82%AC
+    static #SoundWavesBaseValue = 334;
+    static #SoundWavesLevelScale = 12;
+    static #CannonRoarsBaseValue = 343;
+    static #CannonRoarsLevelScale = 12;
+    static #InitialCheeringBalloonsBaseValue = 340;
+    static #InitialCheeringBalloonsLevelScale = 5;
+    static #PostCheeringBalloonsBaseValue = 433 * (1-0.43); // Post the initial GF burst
+    static #PostCheeringBalloonsLevelScale = 8 * (1-0.43);  // FD reduced by 43% after first balloon, which is practically all of them
     static #ExaltBalloonsScale = 1 - 0.45;
 
     static #TotalCheeringBalloonsHits = 1000; // TODO: get this value
@@ -67,14 +67,14 @@ class HexaOriginNode extends HexaSkill {
         if (level == 0) {
             return 0;
         }
-        return (HexaOriginNode.#SoundWavesBaseValue + HexaOriginNode.#SoundWavesLevelScale * level) * 8 * 3;
+        return (HexaOriginNode.#SoundWavesBaseValue + HexaOriginNode.#SoundWavesLevelScale * level) * 9 * 12;
     }
 
     #getCannonRoarsScalingAtLevel(level) {
         if (level == 0) {
             return 0;
         }
-        return (HexaOriginNode.#CannonRoarsBaseValue + HexaOriginNode.#CannonRoarsLevelScale * level) * 14 * 7;
+        return (HexaOriginNode.#CannonRoarsBaseValue + HexaOriginNode.#CannonRoarsLevelScale * level) * 14 * 38;
     }
 
     #getGFSkillMultiplierAtLevel(level) {

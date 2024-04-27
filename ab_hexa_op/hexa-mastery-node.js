@@ -1,31 +1,6 @@
 class HexaMasteryNode extends HexaSkill {
-    static #TrinityMaxLevel = 30;
-    // Considering dco is on
-    static #TrinityBaseScale = 641;
-    static #HexaTrinityBaseScale = 630;
-    static #HexaTrinityLevelScale = 13;
-
-    constructor(hexaSkillName, skillInputTotal) {
-        if (hexaSkillName == HexaSkillName.Trinity) {
-            super(hexaSkillName, skillInputTotal, HexaMasteryNode.#TrinityMaxLevel, HexaSkillFDOperationType.Add);
-        }
-        else {
-            throw new TypeError("Unknown mastery node being processed");
-        }
-    }
-
-    #getTrinityScalingAtLevel(level) {
-        if (level == 0) {
-            return HexaMasteryNode.#TrinityBaseScale;
-        }
-        return HexaMasteryNode.#HexaTrinityBaseScale + HexaMasteryNode.#HexaTrinityLevelScale * level;
-    }
-
-    getSkillMultiplierAtLevel(level) {
-        if (this.hexaSkillName == HexaSkillName.Trinity) {
-            return this.#getTrinityScalingAtLevel(level) / HexaMasteryNode.#TrinityBaseScale;
-        }
-        throw new TypeError("Unknown mastery node being processed");
+    constructor(hexaSkillName, skillInputTotal, maxLevel) {
+        super(hexaSkillName, skillInputTotal, maxLevel, HexaSkillFDOperationType.Add);
     }
 
     getFragmentCostAtLevel(level) {
