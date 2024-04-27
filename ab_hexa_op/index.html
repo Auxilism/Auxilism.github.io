@@ -17,6 +17,8 @@
     <script src="utilis.js"></script>
     <script src="hexa-skill.js"></script>
     <script src="hexa-mastery-node.js"></script>
+    <script src="hexa-trinity.js"></script>
+    <script src="hexa-seeker.js"></script>
     <script src="hexa-boost-node.js"></script>
     <script src="hexa-origin-node.js"></script>
     <script src="converted-hexa-stat-to-skill.js"></script>
@@ -52,12 +54,17 @@
                         <td>
                             Cheering Balloons total<br>
                             <input id="cbInputTotal" type="number" step=1 value=12904838293467><br>
-                            (not Seekers)
+                            (not Seeker)
                         </td>
                         <td>
                             Trinity total<br>
                             <input id="trinityInputTotal" type="number" step=1 value=68375556116735><br>
                             (not Fusion)
+                        </td>
+                        <td>
+                            Seeker total<br>
+                            <input id="seekerInputTotal" type="number" step=1 value=33604104044291><br>
+                            (not Cheering Balloons)
                         </td>
                     </tr>
                     <tr>
@@ -78,6 +85,9 @@
                             <input id="tfInputTotal" type="number" step=1 value=7350389933992><br>
                             (not Trinity)
                         </td>
+                        <td>
+                            -blank space-<br>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -95,7 +105,8 @@
                             (not Fusion)
                         </td>
                         <td>
-                            -blank space-<br>
+                            Hexa Seeker level<br>
+                            <input id="seekerCurrLevel" type="number" step=1 value=0><br>
                         </td>
                         <td>
                             -blank space-<br>
@@ -160,6 +171,8 @@
             Setting a high number of trials could make the simulation take a long time as the simulation is repeated for each Hexa Stat level.<br>
             Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
             <b>Disclaimer: Due to Hexa Stat being random, the data here may not match your specific case. Only the average case is considered.</b><br>
+            ---<br>
+            <b>Sol Janus is not shown here as it is not used for bossing. Each player considers the importance of exp/mob clear differently, so it should be prioritised according to your personal peference.</b><br>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>
         </form>

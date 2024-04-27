@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let gfInputTotal = Number(document.getElementById("gfInputTotal").value);
             let cbInputTotal = Number(document.getElementById("cbInputTotal").value);
             let trinityInputTotal = Number(document.getElementById("trinityInputTotal").value);
+            let seekerInputTotal = Number(document.getElementById("seekerInputTotal").value);
 
             let spotlightInputTotal = Number(document.getElementById("spotlightInputTotal").value);
             let mascotInputTotal = Number(document.getElementById("mascotInputTotal").value);
@@ -19,6 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let gfCurrLevel = Number(document.getElementById("gfCurrLevel").value);
             let trinityCurrLevel = Number(document.getElementById("trinityCurrLevel").value);
+            let seekerCurrLevel = Number(document.getElementById("seekerCurrLevel").value);
 
             let spotlightCurrLevel = Number(document.getElementById("spotlightCurrLevel").value);
             let mascotCurrLevel = Number(document.getElementById("mascotCurrLevel").value);
@@ -45,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
             HexaSkillMatrix.init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
                 mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
-                fdPerBossDmgUnit, fdPerIEDUnit);
+                fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel);
             HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;

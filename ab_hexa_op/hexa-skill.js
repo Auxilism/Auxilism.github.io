@@ -6,10 +6,11 @@ class HexaSkillName {
     static SparkleBurst = new HexaSkillName('Sparkle Burst', 4);
     static Fusion = new HexaSkillName('Fusion', 5);
     static HexaStat = new HexaSkillName('Hexa Stat', 6)
+    static Seeker = new HexaSkillName('Seeker', 7)
 
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
     HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
-    HexaSkillName.HexaStat
+    HexaSkillName.HexaStat, HexaSkillName.Seeker
     ];
 
     #name;
