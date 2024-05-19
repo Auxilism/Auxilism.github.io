@@ -64,14 +64,9 @@ document.addEventListener("DOMContentLoaded", function () {
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
                         },
                         {
-                            label: "Boosty hijack",
+                            label: "KMS hijack",
                             borderColor: "purple",
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
-                        },
-                        {
-                            label: "Boosty overall original",
-                            borderColor: "black",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyOverallOriginal)
                         },
                         {
                             label: "Minimum loss in overall ratio",
