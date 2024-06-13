@@ -79,7 +79,7 @@ class HexaSkillMatrix {
         HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaTrinity(trinityInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Mascot, mascotInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaMascot(HexaSkillName.Mascot, mascotInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfInputTotal));
         // Hexa Stat has no base damage
@@ -113,7 +113,7 @@ class HexaSkillMatrix {
     static computeOptimalPaths() {
         HexaSkillMatrix.#populateBoostyPrevOriginal();
         HexaSkillMatrix.#populateBoostyOverallOriginal();
-        HexaSkillMatrix.#populateBoostySingleOriginal();
+        // HexaSkillMatrix.#populateBoostySingleOriginal();
         HexaSkillMatrix.#populateBoostyHijack();
 
         let totalMaxLevel = 0;
@@ -124,7 +124,6 @@ class HexaSkillMatrix {
         }
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // First, compute when searching for highest ratios spanning all levels
         HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BestRemainingOverallRatio,
             currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
             HexaSkillMatrix.#calculateBestRemainingOverallRatio,
@@ -178,6 +177,16 @@ class HexaSkillMatrix {
             currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
             HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
             totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
+        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // Force mascot to not be bugged
+        // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = false;
+            HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BoostySingleOriginal,
+                currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+                HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
+                totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+        // Undo mascot forcing
+        // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = true;
 
         currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
         // Now search for the highest remaining FD:Fragment ratio within the skills
@@ -375,6 +384,9 @@ class HexaSkillMatrix {
     }
 
     static getGraphData(method) {
+        if (method == HexaSkillOptimisationMethod.BoostySingleOriginal) {
+            // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = false;
+        }
         let path = HexaSkillMatrix.#getPathForMethod(method);
 
         let xyData = [];
@@ -387,6 +399,10 @@ class HexaSkillMatrix {
             let currFD = HexaSkillMatrix.#getFDPercentOfProposedLevels(currLevels);
             let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
             xyData.push({ x: currTotalFragments, y: currFD });
+        }
+
+        if (method == HexaSkillOptimisationMethod.BoostySingleOriginal) {
+            // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = true;
         }
         return xyData;
     }
@@ -413,7 +429,7 @@ class HexaSkillMatrix {
                 skillOrder += HexaSkillMatrix.#hexaSkillLevelInfoToString(path[prevIndex]);
                 currLevels[prevSkill.index] = path[prevIndex].level;
                 let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
-                skillOrder += " (" + currTotalFragments + ")"
+                skillOrder += " (" + currTotalFragments + ")";
                 skillOrder += " -> ";
 
                 prevSkill = currSkill;
@@ -424,7 +440,7 @@ class HexaSkillMatrix {
         skillOrder += HexaSkillMatrix.#hexaSkillLevelInfoToString(path[lastIndex]);
         currLevels[path[lastIndex].hexaSkillName.index] = path[lastIndex].level;
         let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
-        skillOrder += " (" + currTotalFragments + ") "
+        skillOrder += " (" + currTotalFragments + ") ";
         return skillOrder;
     }
 

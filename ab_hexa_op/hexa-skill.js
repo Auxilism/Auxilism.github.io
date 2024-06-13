@@ -50,6 +50,7 @@ class HexaSkill {
 
     static init(baBaseTotal) {
         HexaSkill.#BABaseTotal = baBaseTotal;
+        console.log("Init total", baBaseTotal);
     }
 
     #hexaSkillName;
@@ -85,6 +86,7 @@ class HexaSkill {
 
     calcSkillBaseTotal(inputStartingLevel) {
         this._skillBaseTotal = this.#skillInputTotal / this.getSkillMultiplierAtLevel(inputStartingLevel);
+        console.log(this.#hexaSkillName, this._skillBaseTotal);
         return this._skillBaseTotal;
     }
 
@@ -94,6 +96,7 @@ class HexaSkill {
         this._fdPercentArray = [];
         this._totalFragmentCostArray = [];
         this._totalFDFragmentRatioArray = [];
+        this.#currRemainingFdFragmentRatioArray = [];
         // Computes the whole array to max lvl
         for (let i = 0; i <= this.#maxLevel; ++i) {
             let fdPercent = this.#calcFDPercentAtLevel(i);
@@ -126,7 +129,7 @@ class HexaSkill {
 
     getFDPercentAtLevel(level) {
         if (level > HexaSkill.LevelLimit) {
-            throw new RangeError("Getting ")
+            throw new RangeError("Getting " + level)
         }
         return this._fdPercentArray[level];
     }

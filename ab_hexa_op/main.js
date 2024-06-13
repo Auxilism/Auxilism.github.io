@@ -68,21 +68,26 @@ document.addEventListener("DOMContentLoaded", function () {
                             borderColor: "purple",
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
                         },
-                        {
-                            label: "Minimum loss in overall ratio",
-                            borderColor: "green",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
-                        },
-                        {
-                            label: "Next overall ratio",
-                            borderColor: "blue",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
-                        },
-                        {
-                            label: "Best remaining overall ratio",
-                            borderColor: "red",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
-                        },
+                        // {
+                        //     label: "Mascot no bug",
+                        //     borderColor: "black",
+                        //     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostySingleOriginal)
+                        // },
+                        // {
+                        //     label: "Minimum loss in overall ratio",
+                        //     borderColor: "green",
+                        //     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.MinRatioLoss)
+                        // },
+                        // {
+                        //     label: "Next overall ratio",
+                        //     borderColor: "blue",
+                        //     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.NextOverallRatio)
+                        // },
+                        // {
+                        //     label: "Best remaining overall ratio",
+                        //     borderColor: "red",
+                        //     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BestRemainingOverallRatio)
+                        // },
                     ]
                 },
                 options: {
@@ -132,18 +137,18 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("resultPaths").innerHTML = `
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
                 <br><br>
-                <b><font color='purple'>Boosty hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
-                <br><br>
-                <b><font color='black'>Boosty overall original:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyOverallOriginal)}
-                <br><br>
-                <b><font color='green'>Minimum loss in overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.MinRatioLoss)}
-                <br><br>
-                <b><font color='blue'>Next overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.NextOverallRatio)}
-                <br><br>
-                <b><font color='red'>Best remaining overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BestRemainingOverallRatio)}
+                <b><font color='purple'>KMS hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
             `;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${counter}`;
         }
+        // <br><br>
+        // <b><font color='black'>Mascot no bug:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostySingleOriginal)}
+        // <br><br>
+        // <b><font color='green'>Minimum loss in overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.MinRatioLoss)}
+        // <br><br>
+        // <b><font color='blue'>Next overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.NextOverallRatio)}
+        // <br><br>
+        // <b><font color='red'>Best remaining overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BestRemainingOverallRatio)}
         catch (err) {
             alert(err);
             throw err;

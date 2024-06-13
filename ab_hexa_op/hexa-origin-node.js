@@ -22,11 +22,9 @@ class HexaOriginNode extends HexaSkill {
     static #ExaltCheeringBalloonsHitUnits = 10*7*2;
     static #NonExaltCheeringBalloonsHitUnits = 20*6.03325407812;
 
-    // To calculate how many remaining balloon hits are exalted and non-exalted:
-    // Compute the scale according to the units, and apply after subtracting the initial 35 balloon hits
-    static #ExaltCheeringBalloonsHits = (HexaOriginNode.#TotalCheeringBalloonsHits - HexaOriginNode.#FinaleCheeringBalloonsHits) *
-    HexaOriginNode.#ExaltCheeringBalloonsHitUnits / (HexaOriginNode.#ExaltCheeringBalloonsHitUnits + HexaOriginNode.#NonExaltCheeringBalloonsHitUnits);
-    static #NonExaltCheeringBalloonsHits = HexaOriginNode.#TotalCheeringBalloonsHits - HexaOriginNode.#FinaleCheeringBalloonsHits - HexaOriginNode.#ExaltCheeringBalloonsHits;
+    // Fill in how many remaining balloon hits are exalted and non-exalted from BA data:
+    static #ExaltCheeringBalloonsHits = 1186 - HexaOriginNode.#TotalCheeringBalloonsHits;
+    static #NonExaltCheeringBalloonsHits = 1561 - 1186;
 
     static #GFMaxLevel = 30;
 
@@ -60,6 +58,8 @@ class HexaOriginNode extends HexaSkill {
         this.#gfBaseTotal = gfInputNoAdditional / this.#getGFSkillMultiplierAtLevel(inputStartingLevel);
         this.#cbBaseTotal = cbInputNoAdditional / this.#getCheeringBalloonsSkillMultiplierAtLevel(inputStartingLevel);
         this._skillBaseTotal = this.#gfBaseTotal + this.#cbBaseTotal;
+        console.log("gfBase", this.#gfBaseTotal);
+        console.log("cbBase", this.#cbBaseTotal);
         return this._skillBaseTotal;
     }
 
