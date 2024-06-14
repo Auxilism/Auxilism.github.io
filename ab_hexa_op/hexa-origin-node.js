@@ -6,25 +6,22 @@ class HexaOriginNode extends HexaSkill {
     static #CannonRoarsLevelScale = 12;
     static #InitialCheeringBalloonsBaseValue = 340;
     static #InitialCheeringBalloonsLevelScale = 5;
-    static #PostCheeringBalloonsBaseValue = 433 * (1-0.43); // Post the initial GF burst
-    static #PostCheeringBalloonsLevelScale = 8 * (1-0.43);  // FD reduced by 43% after first balloon, which is practically all of them
+    static #PostCheeringBalloonsBaseValue = 433; // Post the initial GF burst
+    static #PostCheeringBalloonsLevelScale = 8; // #1 hit of a balloon will do this much
+    static #PostCheeringBalloonsConsecutiveHitScale = 1 - 0.43; // #2 to #7 hit suffer 43% FD reduction
     static #ExaltBalloonsScale = 1 - 0.45;
 
-    static #TotalCheeringBalloonsHits = 1000; // TODO: get this value
     static #FinaleCheeringBalloonsHits = (25+10)*7; // 10 extra from exalt, all hitting their max of 7 times
 
-    // After grand finale animation,
-    // Assume 10s remaining of exalt, 20s without exalt for total of 30s of cheering balloons
-    // Exalt units: 10*7*2, for twice as many seekers spawned
-    // Non-exalt units: 20*6.03325407812
+    static #NonExaltCheeringBalloonsAvgHits = 6.03325407812;
     // Where 6.03... is 0.05+0.05*0.95*2+0.05*0.95^2*3+0.05*0.95^3*4+0.05*0.95^4*5+0.05*0.95^5*6+0.95^6*7,
     // 5% chance of a balloon hitting once, 95%*5% chance of a balloon hitting twice, etc
-    static #ExaltCheeringBalloonsHitUnits = 10*7*2;
-    static #NonExaltCheeringBalloonsHitUnits = 20*6.03325407812;
 
     // Fill in how many remaining balloon hits are exalted and non-exalted from BA data:
-    static #ExaltCheeringBalloonsHits = 1186 - HexaOriginNode.#TotalCheeringBalloonsHits;
-    static #NonExaltCheeringBalloonsHits = 1561 - 1186;
+    // Stopped hitting after exalt ran out, continue to let balloons pop
+    static #ExaltCheeringBalloonsHits = 1186 - HexaOriginNode.#FinaleCheeringBalloonsHits;
+    // This was the total number of balloon hits, subtract when hitting stopped after exalt
+    static #NonExaltCheeringBalloonsHits = 1561 - HexaOriginNode.#ExaltCheeringBalloonsHits - HexaOriginNode.#FinaleCheeringBalloonsHits;
 
     static #GFMaxLevel = 30;
 
@@ -90,9 +87,16 @@ class HexaOriginNode extends HexaSkill {
         let initialBalloonsScale = HexaOriginNode.#InitialCheeringBalloonsBaseValue + HexaOriginNode.#InitialCheeringBalloonsLevelScale * level;
         let initialBalloonsTotal = HexaOriginNode.#FinaleCheeringBalloonsHits * initialBalloonsScale;
 
-        let postBalloonsScale = HexaOriginNode.#PostCheeringBalloonsBaseValue + HexaOriginNode.#PostCheeringBalloonsLevelScale * level;
-        let postExaltBalloonsTotal = HexaOriginNode.#ExaltCheeringBalloonsHits * postBalloonsScale * HexaOriginNode.#ExaltBalloonsScale;
-        let postNonExaltBalloonsTotal = HexaOriginNode.#NonExaltCheeringBalloonsHits * postBalloonsScale;
+        let postBalloonsFullScale = HexaOriginNode.#PostCheeringBalloonsBaseValue + HexaOriginNode.#PostCheeringBalloonsLevelScale * level;
+        // #1 hit does 100%, #2 to #7 do reduced. Add all together then get average
+        let postBalloonsExaltedAvgScale = (postBalloonsFullScale + postBalloonsFullScale * HexaOriginNode.#PostCheeringBalloonsConsecutiveHitScale * 6) / 7;
+        let postExaltBalloonsTotal = HexaOriginNode.#ExaltCheeringBalloonsHits * postBalloonsExaltedAvgScale * HexaOriginNode.#ExaltBalloonsScale;
+        // #1 hit does 100%, other hits do reduced. Expected hits now is based on the recrecation chance. 
+        // If total expected hits is 6, add 5 units of reduced then divide by 6 to get the average scale
+        let postBalloonsNonExaltedAvgScale = (postBalloonsFullScale +
+            postBalloonsFullScale * HexaOriginNode.#PostCheeringBalloonsConsecutiveHitScale * (HexaOriginNode.#NonExaltCheeringBalloonsAvgHits - 1)) 
+            / HexaOriginNode.#NonExaltCheeringBalloonsAvgHits;
+        let postNonExaltBalloonsTotal = HexaOriginNode.#NonExaltCheeringBalloonsHits * postBalloonsNonExaltedAvgScale;
         return initialBalloonsTotal + postExaltBalloonsTotal + postNonExaltBalloonsTotal;
     }
 
