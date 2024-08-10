@@ -11,10 +11,11 @@
 </head>
 
 <body>
-    <script src="utilis.js"></script>
+    <script src="../utilis.js"></script>
     <script src="hexa-stat-line-types.js"></script>
     <script src="hexa-stat-line.js"></script>
     <script src="hexa-stat-node.js"></script>
+    <script src="hexa-stat-node-array.js"></script>
     <script src="hexa-stat-matrix.js"></script>
     <script src="main.js"></script>
 
@@ -31,30 +32,30 @@
                     <tr>
                         <td>
                             FD% per 5 raw att<br>
-                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.163>%<br>
+                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.1607074106>%<br>
                         </td>
                         <td>
                             FD% per 100 flat stat<br>
-                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.149>%<br>
+                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.1337792374>%<br>
                             (48 for xenon, 2100 for da)
                         </td>
                         <td>
                             FD% per 0.35% crit dmg<br>
-                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.142>%
+                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.117370892>%
                         </td>
                     </tr>
                     <tr>
                         <td>
                             FD% per 1% boss dmg<br>
-                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.134>%
+                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.1271455817>%
                         </td>
                         <td>
                             FD% per 0.75% dmg<br>
-                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.100>%
+                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.09535918627>%
                         </td>
                         <td>
                             FD% per 1% ied<br>
-                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.084>%
+                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.06733714764>%
                         </td>
                     </tr>
                 </tbody>
@@ -63,13 +64,12 @@
             <br>
             Operation type: <select id="calculationType">
                 <option id='simulate' value="simulate">Simulate rolling</option>
-                <option id='optimiseGiven' value="calculateTheoretical">Calculate theoretical node FD%s</option>
+                <option id='optimiseCurrent' value="optimiseCurrent">Optimise for current nodes</option>
             </select>
             <br>
             <div id="simulateInputsContainer">
                 <br>
                 Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
-                Need to unlock node: <input type="checkbox" id="needsUnlockInput" checked="true"><br>
                 Target node level: <input id="targetNodeLevelInput" type="number" value="20"><br>
             </div>
             <br>

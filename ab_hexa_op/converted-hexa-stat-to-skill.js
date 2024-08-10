@@ -27,19 +27,18 @@ class ConvertedHexaStatToSkill extends HexaSkill {
         this._totalFragmentCostArray = [0];
         this._totalFDFragmentRatioArray = [0];
 
-        let emptyHexaStatNode = new HexaStatNode(true);
         for (let i = 1; i <= ConvertedHexaStatToSkill.#MaxLevel; i++) {
-            let simulatedHexaStatNodes = HexaStatMatrix.getSimulatedHexaStatNodes(ConvertedHexaStatToSkill.#NumTrials, true, i, 0, 0, 0);
+            let simulatedHexaStatNodeArrays = HexaStatMatrix.getSimulatedHexaStatNodeArrays(ConvertedHexaStatToSkill.#NumTrials, i);
             let totalFDFragmentRatio = 0;
             let totalFD = 0;
             let totalFragments = 0;
 
             // Calculate average for fd, fragments and fd:fragment ratio
             for (let j = 0; j < ConvertedHexaStatToSkill.#NumTrials; j++) {
-                let hexaStatNode = simulatedHexaStatNodes[j];
-                totalFD += HexaStatNode.getFDPercentBetweenNodes(emptyHexaStatNode, hexaStatNode);
-                totalFragments += hexaStatNode.additionalFragmentsCost;
-                totalFDFragmentRatio += HexaStatNode.getFDFragmentRatioBetweenNodes(emptyHexaStatNode, hexaStatNode);
+                let hexaStatNodeArray = simulatedHexaStatNodeArrays[j];
+                totalFD += hexaStatNodeArray.getTotalFDPercent();
+                totalFragments += hexaStatNodeArray.getFragmentsCost();
+                totalFDFragmentRatio += hexaStatNodeArray.getFdFragmentRatio();
             }
 
             this._fdPercentArray.push(totalFD / ConvertedHexaStatToSkill.#NumTrials);

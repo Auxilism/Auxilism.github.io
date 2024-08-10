@@ -1,36 +1,31 @@
 class HexaStatMatrix {
     // All of type HexaStatTypeFDPair
     static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
+        HexaStatNodeArray.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
         HexaStatNode.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
     }
 
-    static getSimulatedHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
-        let hexaStatNodesResults = [];
+    static getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel) {
+        let hexaStatNodeArrayResults = [];
         for (let i = 0; i < numTrials; i++) {
-            let hexaStatNode = new HexaStatNode(needsUnlock);
-            hexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
-            hexaStatNode.levelUpTo(targetNodeLevel);
-            hexaStatNode.optimise();
-            hexaStatNodesResults.push(hexaStatNode);
+            let hexaStatNodeArray = new HexaStatNodeArray(targetNodeLevel);
+            hexaStatNodeArray.optimise();
+            hexaStatNodeArrayResults.push(hexaStatNodeArray);
         }
-        return hexaStatNodesResults;
+        return hexaStatNodeArrayResults;
     }
 
-    static getSimulatedHexaStatNodesStatistics(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level) {
-        let currHexaStatNode = new HexaStatNode(needsUnlock);
-        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
-        currHexaStatNode.optimise();
-
-        let hexaStatNodesResults = HexaStatMatrix.getSimulatedHexaStatNodes(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level);
+    static getSimulatedHexaStatNodeArraysStatistics(numTrials, targetNodeLevel) {
+        let hexaStatNodeArrayResults = HexaStatMatrix.getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel);
         let totalFDFragmentRatio = 0;
         let totalFD = 0;
         let totalFragments = 0;
 
         for (let i = 0; i < numTrials; i++) {
-            let hexaStatNode = hexaStatNodesResults[i];
-            totalFDFragmentRatio += HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, hexaStatNode);
-            totalFD += HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, hexaStatNode);
-            totalFragments += hexaStatNode.additionalFragmentsCost;
+            let hexaStatNodeArray = hexaStatNodeArrayResults[i];
+            totalFDFragmentRatio += hexaStatNodeArray.getFdFragmentRatio();
+            totalFD += hexaStatNodeArray.getTotalFDPercent();
+            totalFragments += hexaStatNodeArray.getFragmentsCost();
         }
         let fdFragmentRatioAvg = formatNumberForPrint(totalFDFragmentRatio / numTrials);
         let fdAvg = formatNumberForPrint(totalFD / numTrials);
@@ -38,56 +33,40 @@ class HexaStatMatrix {
 
         // Sort by FD per fragment ratio
         // FD percent is compared to the current node, so need to convert back and forth
-        hexaStatNodesResults.sort(function (a, b) { return (HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, a))
-            - (HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, b)) });
-        let minRatioHexaStatNode = hexaStatNodesResults[0];
-        let minFdFragmentRatio = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, minRatioHexaStatNode));
-        let maxRatioHexaStatNode = hexaStatNodesResults[numTrials-1];
-        let maxFdFragmentRatio = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, maxRatioHexaStatNode));
+        hexaStatNodeArrayResults.sort(function (a, b) { return a.getFdFragmentRatio() - b.getFdFragmentRatio() });
+        let minRatioHexaStatNodeArray = hexaStatNodeArrayResults[0];
+        let minFdFragmentRatio = formatNumberForPrint(minRatioHexaStatNodeArray.getFdFragmentRatio());
+        let maxRatioHexaStatNodeArray = hexaStatNodeArrayResults[numTrials-1];
+        let maxFdFragmentRatio = formatNumberForPrint(maxRatioHexaStatNodeArray.getFdFragmentRatio());
 
-        let ratioHexaStatNodeMedian = percentileFromSortedArray(hexaStatNodesResults, 50);
-        // We want the worse case, so take 25th percentile from smallest to biggest
-        let ratioHexaStatNode75th = percentileFromSortedArray(hexaStatNodesResults, 100 - 75);
-        let ratioHexaStatNode85th = percentileFromSortedArray(hexaStatNodesResults, 100 - 85);
-        let ratioHexaStatNode95th = percentileFromSortedArray(hexaStatNodesResults, 100 - 95);
+        let ratioHexaStatNodeArrayMedian = percentileFromSortedArray(hexaStatNodeArrayResults, 50);
+        let ratioHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 75);
+        let ratioHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 85);
+        let ratioHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 95);
 
-        let fdFragmentRatioMedian = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, ratioHexaStatNodeMedian));
-        let fdFragmentRatio75th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, ratioHexaStatNode75th));
-        let fdFragmentRatio85th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, ratioHexaStatNode85th));
-        let fdFragmentRatio95th = formatNumberForPrint(HexaStatNode.getFDFragmentRatioBetweenNodes(currHexaStatNode, ratioHexaStatNode95th));
+        let fdFragmentRatioMedian = formatNumberForPrint(ratioHexaStatNodeArrayMedian.getFdFragmentRatio());
+        let fdFragmentRatio75th = formatNumberForPrint(ratioHexaStatNodeArray75th.getFdFragmentRatio());
+        let fdFragmentRatio85th = formatNumberForPrint(ratioHexaStatNodeArray85th.getFdFragmentRatio());
+        let fdFragmentRatio95th = formatNumberForPrint(ratioHexaStatNodeArray95th.getFdFragmentRatio());
 
         // Sort by raw FD
-        hexaStatNodesResults.sort(function (a, b) { return HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, a) - HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, b) });
-        let minFDHexaStatNode = hexaStatNodesResults[0];
-        let minFd = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, minFDHexaStatNode));
-        let maxFDHexaStatNode = hexaStatNodesResults[numTrials-1];
-        let maxFd = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, maxFDHexaStatNode));
+        hexaStatNodeArrayResults.sort(function (a, b) { return a.getTotalFDPercent() - b.getTotalFDPercent() });
+        let minFDHexaStatNodeArray = hexaStatNodeArrayResults[0];
+        let minFd = formatNumberForPrint(minFDHexaStatNodeArray.getTotalFDPercent());
+        let maxFDHexaStatNodeArray = hexaStatNodeArrayResults[numTrials-1];
+        let maxFd = formatNumberForPrint(maxFDHexaStatNodeArray.getTotalFDPercent());
 
-        let fdHexaStatNodeMedian = percentileFromSortedArray(hexaStatNodesResults, 50);
-        // We want the worse case, so take 25th percentile from smallest to biggest
-        let fdHexaStatNode75th = percentileFromSortedArray(hexaStatNodesResults, 100 - 75);
-        let fdHexaStatNode85th = percentileFromSortedArray(hexaStatNodesResults, 100 - 85);
-        let fdHexaStatNode95th = percentileFromSortedArray(hexaStatNodesResults, 100 - 95);
+        let fdHexaStatNodeArrayMedian = percentileFromSortedArray(hexaStatNodeArrayResults, 50);
+        let fdHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 75);
+        let fdHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 85);
+        let fdHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 95);
 
-        let fdMedian = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, fdHexaStatNodeMedian));
-        let fd75th = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, fdHexaStatNode75th));
-        let fd85th = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, fdHexaStatNode85th));
-        let fd95th = formatNumberForPrint(HexaStatNode.getFDPercentBetweenNodes(currHexaStatNode, fdHexaStatNode95th));
+        let fdMedian = formatNumberForPrint(fdHexaStatNodeArrayMedian.getTotalFDPercent());
+        let fd75th = formatNumberForPrint(fdHexaStatNodeArray75th.getTotalFDPercent());
+        let fd85th = formatNumberForPrint(fdHexaStatNodeArray85th.getTotalFDPercent());
+        let fd95th = formatNumberForPrint(fdHexaStatNodeArray95th.getTotalFDPercent());
 
         return `
-        <table class="table table-bordered" style="width: auto;">
-            <tbody>
-                <tr>
-                    <td style="vertical-align: middle;">
-                        Current optimised FD:<br>
-                        (node level ${currMainLevel + currAddStat1Level + currAddStat2Level})
-                    </td>
-                    <td>
-                        ${currHexaStatNode.getInfo(false)}
-                    </td>
-                </tr>
-            </tbody>
-        </table>
         <table class="table table-bordered" style="width: auto;">
             <tbody>
                 <th>
@@ -107,36 +86,36 @@ class HexaStatMatrix {
                         <center>
                             Average: <b>${fdFragmentRatioAvg}</b><br>
                             Median: <b>${fdFragmentRatioMedian}</b> at<br>
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeMedian.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArrayMedian.getInfo(true)}</p>
                             Range: <b>${minFdFragmentRatio}</b> to <b>${maxFdFragmentRatio}</b>
                         </center>
                     </td>
                     <td>
                         <center>
                             75% chance for: <b>${fdFragmentRatio75th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNode75th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray75th.getInfo(true)}</p>
                             85% chance for: <b>${fdFragmentRatio85th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNode85th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray85th.getInfo(true)}</p>
                             95% chance for: <b>${fdFragmentRatio95th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNode95th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray95th.getInfo(true)}</p>
                         </center>
                     </td>
                     <td>
                         <center>
                             Average: <b>${fdAvg}%</b> over ${fragmentsAvg} fragments<br>
                             Median: <b>${fdMedian}%</b> at<br>
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeMedian.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArrayMedian.getInfo(true)}</p>
                             Range: <b>${minFd}%</b> to <b>${maxFd}%</b>
                         </center>
                     </td>
                     <td>
                         <center>
                             75% chance for: <b>${fd75th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode75th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray75th.getInfo(true)}</p>
                             85% chance for: <b>${fd85th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode85th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray85th.getInfo(true)}</p>
                             95% chance for: <b>${fd95th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNode95th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray95th.getInfo(true)}</p>
                         </center>
                     </td>
                 </tr>
@@ -145,71 +124,21 @@ class HexaStatMatrix {
         `;
     }
 
-    static calculateTheoreticalHexaStatNodeFDs(currMainLevel, currAddStat1Level, currAddStat2Level) {
-        let currHexaStatNode = new HexaStatNode(false);
-        currHexaStatNode.setLevels(currMainLevel, currAddStat1Level, currAddStat2Level);
-        currHexaStatNode.optimise();
-
-        // Don't overwrite the values of the current node
-        let tempHexaStatNode = new HexaStatNode(false);
-        tempHexaStatNode.setLevels(5, 7, 8);
-        let minFD = tempHexaStatNode.getTotalFDPercent();
-        let minFDHexaStatNode = tempHexaStatNode;
-        let maxFD = minFD;
-        let maxFDHexaStatNode = minFDHexaStatNode;
-
-        // t stands for theoretical
-        for (let tMainLevel = 0; tMainLevel <= HexaStatLine.MAX_LEVEL; tMainLevel++) {
-            // If the sum of all levels is 20,
-            // If main=0, addStat1 can only be 10
-            // If main=1, addStat1 can be 9 to 10
-            for (let tAddStat1Level = HexaStatLine.MAX_LEVEL - tMainLevel; tAddStat1Level <= HexaStatLine.MAX_LEVEL; tAddStat1Level++) {
-                let tAddStat2Level = HexaStatNode.MAX_LEVEL_SUM - tMainLevel - tAddStat1Level;
-                // Don't overwrite the values of the other nodes
-                let tempHexaStatNode = new HexaStatNode(false);
-                tempHexaStatNode.setLevels(tMainLevel, tAddStat1Level, tAddStat2Level);
-                tempHexaStatNode.optimise();
-                let tempFD = tempHexaStatNode.getTotalFDPercent();
-
-                if (tempFD < minFD) {
-                    minFD = tempFD;
-                    minFDHexaStatNode = tempHexaStatNode;
-                }
-                else if (tempFD > maxFD) {
-                    maxFD = tempFD;
-                    maxFDHexaStatNode = tempHexaStatNode;
-                }
-            }
-        }
+    static optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level) {
+        let currHexaStatNodeArray = new HexaStatNodeArray(currMainLevel+currAddStat1Level+currAddStat2Level);
+        currHexaStatNodeArray.setLevels(0, currMainLevel, currAddStat1Level, currAddStat2Level);
+        currHexaStatNodeArray.optimise();
 
         return `
         <table class="table table-bordered" style="width: auto;">
             <tbody>
                 <tr>
                     <td style="vertical-align: middle;">
-                        Current optimised FD:<br>
+                        Current optimised FD:
                         (node level ${currMainLevel + currAddStat1Level + currAddStat2Level})
                     </td>
                     <td>
-                        ${currHexaStatNode.getInfo(false)}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle;">
-                        Theoretical min optimised FD:<br>
-                        (node level 0->${HexaStatNode.MAX_LEVEL_SUM})
-                    </td>
-                    <td>
-                        ${minFDHexaStatNode.getInfo(false)}
-                    </td>
-                </tr>
-                <tr>
-                    <td style="vertical-align: middle;">
-                        Theoretical max optimised FD:<br>
-                        (node level 0->${HexaStatNode.MAX_LEVEL_SUM})
-                    </td>
-                    <td>
-                        ${maxFDHexaStatNode.getInfo(false)}
+                        ${currHexaStatNodeArray.getInfo(false)}
                     </td>
                 </tr>
             </tbody>

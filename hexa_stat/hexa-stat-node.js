@@ -40,10 +40,8 @@ class HexaStatNode {
     #currLevelSum = 0;
     #additionalFragmentsCost = 0;
 
-    #needsUnlock;
-    constructor(needsUnlock) {
-        this.#needsUnlock = needsUnlock;
-        this.#additionalFragmentsCost = this.#needsUnlock ? HexaStatNode.#UNLOCK_COST : 0;
+    constructor() {
+        this.#additionalFragmentsCost = HexaStatNode.#UNLOCK_COST;
     }
 
     get additionalFragmentsCost() {
@@ -198,16 +196,14 @@ class HexaStatNode {
         this.#currLevelSum += 1;
     }
 
-    getInfo(showFragmentsCost) {
-        let htmlText = `FD%: ${formatNumberForPrint(this.getTotalFDPercent())}`
-        if (showFragmentsCost) {
-            htmlText += `, Fragments: ${this.#additionalFragmentsCost}`
-        }
+    getInfo(nodeIndex) {
+        let nodeCounter = nodeIndex + 1; 
+        let htmlText = `<br>-----`;
         htmlText += `
             <br>
-            Main: lvl ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].level} ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair.type.name}<br>
-            Additional Stat1: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair.type.name}<br>
-            Additional Stat2: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair.type.name}
+            Node${nodeCounter}_Main: lvl ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].level} ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair.type.name}<br>
+            Node${nodeCounter}_Additional Stat1: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair.type.name}<br>
+            Node${nodeCounter}_Additional Stat2: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair.type.name}
         `;
         return htmlText;
     }
