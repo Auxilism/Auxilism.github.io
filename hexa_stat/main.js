@@ -3,8 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const calculationTypeKey = "calculationType";
     const simulateKey = "simulate";
-    const calculateTheoreticalKey = "calculateTheoretical";
-    const needsUnlockInputKey = "needsUnlockInput";
+    const optimiseCurrentKey = "optimiseCurrent";
 
     document.getElementById("calculate").addEventListener('click', (e) => {
         try {
@@ -29,17 +28,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             if (calculationType == simulateKey) {
                 let numTrials = Number(document.getElementById("numTrialsInput").value);
-                let needsUnlock = document.getElementById(needsUnlockInputKey).checked;
                 let targetNodeLevel = Number(document.getElementById("targetNodeLevelInput").value);
-                if (needsUnlock) {
-                    currMainLevel = 0;
-                    currAddStat1Level = 0;
-                    currAddStat2Level = 0;
-                }
-                responseHTML = HexaStatMatrix.getSimulatedHexaStatNodesStatistics(numTrials, needsUnlock, targetNodeLevel, currMainLevel, currAddStat1Level, currAddStat2Level);
+                responseHTML = HexaStatMatrix.getSimulatedHexaStatNodeArraysStatistics(numTrials, targetNodeLevel);
             }
-            else if (calculationType == calculateTheoreticalKey) {
-                responseHTML = HexaStatMatrix.calculateTheoreticalHexaStatNodeFDs(currMainLevel, currAddStat1Level, currAddStat2Level);
+            else if (calculationType == optimiseCurrentKey) {
+                responseHTML = HexaStatMatrix.optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level);
             }
             document.getElementById("result").innerHTML = responseHTML;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${calculationType} ${counter}`;
@@ -57,16 +50,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (calculationType == simulateKey) {
             simulateInputsContainer.hidden = false;
-            currentNodeLevelsInputContainer.hidden = document.getElementById(needsUnlockInputKey).checked;
+            currentNodeLevelsInputContainer.hidden = true;
         }
-        else if (calculationType == calculateTheoreticalKey) {
+        else if (calculationType == optimiseCurrentKey) {
             simulateInputsContainer.hidden = true;
             currentNodeLevelsInputContainer.hidden = false;
         }
-    });
-
-    document.getElementById(needsUnlockInputKey).addEventListener('change', (e) => {
-        let currentNodeLevelsInputContainer = document.getElementById("currentNodeLevelsInputContainer");
-        currentNodeLevelsInputContainer.hidden = document.getElementById(needsUnlockInputKey).checked;
     });
 });
