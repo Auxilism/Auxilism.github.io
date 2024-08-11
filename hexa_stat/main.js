@@ -1,12 +1,15 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function ()
+{
     let counter = 0;
 
     const calculationTypeKey = "calculationType";
     const simulateKey = "simulate";
     const optimiseCurrentKey = "optimiseCurrent";
 
-    document.getElementById("calculate").addEventListener('click', (e) => {
-        try {
+    document.getElementById("calculate").addEventListener('click', (e) =>
+    {
+        try
+        {
             counter += 1;
 
             let attFD = new HexaStatTypeFDPair(HexaStatLineType.Att, Number(document.getElementById("fdPerAttUnit").value));
@@ -26,33 +29,39 @@ document.addEventListener("DOMContentLoaded", function () {
             let currAddStat1Level = Number(document.getElementById("currentAddStat1LevelInput").value);
             let currAddStat2Level = Number(document.getElementById("currentAddStat2LevelInput").value);
 
-            if (calculationType == simulateKey) {
+            if (calculationType == simulateKey)
+            {
                 let numTrials = Number(document.getElementById("numTrialsInput").value);
                 let targetNodeLevel = Number(document.getElementById("targetNodeLevelInput").value);
                 responseHTML = HexaStatMatrix.getSimulatedHexaStatNodeArraysStatistics(numTrials, targetNodeLevel);
             }
-            else if (calculationType == optimiseCurrentKey) {
+            else if (calculationType == optimiseCurrentKey)
+            {
                 responseHTML = HexaStatMatrix.optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level);
             }
             document.getElementById("result").innerHTML = responseHTML;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${calculationType} ${counter}`;
         }
-        catch (err) {
+        catch (err)
+        {
             alert(err);
             throw err;
         }
     });
 
-    document.getElementById(calculationTypeKey).addEventListener('change', (e) => {
+    document.getElementById(calculationTypeKey).addEventListener('change', (e) =>
+    {
         let calculationType = document.getElementById(calculationTypeKey).value;
         let simulateInputsContainer = document.getElementById("simulateInputsContainer");
         let currentNodeLevelsInputContainer = document.getElementById("currentNodeLevelsInputContainer");
 
-        if (calculationType == simulateKey) {
+        if (calculationType == simulateKey)
+        {
             simulateInputsContainer.hidden = false;
             currentNodeLevelsInputContainer.hidden = true;
         }
-        else if (calculationType == optimiseCurrentKey) {
+        else if (calculationType == optimiseCurrentKey)
+        {
             simulateInputsContainer.hidden = true;
             currentNodeLevelsInputContainer.hidden = false;
         }

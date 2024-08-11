@@ -1,76 +1,76 @@
-class HexaStatTypeFDPair {
-    #type;
-    #fdPerUnit;
-
-    constructor(type, fdPerUnit) {
-        this.#type = type;
-        this.#fdPerUnit = fdPerUnit;
-    }
-
-    get type() {
-        return this.#type;
-    }
-
-    get fdPerUnit() {
-        return this.#fdPerUnit;
-    }
-}
-
-class HexaStatLine {
-    static MAX_LEVEL=10;
+class HexaStatLine
+{
+    static MAX_LEVEL = 10;
 
     #level = 0;
     #typeFDPair;
     #isMain = false;
 
-    constructor(typeFDPair, isMain = false) {
+    constructor(typeFDPair, isMain = false)
+    {
         this.#typeFDPair = typeFDPair;
         this.#isMain = isMain;
     }
 
-    get typeFDPair() {
+    get typeFDPair()
+    {
         return this.#typeFDPair;
     }
 
-    set typeFDPair(newTypeFDPair) {
+    set typeFDPair(newTypeFDPair)
+    {
         this.#typeFDPair = newTypeFDPair;
     }
 
-    get level() {
+    get level()
+    {
         return this.#level;
     }
 
-    getTotalFDPercent() {
-        if (!this.#isMain) {
-            return this.#level * this.#typeFDPair.fdPerUnit;
+    getTotalUnits()
+    {
+        if (!this.#isMain)
+        {
+            return this.#level;
         }
 
         // Else accumulate the units
         let totalUnits = 0;
-        for (let i = 1; i <= this.#level; i++) {
+        for (let i = 1; i <= this.#level; i++)
+        {
             totalUnits += this.#getNumUnitsPerMainLevel(i);
         }
-        return totalUnits * this.#typeFDPair.fdPerUnit;
-
+        return totalUnits;
     }
 
-    levelUp() {
+    getTotalFDPercent()
+    {
+        return this.getTotalUnits() * this.#typeFDPair.fdPerUnit;
+    }
+
+    levelUp()
+    {
         this.#level += 1;
-        if (this.#level > HexaStatLine.MAX_LEVEL) {
+        if (this.#level > HexaStatLine.MAX_LEVEL)
+        {
             throw new RangeError("Levelling hexa stat above known max.")
         }
     }
 
-    canLevelUp() {
-        if (this.#level == HexaStatLine.MAX_LEVEL) {
+    canLevelUp()
+    {
+        if (this.#level == HexaStatLine.MAX_LEVEL)
+        {
             return false;
         }
         return true;
     }
 
-    #getNumUnitsPerMainLevel(level) {
+    #getNumUnitsPerMainLevel(level)
+    {
         // Get non-linear values according to https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.2
-        switch (level) {
+        switch (level)
+        {
             case 1:
             case 2:
             case 3:
@@ -90,9 +90,11 @@ class HexaStatLine {
         }
     }
 
-    getMainLevelUpChance() {
+    getMainLevelUpChance()
+    {
         // Get non-linear values according to https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.3
-        switch (this.#level) {
+        switch (this.#level)
+        {
             case 0:
             case 1:
             case 2:
@@ -113,9 +115,11 @@ class HexaStatLine {
         }
     }
 
-    getFragmentCost() {
+    getFragmentCost()
+    {
         // Get non-linear values according to https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.3
-        switch (this.#level) {
+        switch (this.#level)
+        {
             case 0:
             case 1:
             case 2:
@@ -140,14 +144,17 @@ class HexaStatLine {
     }
 
     // Not using setter function because this should be used specifically to hijack the leveling system
-    setLevel(level) {
-        if (level > HexaStatLine.MAX_LEVEL) {
+    setLevel(level)
+    {
+        if (level > HexaStatLine.MAX_LEVEL)
+        {
             throw new RangeError(`Levelling hexa stat above known max of ${HexaStatLine.MAX_LEVEL}`)
         }
         this.#level = level;
     }
 
-    printInfo() {
-        console.log("Type:", this.#typeFDPair.type, "Level:", this.#level, "FD:", this.getTotalFDPercent());
+    printInfo()
+    {
+        console.log("Type:", this.#typeFDPair.type, "Level:", this.#level);
     }
 }

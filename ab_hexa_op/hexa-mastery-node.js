@@ -1,11 +1,15 @@
-class HexaMasteryNode extends HexaSkill {
-    constructor(hexaSkillName, skillInputTotal, maxLevel) {
+class HexaMasteryNode extends HexaSkill
+{
+    constructor(hexaSkillName, skillInputTotal, maxLevel)
+    {
         super(hexaSkillName, skillInputTotal, maxLevel, HexaSkillFDOperationType.Add);
     }
 
-    getFragmentCostAtLevel(level) {
+    getFragmentCostAtLevel(level)
+    {
         // Taken from https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.3
-        switch (level) {
+        switch (level)
+        {
             case 0:
                 return 50;
             case 1:

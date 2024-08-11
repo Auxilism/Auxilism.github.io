@@ -1,13 +1,17 @@
-class HexaStatMatrix {
+class HexaStatMatrix
+{
     // All of type HexaStatTypeFDPair
-    static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
+    static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD)
+    {
         HexaStatNodeArray.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
         HexaStatNode.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
     }
 
-    static getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel) {
+    static getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel)
+    {
         let hexaStatNodeArrayResults = [];
-        for (let i = 0; i < numTrials; i++) {
+        for (let i = 0; i < numTrials; i++)
+        {
             let hexaStatNodeArray = new HexaStatNodeArray(targetNodeLevel);
             hexaStatNodeArray.optimise();
             hexaStatNodeArrayResults.push(hexaStatNodeArray);
@@ -15,13 +19,15 @@ class HexaStatMatrix {
         return hexaStatNodeArrayResults;
     }
 
-    static getSimulatedHexaStatNodeArraysStatistics(numTrials, targetNodeLevel) {
+    static getSimulatedHexaStatNodeArraysStatistics(numTrials, targetNodeLevel)
+    {
         let hexaStatNodeArrayResults = HexaStatMatrix.getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel);
         let totalFDFragmentRatio = 0;
         let totalFD = 0;
         let totalFragments = 0;
 
-        for (let i = 0; i < numTrials; i++) {
+        for (let i = 0; i < numTrials; i++)
+        {
             let hexaStatNodeArray = hexaStatNodeArrayResults[i];
             totalFDFragmentRatio += hexaStatNodeArray.getFdFragmentRatio();
             totalFD += hexaStatNodeArray.getTotalFDPercent();
@@ -36,13 +42,14 @@ class HexaStatMatrix {
         hexaStatNodeArrayResults.sort(function (a, b) { return a.getFdFragmentRatio() - b.getFdFragmentRatio() });
         let minRatioHexaStatNodeArray = hexaStatNodeArrayResults[0];
         let minFdFragmentRatio = formatNumberForPrint(minRatioHexaStatNodeArray.getFdFragmentRatio());
-        let maxRatioHexaStatNodeArray = hexaStatNodeArrayResults[numTrials-1];
+        let maxRatioHexaStatNodeArray = hexaStatNodeArrayResults[numTrials - 1];
         let maxFdFragmentRatio = formatNumberForPrint(maxRatioHexaStatNodeArray.getFdFragmentRatio());
 
         let ratioHexaStatNodeArrayMedian = percentileFromSortedArray(hexaStatNodeArrayResults, 50);
-        let ratioHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 75);
-        let ratioHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 85);
-        let ratioHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 95);
+        // We want the worse cases, so get the lower elements in the sorted worst-best array
+        let ratioHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 75);
+        let ratioHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 85);
+        let ratioHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 95);
 
         let fdFragmentRatioMedian = formatNumberForPrint(ratioHexaStatNodeArrayMedian.getFdFragmentRatio());
         let fdFragmentRatio75th = formatNumberForPrint(ratioHexaStatNodeArray75th.getFdFragmentRatio());
@@ -53,13 +60,14 @@ class HexaStatMatrix {
         hexaStatNodeArrayResults.sort(function (a, b) { return a.getTotalFDPercent() - b.getTotalFDPercent() });
         let minFDHexaStatNodeArray = hexaStatNodeArrayResults[0];
         let minFd = formatNumberForPrint(minFDHexaStatNodeArray.getTotalFDPercent());
-        let maxFDHexaStatNodeArray = hexaStatNodeArrayResults[numTrials-1];
+        let maxFDHexaStatNodeArray = hexaStatNodeArrayResults[numTrials - 1];
         let maxFd = formatNumberForPrint(maxFDHexaStatNodeArray.getTotalFDPercent());
 
         let fdHexaStatNodeArrayMedian = percentileFromSortedArray(hexaStatNodeArrayResults, 50);
-        let fdHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 75);
-        let fdHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 85);
-        let fdHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 95);
+        // We want the worse cases, so get the lower elements in the sorted worst-best array
+        let fdHexaStatNodeArray75th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 75);
+        let fdHexaStatNodeArray85th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 85);
+        let fdHexaStatNodeArray95th = percentileFromSortedArray(hexaStatNodeArrayResults, 100 - 95);
 
         let fdMedian = formatNumberForPrint(fdHexaStatNodeArrayMedian.getTotalFDPercent());
         let fd75th = formatNumberForPrint(fdHexaStatNodeArray75th.getTotalFDPercent());
@@ -124,8 +132,9 @@ class HexaStatMatrix {
         `;
     }
 
-    static optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level) {
-        let currHexaStatNodeArray = new HexaStatNodeArray(currMainLevel+currAddStat1Level+currAddStat2Level);
+    static optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level)
+    {
+        let currHexaStatNodeArray = new HexaStatNodeArray(currMainLevel + currAddStat1Level + currAddStat2Level);
         currHexaStatNodeArray.setLevels(0, currMainLevel, currAddStat1Level, currAddStat2Level);
         currHexaStatNodeArray.optimise();
 

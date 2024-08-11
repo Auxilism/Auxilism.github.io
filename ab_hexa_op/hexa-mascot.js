@@ -1,22 +1,27 @@
-class HexaMascot extends HexaBoostNode {
+class HexaMascot extends HexaBoostNode
+{
     static #MascotMaxLevel = 30;
 
     static #KeyDownBasePercent = 1540;
     static #ExplodeBasePercent = 1815;
 
-    constructor(hexaSkillName, skillInputTotal) {
+    constructor(hexaSkillName, skillInputTotal)
+    {
         super(hexaSkillName, skillInputTotal, HexaMascot.#MascotMaxLevel, HexaSkillFDOperationType.Add);
     }
 
     #isBugged = false;
 
-    set isBugged(isBuggedIn) {
+    set isBugged(isBuggedIn)
+    {
         this.#isBugged = isBuggedIn;
         this.compute();
     }
 
-    getSkillMultiplierAtLevel(level) {
-        if (this.#isBugged == false) {
+    getSkillMultiplierAtLevel(level)
+    {
+        if (this.#isBugged == false)
+        {
             return this.#getSupposedMultiplierAtLevel(level);
         }
         else
@@ -30,8 +35,10 @@ class HexaMascot extends HexaBoostNode {
     }
 
     // Taken from https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#fn-13
-    #getSupposedMultiplierAtLevel(level) {
-        switch (level) {
+    #getSupposedMultiplierAtLevel(level)
+    {
+        switch (level)
+        {
             case 0:
                 return 1;
             case 1:

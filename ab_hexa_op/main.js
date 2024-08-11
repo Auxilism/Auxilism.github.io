@@ -1,10 +1,13 @@
 var chartRef = null;
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function ()
+{
     let counter = 0;
 
-    document.getElementById("calculate").addEventListener('click', (e) => {
-        try {
+    document.getElementById("calculate").addEventListener('click', (e) =>
+    {
+        try
+        {
             counter += 1;
 
             let baInputTotal = Number(document.getElementById("baInputTotal").value);
@@ -51,7 +54,8 @@ document.addEventListener("DOMContentLoaded", function () {
             HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;
-            if (chartRef != null) {
+            if (chartRef != null)
+            {
                 chartRef.destroy()
             }
             chartRef = new Chart("resultsChart", {
@@ -110,7 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     plugins: {
                         tooltip: {
                             callbacks: {
-                                footer: function (context) {
+                                footer: function (context)
+                                {
                                     return "";
                                 }
                             }
@@ -149,13 +154,15 @@ document.addEventListener("DOMContentLoaded", function () {
         // <b><font color='blue'>Next overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.NextOverallRatio)}
         // <br><br>
         // <b><font color='red'>Best remaining overall ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BestRemainingOverallRatio)}
-        catch (err) {
+        catch (err)
+        {
             alert(err);
             throw err;
         }
     });
 
-    document.getElementById("resetZoom").addEventListener('click', (e) => {
+    document.getElementById("resetZoom").addEventListener('click', (e) =>
+    {
         chartRef.resetZoom();
     });
 });
