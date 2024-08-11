@@ -1,13 +1,17 @@
-class ConvertedHexaStatToSkill extends HexaSkill {
+class ConvertedHexaStatToSkill extends HexaSkill
+{
     static #MaxLevel = 20;
     static #NumTrials = 1000;
 
-    static init(numTrials) {
+    static init(numTrials)
+    {
         ConvertedHexaStatToSkill.#NumTrials = numTrials;
     }
 
-    constructor(hexaSkillName, skillTotal) {
-        switch (hexaSkillName) {
+    constructor(hexaSkillName, skillTotal)
+    {
+        switch (hexaSkillName)
+        {
             case HexaSkillName.HexaStat:
                 super(hexaSkillName, skillTotal, ConvertedHexaStatToSkill.#MaxLevel, HexaSkillFDOperationType.Mult);
                 break;
@@ -16,25 +20,29 @@ class ConvertedHexaStatToSkill extends HexaSkill {
         }
     }
 
-    calcSkillBaseTotal(inputStartingLevel) {
+    calcSkillBaseTotal(inputStartingLevel)
+    {
         this._skillBaseTotal = 0;
         return this._skillBaseTotal;
     }
 
-    compute() {
+    compute()
+    {
         // At level 0 there's no fd or cost, also 0 ratio
         this._fdPercentArray = [0];
         this._totalFragmentCostArray = [0];
         this._totalFDFragmentRatioArray = [0];
 
-        for (let i = 1; i <= ConvertedHexaStatToSkill.#MaxLevel; i++) {
+        for (let i = 1; i <= ConvertedHexaStatToSkill.#MaxLevel; i++)
+        {
             let simulatedHexaStatNodeArrays = HexaStatMatrix.getSimulatedHexaStatNodeArrays(ConvertedHexaStatToSkill.#NumTrials, i);
             let totalFDFragmentRatio = 0;
             let totalFD = 0;
             let totalFragments = 0;
 
             // Calculate average for fd, fragments and fd:fragment ratio
-            for (let j = 0; j < ConvertedHexaStatToSkill.#NumTrials; j++) {
+            for (let j = 0; j < ConvertedHexaStatToSkill.#NumTrials; j++)
+            {
                 let hexaStatNodeArray = simulatedHexaStatNodeArrays[j];
                 totalFD += hexaStatNodeArray.getTotalFDPercent();
                 totalFragments += hexaStatNodeArray.getFragmentsCost();

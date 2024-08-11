@@ -1,11 +1,14 @@
-class HexaBoostNode extends HexaSkill {
+class HexaBoostNode extends HexaSkill
+{
     static #SpotlightMaxLevel = 30;
     static #MascotMaxLevel = 30;
     static #SparkBurstMaxLevel = 30;
     static #FusionMaxLevel = 30;
 
-    constructor(hexaSkillName, skillInputTotal) {
-        switch (hexaSkillName) {
+    constructor(hexaSkillName, skillInputTotal)
+    {
+        switch (hexaSkillName)
+        {
             case HexaSkillName.Spotlight:
                 super(hexaSkillName, skillInputTotal, HexaBoostNode.#SpotlightMaxLevel, HexaSkillFDOperationType.Add);
                 break;
@@ -24,8 +27,10 @@ class HexaBoostNode extends HexaSkill {
     }
 
     // Taken from https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#fn-13
-    getSkillMultiplierAtLevel(level) {
-        switch (level) {
+    getSkillMultiplierAtLevel(level)
+    {
+        switch (level)
+        {
             case 0:
                 return 1;
             case 1:
@@ -97,9 +102,11 @@ class HexaBoostNode extends HexaSkill {
         }
     }
 
-    getFragmentCostAtLevel(level) {
+    getFragmentCostAtLevel(level)
+    {
         // Taken from https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#s-2.3
-        switch (level) {
+        switch (level)
+        {
             case 0:
                 return 75;
             case 1:

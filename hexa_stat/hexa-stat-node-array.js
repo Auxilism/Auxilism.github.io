@@ -1,16 +1,19 @@
-class HexaStatNodeArray {
+class HexaStatNodeArray
+{
     static #hexaStatTypeFDPairs = [];
     static #MAX_NODE_COUNT = 6;
 
     // All of type HexaStatTypeFDPair
-    static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD) {
+    static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD)
+    {
         HexaStatNodeArray.#hexaStatTypeFDPairs = [attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD];
         // Sort the stat types by highest FD to lowest FD, for type optimisation
         HexaStatNodeArray.#hexaStatTypeFDPairs.sort(function (a, b) { return b.fdPerUnit - a.fdPerUnit });
     }
 
     #hexaStatNodes = [];
-    constructor(totalNodeLevel) {
+    constructor(totalNodeLevel)
+    {
         if (totalNodeLevel > HexaStatNodeArray.#MAX_NODE_COUNT * HexaStatNode.MAX_LEVEL_SUM)
         {
             throw new EvalError("Too many levels for hexa stat nodes");
@@ -36,7 +39,8 @@ class HexaStatNodeArray {
         }
     }
 
-    getFragmentsCost() {
+    getFragmentsCost()
+    {
         let fragCost = 0;
         for (let i = 0; i < this.#hexaStatNodes.length; i++)
         {
@@ -45,21 +49,66 @@ class HexaStatNodeArray {
         return fragCost;
     }
 
-    getFdFragmentRatio() {
+    getFdFragmentRatio()
+    {
         return this.getTotalFDPercent() / this.getFragmentsCost();
     }
 
-    getTotalFDPercent() {
-        // To be reworked to add all the levels of each type, then multiply together
-        let totalFDPercent = 0;
+    getTotalFDPercent()
+    {
+        let numUnitsArray = Array(HexaStatNodeArray.#hexaStatTypeFDPairs.length).fill(0);
+
+        // Fill in how many units each node gives to its specified type
         for (let i = 0; i < this.#hexaStatNodes.length; i++)
         {
-            totalFDPercent += this.#hexaStatNodes[i].getTotalFDPercent();
+            // 3 lines per node
+            for (let j = 0; j < 3; j++)
+            {
+                let currLineType = this.#hexaStatNodes[i].getTypeOfLine(j);
+                // Find out which type matches when comapared to the static type-FD pair
+                for (let k = 0; k < HexaStatNodeArray.#hexaStatTypeFDPairs.length; k++)
+                {
+                    if (currLineType == HexaStatNodeArray.#hexaStatTypeFDPairs[k].type)
+                    {
+                        // Add the units of the line to this type's slot
+                        numUnitsArray[k] += this.#hexaStatNodes[i].getNumUnitsOfLine(j);
+                        break;
+                    }
+                }
+            }
         }
-        return totalFDPercent;
+
+        let totalFD = 0;
+        // Add up the boss dmg and dmg lines first since they are additive while the other types are multiplicative
+        for (let i = 0; i < HexaStatNodeArray.#hexaStatTypeFDPairs.length; i++)
+        {
+            if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.BossDmg ||
+                HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.Dmg)
+            {
+                totalFD += numUnitsArray[i] * HexaStatNodeArray.#hexaStatTypeFDPairs[i].fdPerUnit;
+            }
+        }
+
+        // Convert to multiplication now
+        totalFD = fdPercentToMultiplier(totalFD);
+        // Go through everything that isn't boss dmg or dmg now
+        for (let i = 0; i < HexaStatNodeArray.#hexaStatTypeFDPairs.length; i++)
+        {
+            if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type != HexaStatLineType.BossDmg &&
+                HexaStatNodeArray.#hexaStatTypeFDPairs[i].type != HexaStatLineType.Dmg)
+            {
+                let typeFDPercent = numUnitsArray[i] * HexaStatNodeArray.#hexaStatTypeFDPairs[i].fdPerUnit;
+                totalFD *= fdPercentToMultiplier(typeFDPercent);
+            }
+        }
+
+        // Final result is 1.034...
+        // We want the returned value to be 3.4...%
+        return fdMultiplierToPercent(totalFD);
     }
 
-    optimise() {
+    optimise()
+    {
         // To be reworked to:
         // 1. Branch if there are lesser than 3 nodes with available levels
         // 2a) Try combinations of main and additionals to get the most levels for descending FD types
@@ -71,9 +120,11 @@ class HexaStatNodeArray {
         }
     }
 
-    getInfo(showFragmentsCost) {
+    getInfo(showFragmentsCost)
+    {
         let htmlText = `FD%: ${formatNumberForPrint(this.getTotalFDPercent())}`
-        if (showFragmentsCost) {
+        if (showFragmentsCost)
+        {
             htmlText += `, Fragments: ${this.getFragmentsCost()}`
         }
         for (let i = 0; i < this.#hexaStatNodes.length; i++)
@@ -84,7 +135,8 @@ class HexaStatNodeArray {
     }
 
     // Not using setter function because this should be used specifically to hijack the leveling system
-    setLevels(nodeIndex, mainLevel, addStat1Level, addStat2Level) {
+    setLevels(nodeIndex, mainLevel, addStat1Level, addStat2Level)
+    {
         if (nodeIndex >= this.#hexaStatNodes.length)
         {
             return;
