@@ -61,8 +61,8 @@ class HexaStatNodeArray
         // Fill in how many units each node gives to its specified type
         for (let i = 0; i < this.#hexaStatNodes.length; i++)
         {
-            // 3 lines per node
-            for (let j = 0; j < 3; j++)
+            // Go through each line per node
+            for (let j = 0; j < HexaStatNode.NUM_STAT_LINES; j++)
             {
                 let currLineType = this.#hexaStatNodes[i].getTypeOfLine(j);
                 // Find out which type matches when comapared to the static type-FD pair
@@ -82,6 +82,11 @@ class HexaStatNodeArray
         // Add up the boss dmg and dmg lines first since they are additive while the other types are multiplicative
         for (let i = 0; i < HexaStatNodeArray.#hexaStatTypeFDPairs.length; i++)
         {
+            if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.Unset)
+            {
+                continue;
+            }
+
             if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.BossDmg ||
                 HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.Dmg)
             {
@@ -94,6 +99,11 @@ class HexaStatNodeArray
         // Go through everything that isn't boss dmg or dmg now
         for (let i = 0; i < HexaStatNodeArray.#hexaStatTypeFDPairs.length; i++)
         {
+            if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type == HexaStatLineType.Unset)
+            {
+                continue;
+            }
+
             if (HexaStatNodeArray.#hexaStatTypeFDPairs[i].type != HexaStatLineType.BossDmg &&
                 HexaStatNodeArray.#hexaStatTypeFDPairs[i].type != HexaStatLineType.Dmg)
             {
@@ -114,9 +124,64 @@ class HexaStatNodeArray
         // 2a) Try combinations of main and additionals to get the most levels for descending FD types
         // 2b) Just take the max of the <=2 nodes to assign to current FD type
         // 3. Stop when no more nodes have available levels
+        // Check calc:
+        // (1+0.001607074106*15)*(1+0.001337792374*9)*(1+0.001271455817*7)
+
+        // Clear all previous set lines to start with clean slate
         for (let i = 0; i < this.#hexaStatNodes.length; i++)
         {
-            this.#hexaStatNodes[i].optimise();
+            this.#hexaStatNodes[i].unsetAllLines();
+        }
+
+        // Temp, assign the highest fd to the highest unit
+        // Start with the highest fd, which was already sorted during init
+        for (let typeFDPairIndex = 0; typeFDPairIndex < HexaStatNodeArray.#hexaStatTypeFDPairs.length; typeFDPairIndex++)
+        {
+            let numLinesAvailable = 0;
+            let nodeLineUnitsArray = [];
+            for (let i = 0; i < this.#hexaStatNodes.length; i++)
+            {
+                // Each node starts with each line being -1, meaning they are already set so cannot be considered again
+                nodeLineUnitsArray.push(Array(HexaStatNode.NUM_STAT_LINES).fill(-1));
+
+                for (let j = 0; j < HexaStatNode.NUM_STAT_LINES; j++)
+                {
+                    if (this.#hexaStatNodes[i].getTypeOfLine(j) == HexaStatLineType.Unset)
+                    {
+                        // This line can be set, update the units available
+                        nodeLineUnitsArray[i][j] = this.#hexaStatNodes[i].getNumUnitsOfLine(j);
+                        numLinesAvailable += 1;
+                    }
+                }
+            }
+
+            if (numLinesAvailable == 0)
+            {
+                // Nothing more to set since all lines already have a type
+                break;
+            }
+
+            // Find the line with the highest number of units
+            for (let i = 0; i < this.#hexaStatNodes.length; i++)
+            {
+                let highestLineUnits = -1;
+                let highestLineUnitsIndex = -1;
+                
+                for (let j = 0; j < HexaStatNode.MAX_LEVEL_SUM; j++)
+                {
+                    if (nodeLineUnitsArray[i][j] > highestLineUnits)
+                    {
+                        highestLineUnits = nodeLineUnitsArray[i][j];
+                        highestLineUnitsIndex = j;
+                    }
+                }
+
+                // Assign the current fd type to the line with the highest amount of units
+                if (highestLineUnitsIndex != -1)
+                {
+                    this.#hexaStatNodes[i].setTypeOfLine(highestLineUnitsIndex, HexaStatNodeArray.#hexaStatTypeFDPairs[typeFDPairIndex].type);
+                }
+            }
         }
     }
 

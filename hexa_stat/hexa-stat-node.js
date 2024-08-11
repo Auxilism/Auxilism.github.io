@@ -20,29 +20,11 @@ class HexaStatNode
 {
     static MAX_LEVEL_SUM = 20;
     static #UNLOCK_COST = 10;
-    static #hexaStatTypeFDPairs = [];
 
-    // All of type HexaStatTypeFDPair
-    static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD)
-    {
-        HexaStatNode.#hexaStatTypeFDPairs = [attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD];
-        // Sort the stat types by highest FD to lowest FD, for type optimisation if the hexa stat line's FD is 0
-        HexaStatNode.#hexaStatTypeFDPairs.sort(function (a, b) { return b.fdPerUnit - a.fdPerUnit });
-    }
-
-    static getFDPercentBetweenNodes(oldHexaStatNode, newHexaStatNode)
-    {
-        return getPercentBetweenFdPercents(oldHexaStatNode.getTotalFDPercent(), newHexaStatNode.getTotalFDPercent());
-    }
-
-    static getFDFragmentRatioBetweenNodes(oldHexaStatNode, newHexaStatNode)
-    {
-        return HexaStatNode.getFDPercentBetweenNodes(oldHexaStatNode, newHexaStatNode) / newHexaStatNode.additionalFragmentsCost;
-    }
-
-    #hexaStatLines = [new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.MainStat.index], true),
-    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat1.index]),
-    new HexaStatLine(HexaStatNode.#hexaStatTypeFDPairs[HexaStatLineIndex.AddStat2.index])];
+    #hexaStatLines = [new HexaStatLine(HexaStatLineType.Unset, true),
+    new HexaStatLine(HexaStatLineType.Unset),
+    new HexaStatLine(HexaStatLineType.Unset)];
+    static NUM_STAT_LINES = 3;
 
     #currLevelSum = 0;
     #additionalFragmentsCost = 0;
@@ -64,50 +46,20 @@ class HexaStatNode
 
     getTypeOfLine(lineIndex)
     {
-        return this.#hexaStatLines[lineIndex].typeFDPair.type;
+        return this.#hexaStatLines[lineIndex].type;
     }
 
-    getTotalFDPercent()
+    unsetAllLines()
     {
-        // Check if boss dmg and dmg are together, add those together if so
-        let bossDmgLineIndex = -1;
-        let dmgLineIndex = -1;
-        // Sum of all indexes that can be used to get the stat line
-        let totalIndexSum = 0 + 1 + 2;
-        // Find indexes of the boss dmg and dmg lines, if they exist
-        for (let i = 0; i <= 2; i++)
+        for (let i = 0; i < this.#hexaStatLines.length; i++)
         {
-            if (this.#hexaStatLines[i].typeFDPair.type == HexaStatLineType.BossDmg)
-            {
-                bossDmgLineIndex = i;
-            }
-            else if (this.#hexaStatLines[i].typeFDPair.type == HexaStatLineType.Dmg)
-            {
-                dmgLineIndex = i;
-            }
-            continue;
+            this.#hexaStatLines[i].type = HexaStatLineType.Unset;
         }
-        if (bossDmgLineIndex != -1 && dmgLineIndex != -1)
-        {
-            // Add the FD of boss dmg and dmg
-            let dmgFDPercent = this.#hexaStatLines[bossDmgLineIndex].getTotalFDPercent() + this.#hexaStatLines[dmgLineIndex].getTotalFDPercent();
-            let dmgMultiplier = fdPercentToMultiplier(dmgFDPercent);
-            // Subtract the boss dmg index and dmg index to get the index of the remaining stat
-            let remainingStatLineIndex = totalIndexSum - bossDmgLineIndex - dmgLineIndex;
-            let otherStatMultiplier = fdPercentToMultiplier(this.#hexaStatLines[remainingStatLineIndex].getTotalFDPercent());
-            // Multiply the independent value
-            let totalMultiplier = dmgMultiplier * otherStatMultiplier;
-            return fdMultiplierToPercent(totalMultiplier);
-        }
+    }
 
-        // Else, every stat is independent so multiply with each other
-        let totalMultiplier = 1;
-        for (let i = 0; i <= 2; i++)
-        {
-            totalMultiplier *= fdPercentToMultiplier(this.#hexaStatLines[i].getTotalFDPercent());
-        }
-
-        return fdMultiplierToPercent(totalMultiplier);
+    setTypeOfLine(lineIndex, type)
+    {
+        this.#hexaStatLines[lineIndex].type = type;
     }
 
     levelUpTo(targetLevelSum)
@@ -170,70 +122,6 @@ class HexaStatNode
         }
     }
 
-    optimise()
-    {
-        // Reset to default type-FD pair first
-        for (let i = 0; i < this.#hexaStatLines.length; i++)
-        {
-            this.#hexaStatLines[i].typeFDPair = HexaStatNode.#hexaStatTypeFDPairs[i];
-        }
-        let maxFD = this.getTotalFDPercent();
-        let maxFDTypeFDCombination = [this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair,
-        this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair,
-        this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair];
-
-        // 6 possibilites
-        for (let mainStatTypeIndex = 0; mainStatTypeIndex < HexaStatNode.#hexaStatTypeFDPairs.length; mainStatTypeIndex++)
-        {
-            // 5 possibilites
-            for (let addStat1TypeIndex = 0; addStat1TypeIndex < HexaStatNode.#hexaStatTypeFDPairs.length; addStat1TypeIndex++)
-            {
-                if (addStat1TypeIndex == mainStatTypeIndex)
-                {
-                    continue;
-                }
-
-                // 4 possibilities
-                for (let addStat2TypeIndex = 0; addStat2TypeIndex < HexaStatNode.#hexaStatTypeFDPairs.length; addStat2TypeIndex++)
-                {
-                    if (addStat2TypeIndex == mainStatTypeIndex || addStat2TypeIndex == addStat1TypeIndex)
-                    {
-                        continue;
-                    }
-
-                    this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair = HexaStatNode.#hexaStatTypeFDPairs[mainStatTypeIndex];
-                    this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair = HexaStatNode.#hexaStatTypeFDPairs[addStat1TypeIndex];
-                    this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair = HexaStatNode.#hexaStatTypeFDPairs[addStat2TypeIndex];
-                    let currFD = this.getTotalFDPercent();
-
-                    if (currFD > maxFD)
-                    {
-                        maxFD = currFD;
-                        // Overwrite with the types that would give the most FD
-                        for (let i = 0; i < this.#hexaStatLines.length; i++)
-                        {
-                            maxFDTypeFDCombination[i] = this.#hexaStatLines[i].typeFDPair;
-                        }
-                    }
-                }
-            }
-        }
-
-        let lowestFdUnitOffset = 1;
-        // Use what was determined to be the highest
-        for (let i = 0; i < this.#hexaStatLines.length; i++)
-        {
-            this.#hexaStatLines[i].typeFDPair = maxFDTypeFDCombination[i];
-
-            // Check if any lines give 0 FD, whether because the level is 0 or the FD per unit is 0
-            if (this.#hexaStatLines[i].getTotalFDPercent() == 0)
-            {
-                // Assign the type with the lowest FD per unit, while making sure the types are still unique
-                this.#hexaStatLines[i].typeFDPair = HexaStatNode.#hexaStatTypeFDPairs[HexaStatNode.#hexaStatTypeFDPairs.length - lowestFdUnitOffset];
-                lowestFdUnitOffset++;
-            }
-        }
-    }
 
     #levelUpStat(statLine)
     {
@@ -247,9 +135,9 @@ class HexaStatNode
         let htmlText = `<br>-----`;
         htmlText += `
             <br>
-            Node${nodeCounter}_Main: lvl ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].level} ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].typeFDPair.type.name}<br>
-            Node${nodeCounter}_Additional Stat1: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].typeFDPair.type.name}<br>
-            Node${nodeCounter}_Additional Stat2: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].typeFDPair.type.name}
+            Node${nodeCounter}_Main: lvl ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].level} ${this.#hexaStatLines[HexaStatLineIndex.MainStat.index].type.name}<br>
+            Node${nodeCounter}_Additional Stat1: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat1.index].type.name}<br>
+            Node${nodeCounter}_Additional Stat2: lvl ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].level} ${this.#hexaStatLines[HexaStatLineIndex.AddStat2.index].type.name}
         `;
         return htmlText;
     }
@@ -275,7 +163,6 @@ class HexaStatNode
         this.#hexaStatLines[1].printInfo();
         console.log("Add2:");
         this.#hexaStatLines[2].printInfo()
-        console.log("Additional fragments needed:", this.#additionalFragmentsCost)
-        console.log("Total FD:", this.getTotalFDPercent());
+        console.log("Additional fragments needed:", this.#additionalFragmentsCost);
     }
 }

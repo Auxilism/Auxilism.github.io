@@ -4,7 +4,6 @@ class HexaStatMatrix
     static init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD)
     {
         HexaStatNodeArray.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
-        HexaStatNode.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
     }
 
     static getSimulatedHexaStatNodeArrays(numTrials, targetNodeLevel)
