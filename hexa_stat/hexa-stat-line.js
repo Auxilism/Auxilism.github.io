@@ -3,23 +3,24 @@ class HexaStatLine
     static MAX_LEVEL = 10;
 
     #level = 0;
-    #typeFDPair;
+    // HexaStatLineType
+    #type;
     #isMain = false;
 
-    constructor(typeFDPair, isMain = false)
+    constructor(type, isMain = false)
     {
-        this.#typeFDPair = typeFDPair;
+        this.#type = type;
         this.#isMain = isMain;
     }
 
-    get typeFDPair()
+    get type()
     {
-        return this.#typeFDPair;
+        return this.#type;
     }
 
-    set typeFDPair(newTypeFDPair)
+    set type(newType)
     {
-        this.#typeFDPair = newTypeFDPair;
+        this.#type = newType;
     }
 
     get level()
@@ -41,11 +42,6 @@ class HexaStatLine
             totalUnits += this.#getNumUnitsPerMainLevel(i);
         }
         return totalUnits;
-    }
-
-    getTotalFDPercent()
-    {
-        return this.getTotalUnits() * this.#typeFDPair.fdPerUnit;
     }
 
     levelUp()
@@ -155,6 +151,6 @@ class HexaStatLine
 
     printInfo()
     {
-        console.log("Type:", this.#typeFDPair.type, "Level:", this.#level);
+        console.log("Type:", this.#type, "Level:", this.#level);
     }
 }

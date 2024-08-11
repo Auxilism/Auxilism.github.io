@@ -6,6 +6,7 @@ class HexaStatLineType
   static BossDmg = new HexaStatLineType('boss dmg');
   static Dmg = new HexaStatLineType('dmg');
   static IED = new HexaStatLineType('ied');
+  static Unset = new HexaStatLineType('unset');
 
   #name;
   constructor(name)
