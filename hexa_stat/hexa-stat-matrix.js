@@ -131,10 +131,26 @@ class HexaStatMatrix
         `;
     }
 
-    static optimiseCurrentHexaStatNodeArrayFD(currMainLevel, currAddStat1Level, currAddStat2Level)
+    static optimiseCurrentHexaStatNodeArrayFD(node1MainLevel, node1AddStat1Level, node1AddStat2Level,
+        node2MainLevel, node2AddStat1Level, node2AddStat2Level,
+        node3MainLevel, node3AddStat1Level, node3AddStat2Level,
+        node4MainLevel, node4AddStat1Level, node4AddStat2Level,
+        node5MainLevel, node5AddStat1Level, node5AddStat2Level,
+        node6MainLevel, node6AddStat1Level, node6AddStat2Level)
     {
-        let currHexaStatNodeArray = new HexaStatNodeArray(currMainLevel + currAddStat1Level + currAddStat2Level);
-        currHexaStatNodeArray.setLevels(0, currMainLevel, currAddStat1Level, currAddStat2Level);
+        let currHexaStatNodeArray = new HexaStatNodeArray(node1MainLevel + node1AddStat1Level + node1AddStat2Level +
+            node2MainLevel + node2AddStat1Level + node2AddStat2Level +
+            node3MainLevel + node3AddStat1Level + node3AddStat2Level +
+            node4MainLevel + node4AddStat1Level + node4AddStat2Level +
+            node5MainLevel + node5AddStat1Level + node5AddStat2Level +
+            node6MainLevel + node6AddStat1Level + node6AddStat2Level
+        );
+        currHexaStatNodeArray.setLevels(0, node1MainLevel, node1AddStat1Level, node1AddStat2Level);
+        currHexaStatNodeArray.setLevels(1, node2MainLevel, node2AddStat1Level, node2AddStat2Level);
+        currHexaStatNodeArray.setLevels(2, node3MainLevel, node3AddStat1Level, node3AddStat2Level);
+        currHexaStatNodeArray.setLevels(3, node4MainLevel, node4AddStat1Level, node4AddStat2Level);
+        currHexaStatNodeArray.setLevels(4, node5MainLevel, node5AddStat1Level, node5AddStat2Level);
+        currHexaStatNodeArray.setLevels(5, node6MainLevel, node6AddStat1Level, node6AddStat2Level);
         currHexaStatNodeArray.optimise();
 
         return `
@@ -143,7 +159,6 @@ class HexaStatMatrix
                 <tr>
                     <td style="vertical-align: middle;">
                         Current optimised FD:
-                        (node level ${currMainLevel + currAddStat1Level + currAddStat2Level})
                     </td>
                     <td>
                         ${currHexaStatNodeArray.getInfo(false)}
