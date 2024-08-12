@@ -52,8 +52,6 @@ class HexaSkillFDOperationType
 
 class HexaSkill
 {
-    // This is different from individual maxLevel, and serves for overall computations
-    static LevelLimit = 30;
     static #BABaseTotal;
 
     static init(baBaseTotal)
@@ -149,9 +147,9 @@ class HexaSkill
 
     getFDPercentAtLevel(level)
     {
-        if (level > HexaSkill.LevelLimit)
+        if (level > this.#maxLevel)
         {
-            throw new RangeError("Getting " + level)
+            throw new RangeError("Getting " + level, "expected max", this.maxLevel)
         }
         return this._fdPercentArray[level];
     }
@@ -178,7 +176,7 @@ class HexaSkill
 
     getFDFragmentRatioAtLevel(targetLevel, currLevel, currFDPercent)
     {
-        if (targetLevel > HexaSkill.LevelLimit)
+        if (targetLevel > this.#maxLevel)
         {
             throw new RangeError("Going above max hexa skill level in HexaSkill.getFDFragmentRatioAtLevel");
         }

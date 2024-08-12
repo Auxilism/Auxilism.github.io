@@ -161,26 +161,118 @@ class HexaStatNodeArray
                 break;
             }
 
-            // Find the line with the highest number of units
-            for (let i = 0; i < this.#hexaStatNodes.length; i++)
+            // Add an additional node with all lines -1 to signify the case where picking 2 additional
+            // would be better than 1 main + 1 additional
+            nodeLineUnitsArray.push(Array(HexaStatNode.NUM_STAT_LINES).fill(-1));
+            let mainNodeIndex = -1;
+            let additional1NodeIndex = -1;
+            let additional1NodeLineIndex = -1;
+            let additional2NodeIndex = -1;
+            let additional2NodeLineIndex = -1;
+            let highestUnitsTotal = -1;
+            
+            // Find the combination with the highest number of units
+            for (let i = 0; i < nodeLineUnitsArray.length; i++)
             {
-                let highestLineUnits = -1;
-                let highestLineUnitsIndex = -1;
-                
-                for (let j = 0; j < HexaStatNode.MAX_LEVEL_SUM; j++)
+                let currUnitsTotal = 0;
+                let currMainNodeIndex = -1;
+
+                if (nodeLineUnitsArray[i][HexaStatLineIndex.MainStat.index] != -1)
                 {
-                    if (nodeLineUnitsArray[i][j] > highestLineUnits)
+                    // Only add units if this main line can be assigned a type
+                    currMainNodeIndex = i;
+                    currUnitsTotal += nodeLineUnitsArray[i][HexaStatLineIndex.MainStat.index];
+                }
+
+                let currAdditionalLineCandidateUnits = -1;
+                let currAdditional1NodeIndex = -1;
+                let currAdditional1NodeLineIndex = -1;
+                let currAdditional2NodeIndex = -1;
+                let currAdditional2NodeLineIndex = -1;
+                // Find the highest additional line that is not from the same node as the main line
+                for (let j = 0; j < this.#hexaStatNodes.length; j++)
+                {
+                    if (j == i)
                     {
-                        highestLineUnits = nodeLineUnitsArray[i][j];
-                        highestLineUnitsIndex = j;
+                        continue;
+                    }
+
+                    // Test against both additional line candidates
+                    for (let k = HexaStatLineIndex.AddStat1.index; k < HexaStatNode.NUM_STAT_LINES; k++)
+                    {
+                        if (nodeLineUnitsArray[j][k] > currAdditionalLineCandidateUnits)
+                        {
+                            currAdditionalLineCandidateUnits = nodeLineUnitsArray[j][k];
+                            currAdditional1NodeIndex = j;
+                            currAdditional1NodeLineIndex = k;
+                        }
                     }
                 }
 
-                // Assign the current fd type to the line with the highest amount of units
-                if (highestLineUnitsIndex != -1)
+                if (currMainNodeIndex == -1 && currAdditional1NodeIndex == -1)
                 {
-                    this.#hexaStatNodes[i].setTypeOfLine(highestLineUnitsIndex, HexaStatNodeArray.#hexaStatTypeFDPairs[typeFDPairIndex].type);
+                    // No nodes have been assigned the main nor additional, skip to test next node as possible main
+                    continue;
                 }
+
+                currAdditionalLineCandidateUnits = -1;
+                // Repeat finding the highest additional line, this time
+                // not from the same node as the main line NOR the same node as the additional1 line
+                for (let j = 0; j < this.#hexaStatNodes.length; j++)
+                {
+                    if (j == i || j == currAdditional1NodeIndex)
+                    {
+                        continue;
+                    }
+
+                    // Test against both additional line candidates
+                    for (let k = HexaStatLineIndex.AddStat1.index; k < HexaStatNode.NUM_STAT_LINES; k++)
+                    {
+                        if (nodeLineUnitsArray[j][k] > currAdditionalLineCandidateUnits)
+                        {
+                            currAdditionalLineCandidateUnits = nodeLineUnitsArray[j][k];
+                            currAdditional2NodeIndex = j;
+                            currAdditional2NodeLineIndex = k;
+                        }
+                    }
+                }
+                
+                if (currAdditional1NodeIndex != -1)
+                {
+                    currUnitsTotal += nodeLineUnitsArray[currAdditional1NodeIndex][currAdditional1NodeLineIndex];
+                }
+                if (currAdditional2NodeIndex != -1)
+                {
+                    currUnitsTotal += nodeLineUnitsArray[currAdditional2NodeIndex][currAdditional2NodeLineIndex];
+                }
+
+                if (currUnitsTotal > highestUnitsTotal)
+                {
+                    highestUnitsTotal = currUnitsTotal;
+                    // Save the indexes that form this highest number of units
+                    mainNodeIndex = currMainNodeIndex;
+                    additional1NodeIndex = currAdditional1NodeIndex;
+                    additional1NodeLineIndex = currAdditional1NodeLineIndex;
+                    additional2NodeIndex = currAdditional2NodeIndex;
+                    additional2NodeLineIndex = currAdditional2NodeLineIndex;
+                }
+            }
+
+            // Assign the current fd type to the node lines that give the highest amount of units
+            if (mainNodeIndex != -1)
+            {
+                this.#hexaStatNodes[mainNodeIndex].setTypeOfLine(HexaStatLineIndex.MainStat.index,
+                    HexaStatNodeArray.#hexaStatTypeFDPairs[typeFDPairIndex].type);
+            }
+            if (additional1NodeIndex != -1)
+            {
+                this.#hexaStatNodes[additional1NodeIndex].setTypeOfLine(additional1NodeLineIndex,
+                    HexaStatNodeArray.#hexaStatTypeFDPairs[typeFDPairIndex].type);
+            }
+            if (additional2NodeIndex != -1)
+            {
+                this.#hexaStatNodes[additional2NodeIndex].setTypeOfLine(additional2NodeLineIndex,
+                    HexaStatNodeArray.#hexaStatTypeFDPairs[typeFDPairIndex].type);
             }
         }
     }
