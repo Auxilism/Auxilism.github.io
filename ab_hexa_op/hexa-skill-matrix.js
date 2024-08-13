@@ -138,107 +138,81 @@ class HexaSkillMatrix
             totalMaxLevel += skill.maxLevel;
         }
 
+        // let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BestRemainingOverallRatio,
+        //     currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateBestRemainingOverallRatio,
+        //     totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
+        // currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // // Now search using next ratios only
+        // // Hijack trinity 1 or it would be hard to pick
+        // currLevels[HexaSkillName.Trinity.index].currLevel = 1;
+        // HexaSkillMatrix.#nextOverallRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.NextOverallRatio,
+        //     currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateNextOverallRatio,
+        //     totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
+        // currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // // Now search backwards from max, finding the skill with the minimal loss
+        // for (let i = 0; i < currLevels.length; i++)
+        // {
+        //     currLevels[i].currLevel = HexaSkillMatrix.#HexaSkillArray[i].maxLevel;
+        // }
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.MinRatioLoss,
+        //     currLevels, HexaSkillMatrix.#backwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateMinRatioLoss,
+        //     totalMaxLevel, HexaSkillMatrix.#backwardSkillLevellingAndCheck);
+        // // Find the last skill that is not delevelled or the total fragment cost would be 0
+        // let skillNameIterator = HexaSkillName.Values.values();
+        // for (let skillName of skillNameIterator)
+        // {
+        //     if (skillName != HexaSkillName.GF)
+        //     {
+        //         let currSkillLevel = currLevels[skillName.index].currLevel;
+        //         if (currSkillLevel > 0)
+        //         {
+        //             HexaSkillMatrix.#minRatioLossPath.push(new HexaSkillLevelInfo(skillName, currSkillLevel));
+        //         }
+        //     }
+        // }
+        // // Since we backward computed, reverse the path
+        // HexaSkillMatrix.#minRatioLossPath.reverse();
+
+        // currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // // Now search for the highest FD:Fragment ratio within the skills
+        // // Hijack trinity 1 or it would be hard to pick
+        // currLevels[HexaSkillName.Trinity.index].currLevel = 1;
+        // HexaSkillMatrix.#highestSkillRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestSkillRatio,
+        //     currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateHighestSkillRatio,
+        //     totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BestRemainingOverallRatio,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateBestRemainingOverallRatio,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+         // Now search for the highest remaining FD:Fragment ratio within the skills
+         HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestRemainingSkillRatio,
+             currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+             HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
+             totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Now search using next ratios only
-        // Hijack trinity 1 or it would be hard to pick
-        currLevels[HexaSkillName.Trinity.index].currLevel = 1;
-        HexaSkillMatrix.#nextOverallRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.NextOverallRatio,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateNextOverallRatio,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+        // currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // // Force mascot to not be bugged
+        // // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = false;
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BoostySingleOriginal,
+        //     currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
+        //     totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+        // // Undo mascot forcing
+        // // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = true;
 
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Now search backwards from max, finding the skill with the minimal loss
-        for (let i = 0; i < currLevels.length; i++)
-        {
-            currLevels[i].currLevel = HexaSkillMatrix.#HexaSkillArray[i].maxLevel;
-        }
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.MinRatioLoss,
-            currLevels, HexaSkillMatrix.#backwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateMinRatioLoss,
-            totalMaxLevel, HexaSkillMatrix.#backwardSkillLevellingAndCheck);
-        // Find the last skill that is not delevelled or the total fragment cost would be 0
-        let skillNameIterator = HexaSkillName.Values.values();
-        for (let skillName of skillNameIterator)
-        {
-            if (skillName != HexaSkillName.GF)
-            {
-                let currSkillLevel = currLevels[skillName.index].currLevel;
-                if (currSkillLevel > 0)
-                {
-                    HexaSkillMatrix.#minRatioLossPath.push(new HexaSkillLevelInfo(skillName, currSkillLevel));
-                }
-            }
-        }
-        // Since we backward computed, reverse the path
-        HexaSkillMatrix.#minRatioLossPath.reverse();
-
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Now search for the highest FD:Fragment ratio within the skills
-        // Hijack trinity 1 or it would be hard to pick
-        currLevels[HexaSkillName.Trinity.index].currLevel = 1;
-        HexaSkillMatrix.#highestSkillRatioPath.push(new HexaSkillLevelInfo(HexaSkillName.Trinity, 1));
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestSkillRatio,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateHighestSkillRatio,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
-
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Now search for the highest remaining FD:Fragment ratio within the skills
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestRemainingSkillRatio,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
-
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Force mascot to not be bugged
-        // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = false;
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.BoostySingleOriginal,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
-        // Undo mascot forcing
-        // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = true;
-
-        currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-        // Now search for the highest remaining FD:Fragment ratio within the skills
-        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.LowestFragmentCost,
-            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-            HexaSkillMatrix.#calculateLowestFragmentCost,
-            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
-
-
-        let pathToCopy = HexaSkillMatrix.#boostyOverallOriginalPath;
-        let hexaStatInsertIndex = 19;
-        let hexaStatInsertIndex2 = 20;
-        for (let i = 0; i < pathToCopy.length; ++i)
-        {
-            if (i == hexaStatInsertIndex)
-            {
-                for (let j = 1; j <= 10; j++)
-                {
-                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
-                }
-            }
-            if (i == hexaStatInsertIndex2)
-            {
-                for (let j = 11; j <= 20; j++)
-                {
-                    HexaSkillMatrix.#hijackHexaStatPath.push(new HexaSkillLevelInfo(HexaSkillName.HexaStat, j));
-                }
-            }
-            if (pathToCopy[i].hexaSkillName != HexaSkillName.HexaStat)
-            {
-                HexaSkillMatrix.#hijackHexaStatPath.push(pathToCopy[i]);
-            }
-        }
+        // currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
+        // // Now search for the highest remaining FD:Fragment ratio within the skills
+        // HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.LowestFragmentCost,
+        //     currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+        //     HexaSkillMatrix.#calculateLowestFragmentCost,
+        //     totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
     }
 
     static #getPathForMethod(method)

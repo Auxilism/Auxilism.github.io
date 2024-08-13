@@ -223,6 +223,42 @@ class HexaStatNodeArray
                     // Test against both additional line candidates
                     for (let k = HexaStatLineIndex.AddStat1.index; k < HexaStatNode.NUM_STAT_LINES; k++)
                     {
+                        if (forceTopFDTypes == true && nodeLineUnitsArray[j][k] != -1)
+                        {
+                            // Don't let the assignment, that would bring a lower ranked FD type in, go through
+                            let totalNumFDTypes = this.#getNumStatTypesToSpread(this.#hexaStatNodes.length);
+                            let remainingNumFDTypes = totalNumFDTypes - typeFDPairIndex - 1;
+                            // found out that structuredClone makes the optimisation take 4x longer, manual copy for now
+                            let proposedNodeLineUnitsArray = []; //structuredClone(nodeLineUnitsArray);
+                            for (let a = 0; a < nodeLineUnitsArray.length; a++)
+                            {
+                                proposedNodeLineUnitsArray.push(Array(HexaStatNode.NUM_STAT_LINES).fill(-1));
+                                for (let b = 0; b < HexaStatNode.NUM_STAT_LINES; b++)
+                                {
+                                    proposedNodeLineUnitsArray[a][b] = nodeLineUnitsArray[a][b];
+                                }
+                            }
+        
+                            if (currMainNodeIndex != -1)
+                            {
+                                proposedNodeLineUnitsArray[currMainNodeIndex][HexaStatLineIndex.MainStat.index] = -1;
+                            }
+                            if (currAdditional1NodeIndex != -1)
+                            {
+                                proposedNodeLineUnitsArray[currAdditional1NodeIndex][currAdditional1NodeLineIndex] = -1;
+                            }
+                            proposedNodeLineUnitsArray[j][k] = -1;
+        
+                            if (this.#getMaxSlotsPerNodeLeft(proposedNodeLineUnitsArray) > remainingNumFDTypes)
+                            {
+                                // M1X | M2X | M3- | M4- |
+                                // A1X | A1X | A1X | A1- |
+                                // A2- | A2- | A2X | A2- |
+                                // don't assign this, a node has 3 slots when there are only 2 stat types left
+                                continue;
+                            }
+                        }
+
                         if (nodeLineUnitsArray[j][k] > currAdditionalLineCandidateUnits)
                         {
                             currAdditionalLineCandidateUnits = nodeLineUnitsArray[j][k];
@@ -241,14 +277,22 @@ class HexaStatNodeArray
                     currUnitsTotal += nodeLineUnitsArray[currAdditional2NodeIndex][currAdditional2NodeLineIndex];
                 }
 
-                if (currUnitsTotal >= highestUnitsTotal)
+                if (currUnitsTotal > highestUnitsTotal)
                 {
                     if (forceTopFDTypes == true)
                     {
                         // Don't let the assignment, that would bring a lower ranked FD type in, go through
                         let totalNumFDTypes = this.#getNumStatTypesToSpread(this.#hexaStatNodes.length);
                         let remainingNumFDTypes = totalNumFDTypes - typeFDPairIndex - 1;
-                        let proposedNodeLineUnitsArray = structuredClone(nodeLineUnitsArray);
+                        let proposedNodeLineUnitsArray = []; //structuredClone(nodeLineUnitsArray);
+                        for (let a = 0; a < nodeLineUnitsArray.length; a++)
+                        {
+                            proposedNodeLineUnitsArray.push(Array(HexaStatNode.NUM_STAT_LINES).fill(-1));
+                            for (let b = 0; b < HexaStatNode.NUM_STAT_LINES; b++)
+                            {
+                                proposedNodeLineUnitsArray[a][b] = nodeLineUnitsArray[a][b];
+                            }
+                        }
     
                         if (currMainNodeIndex != -1)
                         {
@@ -269,43 +313,6 @@ class HexaStatNodeArray
                             // A1X | A1X |
                             // A2X | A2X |
                             // don't assign this, there are two main slots when there is only 1 stat type left
-                            continue;
-                        }
-    
-                        if (this.#getMaxSlotsPerNodeLeft(proposedNodeLineUnitsArray) > remainingNumFDTypes)
-                        {
-                            // M1X | M2X | M3- | M4- |
-                            // A1X | A1X | A1X | A1- |
-                            // A2- | A2- | A2X | A2- |
-                            // don't assign this, a node has 3 slots when there are only 2 stat types left
-                            continue;
-                        }
-                    }
-
-                    if (currUnitsTotal == highestUnitsTotal)
-                    {
-                        let additional1NodeFilled = false;
-                        // Skip this similar setup if both additional nodes would be completely filled up
-                        if (currAdditional1NodeIndex != -1)
-                        {
-                            // When currAdditional1NodeLineIndex is 2, we want to check index 1
-                            // When currAdditional1NodeLineIndex is 1, we want to check index 2
-                            if (nodeLineUnitsArray[currAdditional1NodeIndex][3-currAdditional1NodeLineIndex] == -1)
-                            {
-                                additional1NodeFilled = true;
-                            }
-                        }
-                        let additional2NodeFilled = false;
-                        if (currAdditional2NodeIndex != -1)
-                        {
-                            if (nodeLineUnitsArray[currAdditional2NodeIndex][3-currAdditional2NodeLineIndex] == -1)
-                            {
-                                additional2NodeFilled = true;
-                            }
-                        }
-
-                        if (additional1NodeFilled && additional2NodeFilled)
-                        {
                             continue;
                         }
                     }
@@ -343,15 +350,29 @@ class HexaStatNodeArray
     {
         this.#applyOptimisation(false);
         let unforcedTypeFD = this.getTotalFDPercent();
-        let unforcedTypeNodes = structuredClone(this.#hexaStatNodes);
+        let unforcedTypeNodeLines = [];
+        for (let i = 0; i < this.#hexaStatNodes.length; i++)
+        {
+            unforcedTypeNodeLines.push(Array(HexaStatNode.NUM_STAT_LINES).fill(HexaStatLineType.Unset));
+            for (let j = 0; j < HexaStatNode.NUM_STAT_LINES; j++)
+            {
+                unforcedTypeNodeLines[i][j] = this.#hexaStatNodes[i].getTypeOfLine(j);
+            }
+        }
 
         this.#applyOptimisation(true);
         let forcedTypeFD = this.getTotalFDPercent();
         if (unforcedTypeFD > forcedTypeFD)
         {
             // can't figure out how to reassign the old node-line-type matchings since structuredClone does not retain the original class functions
-            // for now just redo the optimisation without forcing the top FD types
-            this.#applyOptimisation(false);
+            // for now just reassign the FD types that were grabbed earlier during unforced optimisation
+            for (let i = 0; i < this.#hexaStatNodes.length; i++)
+            {
+                for (let j = 0; j < HexaStatNode.NUM_STAT_LINES; j++)
+                {
+                    this.#hexaStatNodes[i].setTypeOfLine(j, unforcedTypeNodeLines[i][j]);
+                }
+            }
         }
     }
 
