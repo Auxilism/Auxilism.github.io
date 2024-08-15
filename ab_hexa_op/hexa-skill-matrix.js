@@ -123,7 +123,7 @@ class HexaSkillMatrix
         HexaSkillMatrix.#boostyHijackPath = [];
     }
 
-    static computeOptimalPaths()
+    static async computeOptimalPaths()
     {
         HexaSkillMatrix.#populateBoostyPrevOriginal();
         HexaSkillMatrix.#populateBoostyOverallOriginal();
@@ -134,7 +134,7 @@ class HexaSkillMatrix
         let skillIterator = HexaSkillMatrix.#HexaSkillArray.values();
         for (let skill of skillIterator)
         {
-            skill.compute();
+            await skill.compute();
             totalMaxLevel += skill.maxLevel;
         }
 

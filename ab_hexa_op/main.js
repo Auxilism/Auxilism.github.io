@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function ()
 {
     let counter = 0;
 
-    document.getElementById("calculate").addEventListener('click', (e) =>
+    document.getElementById("calculate").addEventListener('click', async (e) =>
     {
         try
         {
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", function ()
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
                 mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
                 fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel);
-            HexaSkillMatrix.computeOptimalPaths();
+            await HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;
             if (chartRef != null)

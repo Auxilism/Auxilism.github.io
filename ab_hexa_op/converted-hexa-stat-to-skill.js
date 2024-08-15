@@ -26,7 +26,7 @@ class ConvertedHexaStatToSkill extends HexaSkill
         return this._skillBaseTotal;
     }
 
-    compute()
+    async compute()
     {
         // At level 0 there's no fd or cost, also 0 ratio
         this._fdPercentArray = [0];
@@ -36,6 +36,12 @@ class ConvertedHexaStatToSkill extends HexaSkill
         for (let i = 1; i <= ConvertedHexaStatToSkill.#MaxLevel; i++)
         {
             let simulatedHexaStatNodeArrays = HexaStatMatrix.getSimulatedHexaStatNodeArrays(ConvertedHexaStatToSkill.#NumTrials, i);
+            await new Promise((resolve) => {
+                window.requestAnimationFrame(() => {
+                    document.getElementById('progress').innerHTML = `Calculating: ${Math.round(i / ConvertedHexaStatToSkill.#MaxLevel * 100)} complete.`
+                    resolve();
+                })
+            })
             let totalFDFragmentRatio = 0;
             let totalFD = 0;
             let totalFragments = 0;
