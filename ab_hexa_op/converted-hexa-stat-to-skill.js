@@ -38,7 +38,7 @@ class ConvertedHexaStatToSkill extends HexaSkill
             let simulatedHexaStatNodeArrays = HexaStatMatrix.getSimulatedHexaStatNodeArrays(ConvertedHexaStatToSkill.#NumTrials, i);
             await new Promise((resolve) => {
                 window.requestAnimationFrame(() => {
-                    document.getElementById('progress').innerHTML = `Calculating: ${Math.round(i / ConvertedHexaStatToSkill.#MaxLevel * 100)} complete.`
+                    document.getElementById('progress').innerHTML = `Calculating: ${Math.round(i / ConvertedHexaStatToSkill.#MaxLevel * 100)}% complete.`
                     resolve();
                 })
             })
