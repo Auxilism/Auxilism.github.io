@@ -63,41 +63,41 @@
             If the FD%s aren't known, I recommend using <a href="http://tiny.cc/maplestorycalculators" target="_blank" rel="noopener noreferrer">http://tiny.cc/maplestorycalculators</a> (they have a free version) to fill in the character's stats.<br>
             <br>
             Operation type: <select id="calculationType">
-                <option id='simulate' value="simulate">Simulate rolling</option>
                 <option id='optimiseCurrent' value="optimiseCurrent">Optimise for current nodes</option>
+                <option id='simulate' value="simulate">Simulate rolling</option>
             </select>
             <br>
-            <div id="simulateInputsContainer">
+            <div id="simulateInputsContainer" hidden>
                 <br>
                 Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
                 Target node level: <input id="targetNodeLevelInput" type="number" value="20"><br>
                 <b>Takes a few seconds to simulate and optimise for high node levels.</b>
             </div>
             <br>
-            <div id="currentNodeLevelsInputContainer" hidden="true">
-                Node1 main stat level: <input id="node1MainLevelInput" type="number" value=6 min=0><br>
-                Node1 additional stat1 level: <input id="node1AddStat1LevelInput" type="number" value=6 min=0><br>
-                Node1 additional stat2 level: <input id="node1AddStat2LevelInput" type="number" value=8 min=0><br>
+            <div id="currentNodeLevelsInputContainer">
+                Node1 main stat level: <input id="node1MainLevelInput" type="number" value=0 min=0><br>
+                Node1 additional stat1 level: <input id="node1AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node1 additional stat2 level: <input id="node1AddStat2LevelInput" type="number" value=0 min=0><br>
                 <br>
-                Node2 main stat level: <input id="node2MainLevelInput" type="number" value=4 min=0><br>
-                Node2 additional stat1 level: <input id="node2AddStat1LevelInput" type="number" value=6 min=0><br>
-                Node2 additional stat2 level: <input id="node2AddStat2LevelInput" type="number" value=10 min=0><br>
+                Node2 main stat level: <input id="node2MainLevelInput" type="number" value=0 min=0><br>
+                Node2 additional stat1 level: <input id="node2AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node2 additional stat2 level: <input id="node2AddStat2LevelInput" type="number" value=0 min=0><br>
                 <br>
-                Node3 main stat level: <input id="node3MainLevelInput" type="number" value=3 min=0><br>
-                Node3 additional stat1 level: <input id="node3AddStat1LevelInput" type="number" value=10 min=0><br>
-                Node3 additional stat2 level: <input id="node3AddStat2LevelInput" type="number" value=7 min=0><br>
+                Node3 main stat level: <input id="node3MainLevelInput" type="number" value=0 min=0><br>
+                Node3 additional stat1 level: <input id="node3AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node3 additional stat2 level: <input id="node3AddStat2LevelInput" type="number" value=0 min=0><br>
                 <br>
-                Node4 main stat level: <input id="node4MainLevelInput" type="number" value=4 min=0><br>
-                Node4 additional stat1 level: <input id="node4AddStat1LevelInput" type="number" value=6 min=0><br>
-                Node4 additional stat2 level: <input id="node4AddStat2LevelInput" type="number" value=10 min=0><br>
+                Node4 main stat level: <input id="node4MainLevelInput" type="number" value=0 min=0><br>
+                Node4 additional stat1 level: <input id="node4AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node4 additional stat2 level: <input id="node4AddStat2LevelInput" type="number" value=0 min=0><br>
                 <br>
-                Node5 main stat level: <input id="node5MainLevelInput" type="number" value=8 min=0><br>
-                Node5 additional stat1 level: <input id="node5AddStat1LevelInput" type="number" value=6 min=0><br>
-                Node5 additional stat2 level: <input id="node5AddStat2LevelInput" type="number" value=6 min=0><br>
+                Node5 main stat level: <input id="node5MainLevelInput" type="number" value=0 min=0><br>
+                Node5 additional stat1 level: <input id="node5AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node5 additional stat2 level: <input id="node5AddStat2LevelInput" type="number" value=0 min=0><br>
                 <br>
-                Node6 main stat level: <input id="node6MainLevelInput" type="number" value=4 min=0><br>
-                Node6 additional stat1 level: <input id="node6AddStat1LevelInput" type="number" value=9 min=0><br>
-                Node6 additional stat2 level: <input id="node6AddStat2LevelInput" type="number" value=7 min=0><br>
+                Node6 main stat level: <input id="node6MainLevelInput" type="number" value=0 min=0><br>
+                Node6 additional stat1 level: <input id="node6AddStat1LevelInput" type="number" value=0 min=0><br>
+                Node6 additional stat2 level: <input id="node6AddStat2LevelInput" type="number" value=0 min=0><br>
             </div>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>

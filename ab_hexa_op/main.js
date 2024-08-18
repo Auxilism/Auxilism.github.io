@@ -3,11 +3,14 @@ var chartRef = null;
 document.addEventListener("DOMContentLoaded", function ()
 {
     let counter = 0;
+    let calculateButton = document.getElementById("calculate");
 
-    document.getElementById("calculate").addEventListener('click', (e) =>
+    calculateButton.addEventListener('click', async (e) =>
     {
         try
         {
+            // prevent multiple calculations being run while the long computation is being done
+            calculateButton.disabled = true;
             counter += 1;
 
             let baInputTotal = Number(document.getElementById("baInputTotal").value);
@@ -51,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function ()
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
                 mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
                 fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel);
-            HexaSkillMatrix.computeOptimalPaths();
+            await HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;
             if (chartRef != null)
@@ -145,6 +148,7 @@ document.addEventListener("DOMContentLoaded", function ()
                 <b><font color='purple'>KMS hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
             `;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${counter}`;
+            calculateButton.disabled = false;
         }
         // <br><br>
         // <b><font color='black'>Mascot no bug:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostySingleOriginal)}

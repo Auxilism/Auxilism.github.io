@@ -34,6 +34,16 @@
         <h2>
             Changelog:
         </h2>
+            18 Aug 2024:
+            <ul>
+                <li>Added simulation and optimisation for multiple nodes.</li>
+                <ul>
+                    <li>Although only the second stat node is released in kms, I am using the same logic for the future 3-6th stat nodes where the previous nodes must be at max level (20).</li>
+                </ul>
+                <li>
+                    Removed comparing stat nodes since that doesn't work well with multiple nodes, and the FD is from the whole group rather than a single node.
+                </li>
+            </ul>
             11 Dec 2023:
             <ul>
                 <li>Added FD% statistics alongside the ratios.</li>
@@ -47,17 +57,7 @@
             Tasks:
         </h2>
         <h5>
-            Known and plan to do:
-        </h5>
-        <ol>
-            <h6>
-                <li>
-                    Compare FD% between two Hexa Stat Nodes
-                </li>
-            </h6>
-        </ol>
-        <h5>
-            Known but not doing yet:
+            Known but not doing:
         </h4>
         <ol>
             <h6>
@@ -68,26 +68,14 @@
             <p>
                 I'll admit that I didn't think about this until it was raised as a suggestion. However, after pondering about it, I don't think it would be that straightforward as it sounds:
                 <ul>
-                    <li>Attack would have to be input from adding the sources in the stat window, but ignoring the potentials (can't just read off the total).</li>
                     <li>Total secondary stat would be needed as well, since that is factored into the 'stat value' for damage output.</li>
                     <li>Additional inputs from the user would be needed for Xenon and DA since their stat formulas are different. This would also make this calculator unable to support a class with a totally new formula until implemented.</li>
                     <li>Finally, the input would have to be when fully buffed, e.g. gskills, potions, fams, etc.</li>
                 </ul>
                 So I'm not really talking about the logic to implement, but more so that users would have to prepare more to input more fields.
                 Using the generic calculator <a href="http://tiny.cc/maplestorycalculators" target="_blank" rel="noopener noreferrer">linked</a> would save those fields upon reopening, but this webpage would need users to input everything again.<br>
-                Hence I don't think I'll implement it currently, but if many people think it would be better to ask for the actual stat numbers, then I'll look into that.
+                Hence I don't think I'll ever implement it.
             </p>
-            <h6>
-                <li>
-                    Optimise for multiple stat nodes
-                </li>
-            </h6>
-            <p>
-                The current FD optimisation only happens for one stat node where each stat's calculation is individual and then can be multiplied with each other.<br>
-                This would result in the wrong FD calculation if two stat nodes are multiplied with each other instead of adding all their individual stat units first, then multiplying their respective FD totals.<br>
-                I plan to remake the calculation when KMS has more stat nodes unlocked (currently only 1 is available in Dec 2023), to see if the way the stat nodes interact with each other is different from how I'm thinking of them now.<br>
-            </p>
-            <h6>
                 <li>
                     Make a better UI.
                 </li>
@@ -107,20 +95,13 @@
             How the FD% is calculated for a stat type given 1 unit of FD%:
         </h5>
         <p>
-            With ied being one source, every stat type increases the FD% they give linearly. So after getting the number of units the stat level would give, multiply that by the FD% per unit input. 
+            With ied being one source, every stat type increases the FD% they give linearly. So after getting the number of units the stat levels would give, multiply that by the FD% per unit input. 
         </p>
         <h5>
-            How the FD% is calculated for the whole stat node:
+            How the FD% is calculated for all the stat nodes:
         </h5>
         <p>
             Other than boss dmg and dmg being additive with each other, every other stat (att, stat, crit dmg, ied) is independent of each other. After adding the FD% of boss damage and damage, everything can be multiplied with each other.
-        </p>
-        <h5>
-            How the FD%:Fragment ratio is calculated if there are current levels:
-        </h5>
-        <p>
-            The FD% increase from upgrading a non-zero stat node is not subtractive, i.e. going from a current FD% of 2.5% to 3.0% does not mean gaining 0.5% FD, but 1.03/1.025 = 0.4878% FD.<br>
-            So if simulating a stat node that has current levels, the amount of FD% gained is diminishing but the fragment costs are still additive, resulting in lower ratios.
         </p>
         <h5>
             The decision to split up FD% for boss dmg and dmg, instead of just multiplying boss dmg's FD% by 0.75 for dmg:
