@@ -26,7 +26,7 @@ class ConvertedHexaStatToSkill extends HexaSkill
         return this._skillBaseTotal;
     }
 
-    compute()
+    async compute()
     {
         // At level 0 there's no fd or cost, also 0 ratio
         this._fdPercentArray = [0];
@@ -52,6 +52,22 @@ class ConvertedHexaStatToSkill extends HexaSkill
             this._fdPercentArray.push(totalFD / ConvertedHexaStatToSkill.#NumTrials);
             this._totalFragmentCostArray.push(totalFragments / ConvertedHexaStatToSkill.#NumTrials);
             this._totalFDFragmentRatioArray.push(totalFDFragmentRatio / ConvertedHexaStatToSkill.#NumTrials);
+
+            // await/async Promise logic by Swabluu 
+            await new Promise((resolve) => {
+                window.requestAnimationFrame(() => {
+                    let progressUpdateElement = document.getElementById('progressUpdate');
+                    if (i < ConvertedHexaStatToSkill.#MaxLevel)
+                    {
+                        progressUpdateElement.innerHTML = `Hexa stat computing: ${i} / ${ConvertedHexaStatToSkill.#MaxLevel}`;
+                    }
+                    else
+                    {
+                        progressUpdateElement.innerHTML = `Thank you Bird (SwabIuu) for progress updater.`;
+                    }
+                    resolve();
+                })
+            })
         }
     }
 }

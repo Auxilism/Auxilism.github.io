@@ -102,7 +102,7 @@ class HexaSkill
         return this._skillBaseTotal;
     }
 
-    compute()
+    async compute()
     {
         this.#otherSkillsBaseTotal = HexaSkill.#BABaseTotal - this._skillBaseTotal;
 

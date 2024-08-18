@@ -12,10 +12,10 @@ class HexaMascot extends HexaBoostNode
 
     #isBugged = false;
 
-    set isBugged(isBuggedIn)
+    async setIsBugged(isBuggedIn)
     {
         this.#isBugged = isBuggedIn;
-        this.compute();
+        await this.compute();
     }
 
     getSkillMultiplierAtLevel(level)
