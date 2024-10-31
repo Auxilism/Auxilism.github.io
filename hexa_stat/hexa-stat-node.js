@@ -20,6 +20,7 @@ class HexaStatNode
 {
     static MAX_LEVEL_SUM = 20;
     static #UNLOCK_COST = 10;
+    static #NODE_COUNT = 0;
 
     #hexaStatLines = [new HexaStatLine(HexaStatLineType.Unset, true),
     new HexaStatLine(HexaStatLineType.Unset),
@@ -29,9 +30,33 @@ class HexaStatNode
     #currLevelSum = 0;
     #additionalFragmentsCost = 0;
 
+    static init()
+    {
+        HexaStatNode.#NODE_COUNT = 0;
+    }
+
+    static getUnlockCost(node_count)
+    {
+        let unlockCost = 0;
+        switch (node_count)
+        {
+            case 1:
+                unlockCost = 10;
+                break;
+            case 2:
+                unlockCost = 200;
+                break;
+            default:
+                unlockCost = 200;
+                break;
+        }
+        return unlockCost;
+    }
+
     constructor()
     {
-        this.#additionalFragmentsCost = HexaStatNode.#UNLOCK_COST;
+        HexaStatNode.#NODE_COUNT++;
+        this.#additionalFragmentsCost = HexaStatNode.getUnlockCost(HexaStatNode.#NODE_COUNT);
     }
 
     get additionalFragmentsCost()

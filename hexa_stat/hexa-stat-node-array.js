@@ -18,6 +18,7 @@ class HexaStatNodeArray
         {
             throw new EvalError("Too many levels for hexa stat nodes");
         }
+        HexaStatNode.init();
 
         let numNodes = totalNodeLevel / HexaStatNode.MAX_LEVEL_SUM;
         for (let i = 0; i < numNodes; i++)
