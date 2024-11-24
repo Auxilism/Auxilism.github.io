@@ -420,16 +420,19 @@ class HexaStatNodeArray
         return maxSlotsPerNodeLeft;
     }
 
-    getInfo(showFragmentsCost)
+    getInfo(showFragmentsCost, showHexaStatNodeLines)
     {
         let htmlText = `FD%: ${formatNumberForPrint(this.getTotalFDPercent())}`
         if (showFragmentsCost)
         {
             htmlText += `, Fragments: ${this.getFragmentsCost()}`
         }
-        for (let i = 0; i < this.#hexaStatNodes.length; i++)
+        if (showHexaStatNodeLines)
         {
-            htmlText += this.#hexaStatNodes[i].getInfo(i);
+            for (let i = 0; i < this.#hexaStatNodes.length; i++)
+            {
+                htmlText += this.#hexaStatNodes[i].getInfo(i);
+            }
         }
         return htmlText;
     }

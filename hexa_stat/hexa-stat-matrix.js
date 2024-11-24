@@ -93,36 +93,36 @@ class HexaStatMatrix
                         <center>
                             Average: <b>${fdFragmentRatioAvg}</b><br>
                             Median: <b>${fdFragmentRatioMedian}</b> at<br>
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArrayMedian.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArrayMedian.getInfo(true, false)}</p>
                             Range: <b>${minFdFragmentRatio}</b> to <b>${maxFdFragmentRatio}</b>
                         </center>
                     </td>
                     <td>
                         <center>
                             75% chance for: <b>${fdFragmentRatio75th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray75th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray75th.getInfo(true, false)}</p>
                             85% chance for: <b>${fdFragmentRatio85th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray85th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray85th.getInfo(true, false)}</p>
                             95% chance for: <b>${fdFragmentRatio95th}</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray95th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${ratioHexaStatNodeArray95th.getInfo(true, false)}</p>
                         </center>
                     </td>
                     <td>
                         <center>
                             Average: <b>${fdAvg}%</b> over ${fragmentsAvg} fragments<br>
                             Median: <b>${fdMedian}%</b> at<br>
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArrayMedian.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArrayMedian.getInfo(true, false)}</p>
                             Range: <b>${minFd}%</b> to <b>${maxFd}%</b>
                         </center>
                     </td>
                     <td>
                         <center>
                             75% chance for: <b>${fd75th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray75th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray75th.getInfo(true, false)}</p>
                             85% chance for: <b>${fd85th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray85th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray85th.getInfo(true, false)}</p>
                             95% chance for: <b>${fd95th}%</b> at
-                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray95th.getInfo(true)}</p>
+                            <p style="border-width:1px; border-style:solid; padding:5px;">${fdHexaStatNodeArray95th.getInfo(true, false)}</p>
                         </center>
                     </td>
                 </tr>
@@ -161,7 +161,7 @@ class HexaStatMatrix
                         Current optimised FD:
                     </td>
                     <td>
-                        ${currHexaStatNodeArray.getInfo(false)}
+                        ${currHexaStatNodeArray.getInfo(false, true)}
                     </td>
                 </tr>
             </tbody>
