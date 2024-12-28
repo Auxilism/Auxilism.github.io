@@ -8,11 +8,13 @@ class HexaSkillName
     static Fusion = new HexaSkillName('Fusion', 5);
     static HexaStat = new HexaSkillName('Hexa Stat', 6)
     static Seeker = new HexaSkillName('Seeker', 7)
-    static DaCapo = new HexaSkillName('Da Capo', 7)
+    static DaCapo = new HexaSkillName('Da Capo', 8)
+    static Supernova = new HexaSkillName('Supernova', 9)
 
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
     HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
-    HexaSkillName.HexaStat, HexaSkillName.Seeker
+    HexaSkillName.HexaStat, HexaSkillName.Seeker, HexaSkillName.DaCapo,
+    HexaSkillName.Supernova
     ];
 
     #name;
