@@ -2,36 +2,14 @@ class HexaMascot extends HexaBoostNode
 {
     static #MascotMaxLevel = 30;
 
-    static #KeyDownBasePercent = 1540;
-    static #ExplodeBasePercent = 1815;
-
     constructor(hexaSkillName, skillInputTotal)
     {
         super(hexaSkillName, skillInputTotal, HexaMascot.#MascotMaxLevel, HexaSkillFDOperationType.Add);
     }
 
-    #isBugged = false;
-
-    async setIsBugged(isBuggedIn)
-    {
-        this.#isBugged = isBuggedIn;
-        await this.compute();
-    }
-
     getSkillMultiplierAtLevel(level)
     {
-        if (this.#isBugged == false)
-        {
-            return this.#getSupposedMultiplierAtLevel(level);
-        }
-        else
-        {
-            let totalKeyDownBase = HexaMascot.#KeyDownBasePercent * 13 * 5;
-            let totalExplodeBase = HexaMascot.#ExplodeBasePercent * 7 * 10;
-            // The bug makes the hexa boost only affect the keydown part
-            return (totalKeyDownBase * this.#getSupposedMultiplierAtLevel(level) + totalExplodeBase) /
-                (totalKeyDownBase + totalExplodeBase);
-        }
+        return this.#getSupposedMultiplierAtLevel(level);
     }
 
     // Taken from https://en.namu.wiki/w/HEXA%20%EB%A7%A4%ED%8A%B8%EB%A6%AD%EC%8A%A4#fn-13
