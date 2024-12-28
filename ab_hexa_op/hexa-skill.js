@@ -8,6 +8,7 @@ class HexaSkillName
     static Fusion = new HexaSkillName('Fusion', 5);
     static HexaStat = new HexaSkillName('Hexa Stat', 6)
     static Seeker = new HexaSkillName('Seeker', 7)
+    static DaCapo = new HexaSkillName('Da Capo', 7)
 
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
     HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
@@ -179,11 +180,6 @@ class HexaSkill
         if (targetLevel > this.#maxLevel)
         {
             throw new RangeError("Going above max hexa skill level in HexaSkill.getFDFragmentRatioAtLevel");
-        }
-        // If this hexa skill's max is 20, the ratio of 'lvl 21' should be the same as 20
-        if (targetLevel > this.#maxLevel)
-        {
-            targetLevel = this.#maxLevel;
         }
         if (targetLevel == currLevel)
         {
