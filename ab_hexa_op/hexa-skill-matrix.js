@@ -266,10 +266,6 @@ class HexaSkillMatrix
 
     static getGraphData(method)
     {
-        if (method == HexaSkillOptimisationMethod.BoostySingleOriginal)
-        {
-            // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = false;
-        }
         let path = HexaSkillMatrix.#getPathForMethod(method);
 
         let xyData = [];
@@ -285,10 +281,6 @@ class HexaSkillMatrix
             xyData.push({ x: currTotalFragments, y: currFD });
         }
 
-        if (method == HexaSkillOptimisationMethod.BoostySingleOriginal)
-        {
-            // HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].isBugged = true;
-        }
         return xyData;
     }
 
