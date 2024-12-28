@@ -84,13 +84,25 @@ class HexaSkillMatrix
     static init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
         trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
         mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
-        fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel)
+        fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel, daCapoInputTotal, daCapoCurrLevel,
+        supernovaInputTotal, supernovaCurrLevel)
     {
 
         HexaOriginNode.init(fdPerBossDmgUnit, fdPerIEDUnit);
         HexaSkillMatrix.#HexaSkillArray = [];
         HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
+
+        if (supernovaCurrLevel > 0)
+        {
+            // scale down trinity dmg by the amount that hexa supernova affects trinity
+            baInputTotal -= trinityInputTotal;
+            let pureTrinityPercent = HexaTrinity.getTrinityPercentBase(trinityCurrLevel);
+            let totalTrinityPercent = pureTrinityPercent + HexaSupernova.getTrinityPercentBoost(supernovaCurrLevel);
+            trinityInputTotal = trinityInputTotal * pureTrinityPercent / totalTrinityPercent;
+            baInputTotal += trinityInputTotal;
+        }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaTrinity(trinityInputTotal));
+
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaMascot(HexaSkillName.Mascot, mascotInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.SparkleBurst, sbInputTotal));
@@ -99,14 +111,39 @@ class HexaSkillMatrix
         HexaSkillMatrix.#HexaSkillArray.push(new ConvertedHexaStatToSkill(HexaSkillName.HexaStat, 0));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaSeeker(seekerInputTotal));
 
+        // Give some default value if da capo is lvl 0, or it would be registered as no damage and have no scaling
+        if (daCapoCurrLevel == 0)
+        {
+            daCapoCurrLevel = 1;
+            // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/192430?category=%EC%97%94%EC%A0%A4%EB%A6%AD%EB%B2%84%EC%8A%A4%ED%84%B0
+            // (17.2702/560*125)/231.2848
+            daCapoInputTotal = baInputTotal * 0.01666756897;
+            baInputTotal += daCapoInputTotal;
+        }
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
+
+        let trinityBaseAmt = HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel);
+        // Give some default value if supernova is lvl 0, or it would be registered as 4th job dmg and have inaccurate scaling
+        if (supernovaCurrLevel == 0)
+        {
+            supernovaCurrLevel = 1;
+            //4th job does 600% x 3 lines x 14, hexa does 360% x 4 lines x 18
+            baInputTotal -= supernovaInputTotal;
+            supernovaInputTotal = supernovaInputTotal * (360*4*18) / (600*3*14);
+            baInputTotal += supernovaInputTotal;
+        }
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaSupernova(supernovaInputTotal, trinityBaseAmt));
+
         // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
         baInputTotal -= (gfInputTotal + cbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].calcSkillBaseTotal(gfCurrLevel));
-        baInputTotal -= (trinityInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel));
+        baInputTotal -= (trinityInputTotal - trinityBaseAmt);
         baInputTotal -= (spotlightInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Spotlight.index].calcSkillBaseTotal(spotlightCurrLevel));
         baInputTotal -= (mascotInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Mascot.index].calcSkillBaseTotal(mascotCurrLevel));
         baInputTotal -= (sbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.SparkleBurst.index].calcSkillBaseTotal(sbCurrLevel));
         baInputTotal -= (tfInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Fusion.index].calcSkillBaseTotal(tfCurrLevel));
         baInputTotal -= (seekerInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Seeker.index].calcSkillBaseTotal(seekerCurrLevel));
+        baInputTotal -= (daCapoInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.DaCapo.index].calcSkillBaseTotal(daCapoCurrLevel));
+        baInputTotal -= (supernovaInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Supernova.index].calcSkillBaseTotal(supernovaCurrLevel));
         // Don't need to revert hexa stat as that is universally applied
         HexaSkill.init(baInputTotal);
 

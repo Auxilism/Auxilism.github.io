@@ -11,17 +11,17 @@ class HexaTrinity extends HexaMasteryNode
         super(HexaSkillName.Trinity, skillInputTotal, HexaTrinity.#HexaTrinityMaxLevel);
     }
 
-    #getTrinityScalingAtLevel(level)
+    getSkillMultiplierAtLevel(level)
     {
-        if (level == 0)
+        return HexaTrinity.getTrinityPercentBase(level) / HexaTrinity.#TrinityBaseScale;
+    }
+
+    static getTrinityPercentBase(level)
+    {
+        if  (level == 0)
         {
             return HexaTrinity.#TrinityBaseScale;
         }
         return HexaTrinity.#HexaTrinityBaseScale + HexaTrinity.#HexaTrinityLevelScale * level;
-    }
-
-    getSkillMultiplierAtLevel(level)
-    {
-        return this.#getTrinityScalingAtLevel(level) / HexaTrinity.#TrinityBaseScale;
     }
 }

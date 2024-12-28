@@ -19,6 +19,8 @@
     <script src="hexa-mastery-node.js"></script>
     <script src="hexa-trinity.js"></script>
     <script src="hexa-seeker.js"></script>
+    <script src="hexa-da-capo.js"></script>
+    <script src="hexa-supernova.js"></script>
     <script src="hexa-boost-node.js"></script>
     <script src="hexa-mascot.js"></script>
     <script src="hexa-origin-node.js"></script>
@@ -73,6 +75,12 @@
                             (not Cheering Balloons)
                             <!-- 68,354,447,645,003 - 0 -->
                         </td>
+                        <td>
+                            Supernova total<br>
+                            <input id="supernovaInputTotal" type="number" step=1 value=6076134417319><br>
+                            If hexa Supernova is not unlocked, input the 4th job supernova total.
+                            <!-- 68,354,447,645,003 - 0 -->
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -97,11 +105,16 @@
                             <!-- 9,783,522,867,169 - 1 -->
                         </td>
                         <td>
+                            Da Capo total<br>
+                            <input id="daCapoInputTotal" type="number" step=1 value=0><br>
+                        </td>
+                        <td>
                             -blank space-<br>
                         </td>
                     </tr>
                 </tbody>
             </table>
+            <b>It is recommended to have at least lvl 1 of Da Capo and Hexa Supernova before using this optimiser. If they are level 0, a default lvl 1 value will be used.</b><br>
             Enter the current Hexa levels of each skill:
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
@@ -118,6 +131,10 @@
                         <td>
                             Hexa Seeker level<br>
                             <input id="seekerCurrLevel" type="number" step=1 value=0><br>
+                        </td>
+                        <td>
+                            Hexa Supernova level<br>
+                            <input id="supernovaCurrLevel" type="number" step=1 value=0><br>
                         </td>
                         <td>
                             -blank space-<br>
@@ -140,6 +157,10 @@
                             Hexa Trinity Fusion level<br>
                             <input id="tfCurrLevel" type="number" step=1 value=0><br>
                             (not Trinity)
+                        </td>
+                        <td>
+                            Da Capo level<br>
+                            <input id="daCapoCurrLevel" type="number" step=1 value=0><br>
                         </td>
                     </tr>
                 </tbody>

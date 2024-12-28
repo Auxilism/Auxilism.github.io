@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", function ()
             let sbInputTotal = Number(document.getElementById("sbInputTotal").value);
             let tfInputTotal = Number(document.getElementById("tfInputTotal").value);
 
+            let daCapoInputTotal = Number(document.getElementById("daCapoInputTotal").value);
+            let supernovaInputTotal = Number(document.getElementById("supernovaInputTotal").value);
+
             let gfCurrLevel = Number(document.getElementById("gfCurrLevel").value);
             let trinityCurrLevel = Number(document.getElementById("trinityCurrLevel").value);
             let seekerCurrLevel = Number(document.getElementById("seekerCurrLevel").value);
@@ -32,6 +35,9 @@ document.addEventListener("DOMContentLoaded", function ()
             let mascotCurrLevel = Number(document.getElementById("mascotCurrLevel").value);
             let sbCurrLevel = Number(document.getElementById("sbCurrLevel").value);
             let tfCurrLevel = Number(document.getElementById("tfCurrLevel").value);
+
+            let daCapoCurrLevel = Number(document.getElementById("daCapoCurrLevel").value);
+            let supernovaCurrLevel = Number(document.getElementById("supernovaCurrLevel").value);
 
             let fdPerAttUnit = Number(document.getElementById("fdPerAttUnit").value);
             let fdPerFlatStatUnit = Number(document.getElementById("fdPerFlatStatUnit").value);
@@ -53,7 +59,8 @@ document.addEventListener("DOMContentLoaded", function ()
             HexaSkillMatrix.init(baInputTotal, gfInputTotal, cbInputTotal, gfCurrLevel,
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
                 mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
-                fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel);
+                fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel,
+                daCapoInputTotal, daCapoCurrLevel, supernovaInputTotal, supernovaCurrLevel);
             await HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;
