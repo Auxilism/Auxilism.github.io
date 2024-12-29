@@ -129,7 +129,7 @@ class HexaSkillMatrix
             supernovaCurrLevel = 1;
             //4th job does 600% x 3 lines x 14, hexa does 360% x 4 lines x 18
             baInputTotal -= supernovaInputTotal;
-            supernovaInputTotal = supernovaInputTotal * (360*4*18) / (600*3*14);
+            supernovaInputTotal = supernovaInputTotal * (360 * 4 * 18) / (600 * 3 * 14);
             baInputTotal += supernovaInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaSupernova(supernovaInputTotal, trinityBaseAmt));
@@ -173,11 +173,11 @@ class HexaSkillMatrix
         }
 
         let currLevels = HexaSkillLevellingInfo.getNewLevellingArray();
-         // Now search for the highest remaining FD:Fragment ratio within the skills
-         HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestRemainingSkillRatio,
-             currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
-             HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
-             totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
+        // Now search for the highest remaining FD:Fragment ratio within the skills
+        HexaSkillMatrix.#computePathForMethod(HexaSkillOptimisationMethod.HighestRemainingSkillRatio,
+            currLevels, HexaSkillMatrix.#forwardLevellingExitCondition,
+            HexaSkillMatrix.#calculateHighestRemainingSkillRatio,
+            totalMaxLevel, HexaSkillMatrix.#forwardSkillLevellingAndCheck);
 
     }
 
