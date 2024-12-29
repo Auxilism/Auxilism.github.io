@@ -18,7 +18,7 @@ class HexaTrinity extends HexaMasteryNode
 
     static getTrinityPercentBase(level)
     {
-        if  (level == 0)
+        if (level == 0)
         {
             return HexaTrinity.#TrinityBaseScale;
         }

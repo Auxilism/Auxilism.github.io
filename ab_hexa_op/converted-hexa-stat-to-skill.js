@@ -54,8 +54,10 @@ class ConvertedHexaStatToSkill extends HexaSkill
             this._totalFDFragmentRatioArray.push(totalFDFragmentRatio / ConvertedHexaStatToSkill.#NumTrials);
 
             // await/async Promise logic by Swabluu 
-            await new Promise((resolve) => {
-                window.requestAnimationFrame(() => {
+            await new Promise((resolve) =>
+            {
+                window.requestAnimationFrame(() =>
+                {
                     let progressUpdateElement = document.getElementById('progressUpdate');
                     if (i < ConvertedHexaStatToSkill.#MaxLevel)
                     {
