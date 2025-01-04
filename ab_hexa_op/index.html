@@ -41,6 +41,8 @@
         <h4>All initial BA data was shared by Boosty (ImSoBoosted). AB discord provided behind the scene numbers.</h4>
         <hr>
         For each skill, put the total damage they did in the BA's column.<br>
+        It is recommended to have <b>at least lvl 1 of Da Capo and Hexa Supernova before using</b> this optimiser. <b>If they are level 0, assumptions will be made.</b><br>
+        Having Hexa Supernova also turns supernova into a <b>30s summon</b>, making it very useful for training regardless of its bossing damage.</br>
         <form onsubmit="return false">
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
@@ -114,7 +116,7 @@
                     </tr>
                 </tbody>
             </table>
-            <b>It is recommended to have at least lvl 1 of Da Capo and Hexa Supernova before using this optimiser. If they are level 0, a default lvl 1 value will be used.</b><br>
+            <b>Sol Janus is not shown here as it is not used for bossing. Each player considers the importance of exp/mob clear differently, so it should be prioritised according to your personal peference.</b><br>
             Enter the current Hexa levels of each skill:
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
@@ -172,29 +174,29 @@
                     <tr>
                         <td>
                             FD% per 5 raw att<br>
-                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.1607074106>%<br>
+                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.13968>%<br>
                         </td>
                         <td>
                             FD% per 100 flat dex<br>
-                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.1337792374>%<br>
+                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.12503>%<br>
                         </td>
                         <td>
                             FD% per 0.35% crit dmg<br>
-                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.117370892>%
+                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.11364>%
                         </td>
                     </tr>
                     <tr>
                         <td>
                             FD% per 1% boss dmg<br>
-                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.1271455817>%
+                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.11099>%
                         </td>
                         <td>
                             FD% per 0.75% dmg<br>
-                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.09535918627>%
+                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.0832425>%
                         </td>
                         <td>
                             FD% per 1% ied<br>
-                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.06733714764>%
+                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.07684>%
                         </td>
                     </tr>
                 </tbody>
@@ -204,8 +206,6 @@
             Setting a high number of trials could make the simulation take a long time as the simulation is repeated for each Hexa Stat level.<br>
             Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
             <b>Disclaimer: Due to Hexa Stat being random, the data here may not match your specific case. Only the average case is considered.</b><br>
-            ---<br>
-            <b>Sol Janus is not shown here as it is not used for bossing. Each player considers the importance of exp/mob clear differently, so it should be prioritised according to your personal peference.</b><br>
             <button id="calculate" type="submit" class="btnSubmit">Calculate</button>
             <hr>
         </form>
