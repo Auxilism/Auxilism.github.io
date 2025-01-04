@@ -117,7 +117,8 @@ class HexaSkillMatrix
             daCapoCurrLevel = 1;
             // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/192430?category=%EC%97%94%EC%A0%A4%EB%A6%AD%EB%B2%84%EC%8A%A4%ED%84%B0
             // (17.2702/560*125)/231.2848
-            daCapoInputTotal = baInputTotal * 0.01666756897;
+            // 1.61 is from maxing out the hexa matrix without 3rd/4th mastery. I assume the 231.2848 is with maxed hexa without 3rd/4th.
+            daCapoInputTotal = baInputTotal * 0.01666756897 * 1.61;
             baInputTotal += daCapoInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
@@ -247,6 +248,14 @@ class HexaSkillMatrix
                     skillToLevel = skillName;
                     newSkillLevel = proposedLevels[skillName.index];
                 }
+            }
+
+            // If hexa supernova was determined to be the most effective, check if hexa trinity has been levelled
+            // if hexa trinity is still 0, then force a level for supernova's passive to have an effect since supernova affects hexa trinity specifically
+            if (skillToLevel == HexaSkillName.Supernova && currLevels[HexaSkillName.Trinity.index].currLevel == 0)
+            {
+                skillToLevel = HexaSkillName.Trinity;
+                newSkillLevel = 1;
             }
 
             levelSkillAndCheckFunction(currLevels, skillToLevel, newSkillLevel, path);
