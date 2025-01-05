@@ -117,22 +117,13 @@ class HexaSkillMatrix
             daCapoCurrLevel = 1;
             // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/192430?category=%EC%97%94%EC%A0%A4%EB%A6%AD%EB%B2%84%EC%8A%A4%ED%84%B0
             // (17.2702/560*125)/231.2848
-            // 1.61 is from maxing out the hexa matrix without 3rd/4th mastery. I assume the 231.2848 is with maxed hexa without 3rd/4th.
-            daCapoInputTotal = baInputTotal * 0.01666756897 * 1.61;
+            // 1.6025 is from maxing out the hexa matrix without 3rd/4th mastery. I assume the 231.2848 is with maxed hexa without 3rd/4th.
+            daCapoInputTotal = baInputTotal * 0.01666756897 * 1.6025;
             baInputTotal += daCapoInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
 
         let trinityBaseAmt = HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel);
-        // Give some default value if supernova is lvl 0, or it would be registered as 4th job dmg and have inaccurate scaling
-        if (supernovaCurrLevel == 0)
-        {
-            supernovaCurrLevel = 1;
-            //4th job does 600% x 3 lines x 14, hexa does 360% x 4 lines x 18
-            baInputTotal -= supernovaInputTotal;
-            supernovaInputTotal = supernovaInputTotal * (360 * 4 * 18) / (600 * 3 * 14);
-            baInputTotal += supernovaInputTotal;
-        }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaSupernova(supernovaInputTotal, trinityBaseAmt));
 
         // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
