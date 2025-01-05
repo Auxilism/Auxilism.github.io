@@ -14,16 +14,19 @@ class HexaSupernova extends HexaMasteryNode
 
     #getSupernovaScalingAtLevel(level)
     {
+        //4th job does 600% x 3 lines x 14, hexa does 360% x 4 lines x 18
         if (level == 0)
         {
-            return HexaSupernova.#HexaSupernovaBase;
+            return 600 * 3 * 14;
         }
-        return HexaSupernova.#HexaSupernovaBase + HexaSupernova.#HexaSupernovaLevelScale * level;
+        let lineAmt = 4 * 18;
+        let skillMult = HexaSupernova.#HexaSupernovaBase + HexaSupernova.#HexaSupernovaLevelScale * level;
+        return lineAmt * skillMult;
     }
 
     getSkillMultiplierAtLevel(level)
     {
-        return this.#getSupernovaScalingAtLevel(level) / this.#getSupernovaScalingAtLevel(1);
+        return this.#getSupernovaScalingAtLevel(level) / this.#getSupernovaScalingAtLevel(0);
     }
 
     _getScaledUpTotalAtLevel(level)
