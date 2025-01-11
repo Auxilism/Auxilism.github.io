@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function ()
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
                         },
                         {
-                            label: "KMS hijack",
+                            label: "Old KMS without 3rd/4th",
                             borderColor: "purple",
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
                         },
