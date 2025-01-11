@@ -346,8 +346,9 @@ class HexaSkillMatrix
                 let prevIndex = i - 1;
                 skillOrder += HexaSkillMatrix.#hexaSkillLevelInfoToString(path[prevIndex]);
                 currLevels[prevSkill.index] = path[prevIndex].level;
-                let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
-                skillOrder += " (" + currTotalFragments + ")";
+                let currTotalFragments = formatNumberForPrint(HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels));
+                let currFD = formatNumberForPrint(HexaSkillMatrix.#getFDPercentOfProposedLevels(currLevels));
+                skillOrder += " (" + currFD + "%, " + currTotalFragments + ")";
                 skillOrder += " -> ";
 
                 prevSkill = currSkill;
@@ -357,8 +358,9 @@ class HexaSkillMatrix
         let lastIndex = path.length - 1;
         skillOrder += HexaSkillMatrix.#hexaSkillLevelInfoToString(path[lastIndex]);
         currLevels[path[lastIndex].hexaSkillName.index] = path[lastIndex].level;
-        let currTotalFragments = HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels);
-        skillOrder += " (" + currTotalFragments + ") ";
+        let currTotalFragments = formatNumberForPrint(HexaSkillMatrix.#getTotalFragmentsOfProposedLevels(currLevels));
+        let currFD = formatNumberForPrint(HexaSkillMatrix.#getFDPercentOfProposedLevels(currLevels));
+        skillOrder += " (" + currFD + "%, " + currTotalFragments + ")";
         return skillOrder;
     }
 
