@@ -39,18 +39,25 @@ document.addEventListener("DOMContentLoaded", function ()
             let daCapoCurrLevel = Number(document.getElementById("daCapoCurrLevel").value);
             let supernovaCurrLevel = Number(document.getElementById("supernovaCurrLevel").value);
 
-            let fdPerAttUnit = Number(document.getElementById("fdPerAttUnit").value);
-            let fdPerFlatStatUnit = Number(document.getElementById("fdPerFlatStatUnit").value);
-            let fdPerCritDmgUnit = Number(document.getElementById("fdPerCritDmgUnit").value);
-            let fdPerBossDmgUnit = Number(document.getElementById("fdPerBossDmgUnit").value);
-            let fdPerDmgUnit = Number(document.getElementById("fdPerDmgUnit").value);
-            let fdPerIEDUnit = Number(document.getElementById("fdPerIEDUnit").value);
+            // Scale down values by maple scouter defaults
+            let fdPerAttUnit = Number(document.getElementById("fdPerAttUnit").value) * 5 / 30;
+            let fdPerFlatStatUnit = Number(document.getElementById("fdPerFlatStatUnit").value) * 100 / 200;
+            let fdPerCritDmgUnit = Number(document.getElementById("fdPerCritDmgUnit").value) * 0.35 / 8;
+            let fdPerBossDmgUnit = Number(document.getElementById("fdPerBossDmgUnit").value) / 40;
+            let fdPerIEDUnit = Number(document.getElementById("fdPerIEDUnit").value) / 40;
+
+            console.log("FD% per 5 raw att:", fdPerAttUnit);
+            console.log("FD% per 100 flat att:", fdPerFlatStatUnit);
+            console.log("FD% per 0.35% crit dmg:", fdPerCritDmgUnit);
+            console.log("FD% per 1% boss dmg:", fdPerBossDmgUnit);
+            console.log("FD% per 0.75% dmg:", fdPerBossDmgUnit * 0.75);
+            console.log("FD% per 1% ied:", fdPerIEDUnit);
 
             let attFD = new HexaStatTypeFDPair(HexaStatLineType.Att, fdPerAttUnit);
             let statFD = new HexaStatTypeFDPair(HexaStatLineType.FlatStat, fdPerFlatStatUnit);
             let critDmgFD = new HexaStatTypeFDPair(HexaStatLineType.CritDmg, fdPerCritDmgUnit);
             let bossDmgFD = new HexaStatTypeFDPair(HexaStatLineType.BossDmg, fdPerBossDmgUnit);
-            let dmgFD = new HexaStatTypeFDPair(HexaStatLineType.Dmg, fdPerDmgUnit);
+            let dmgFD = new HexaStatTypeFDPair(HexaStatLineType.Dmg, fdPerBossDmgUnit * 0.75);
             let iedFD = new HexaStatTypeFDPair(HexaStatLineType.IED, fdPerIEDUnit);
             HexaStatMatrix.init(attFD, statFD, critDmgFD, bossDmgFD, dmgFD, iedFD);
             let numTrials = Number(document.getElementById("numTrialsInput").value);

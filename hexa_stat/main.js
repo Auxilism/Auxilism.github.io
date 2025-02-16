@@ -12,12 +12,25 @@ document.addEventListener("DOMContentLoaded", function ()
         {
             counter += 1;
 
-            let attFD = new HexaStatTypeFDPair(HexaStatLineType.Att, Number(document.getElementById("fdPerAttUnit").value));
-            let statFD = new HexaStatTypeFDPair(HexaStatLineType.FlatStat, Number(document.getElementById("fdPerFlatStatUnit").value));
-            let critDmgFD = new HexaStatTypeFDPair(HexaStatLineType.CritDmg, Number(document.getElementById("fdPerCritDmgUnit").value));
-            let bossDmgFD = new HexaStatTypeFDPair(HexaStatLineType.BossDmg, Number(document.getElementById("fdPerBossDmgUnit").value));
-            let dmgFD = new HexaStatTypeFDPair(HexaStatLineType.Dmg, Number(document.getElementById("fdPerDmgUnit").value));
-            let iedFD = new HexaStatTypeFDPair(HexaStatLineType.IED, Number(document.getElementById("fdPerIEDUnit").value));
+            // Scale down values by maple scouter defaults
+            let attFDPerUnit = Number(document.getElementById("fdPerAttUnit").value) * 5 / 30;
+            let attFD = new HexaStatTypeFDPair(HexaStatLineType.Att, attFDPerUnit);
+            let statFDPerUnit = Number(document.getElementById("fdPerFlatStatUnit").value) * 100 / 200;
+            let statFD = new HexaStatTypeFDPair(HexaStatLineType.FlatStat, statFDPerUnit);
+            let critFDPerUnit = Number(document.getElementById("fdPerCritDmgUnit").value) * 0.35 / 8;
+            let critDmgFD = new HexaStatTypeFDPair(HexaStatLineType.CritDmg, critFDPerUnit);
+            let bossDmgFDPerUnit = Number(document.getElementById("fdPerBossDmgUnit").value) / 40;
+            let bossDmgFD = new HexaStatTypeFDPair(HexaStatLineType.BossDmg, bossDmgFDPerUnit);
+            let dmgFD = new HexaStatTypeFDPair(HexaStatLineType.Dmg, bossDmgFDPerUnit * 0.75);
+            let iedFDPerUnit = Number(document.getElementById("fdPerIEDUnit").value) / 40;
+            let iedFD = new HexaStatTypeFDPair(HexaStatLineType.IED, iedFDPerUnit);
+
+            console.log("FD% per 5 raw att:", attFDPerUnit);
+            console.log("FD% per 100 flat att:", statFDPerUnit);
+            console.log("FD% per 0.35% crit dmg:", critFDPerUnit);
+            console.log("FD% per 1% boss dmg:", bossDmgFDPerUnit);
+            console.log("FD% per 0.75% dmg:", bossDmgFDPerUnit * 0.75);
+            console.log("FD% per 1% ied:", iedFDPerUnit);
 
             let calculationType = document.getElementById(calculationTypeKey).value;
 

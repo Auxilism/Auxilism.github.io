@@ -168,40 +168,37 @@
                 </tbody>
             </table>
             For origin ied/boss boost at lvl 10/20/30, and hexa stat<br>
-            E.g. put 5 to mean that one unit will give you 5% FD or multiply your dps by 1.05x<br>
+            E.g. put 5 to mean that unit will give you 5% FD or multiply your dps by 1.05x<br>
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
                     <tr>
                         <td>
-                            FD% per 5 raw att<br>
-                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.13968>%<br>
+                            FD% per 30 raw att<br>
+                            <input id="fdPerAttUnit" type="number" step=0.00000000001 value=0.83808>%<br>
                         </td>
                         <td>
-                            FD% per 100 flat dex<br>
-                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.12503>%<br>
+                            FD% per 200 flat (Not Affected by %) dex<br>
+                            <input id="fdPerFlatStatUnit" type="number" step=0.00000000001 value=0.25006>%<br>
                         </td>
                         <td>
-                            FD% per 0.35% crit dmg<br>
-                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=0.11364>%
+                            FD% per 8% crit dmg<br>
+                            <input id="fdPerCritDmgUnit" type="number" step=0.00000000001 value=2.5975>%
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            FD% per 1% boss dmg<br>
-                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=0.11099>%
+                            FD% per 40% boss dmg<br>
+                            <input id="fdPerBossDmgUnit" type="number" step=0.00000000001 value=4.439>%
                         </td>
                         <td>
-                            FD% per 0.75% dmg<br>
-                            <input id="fdPerDmgUnit" type="number" step=0.00000000001 value=0.0832425>%
-                        </td>
-                        <td>
-                            FD% per 1% ied<br>
-                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=0.07684>%
+                            FD% per 40% ied<br>
+                            <input id="fdPerIEDUnit" type="number" step=0.00000000001 value=3.0736>%
                         </td>
                     </tr>
                 </tbody>
             </table>
             If the FD%s aren't known, I recommend using <a href="https://maplescouter.com" target="_blank" rel="noopener noreferrer">https://maplescouter.com</a> to fill in the character's stats and adjust the 'Value' column under 'Stat Efficiency'.<br>
+            The units asked for match maplescouter's Stat Efficiency.<br>
             <br>
             Setting a high number of trials could make the simulation take a long time as the simulation is repeated for each Hexa Stat level.<br>
             Number of trials: <input id="numTrialsInput" type="number" value=1000><br>
