@@ -32,7 +32,7 @@ class HexaSupernova extends HexaMasteryNode
     _getScaledUpTotalAtLevel(level)
     {
         let supernovaNewTotal = this._skillBaseTotal * this.getSkillMultiplierAtLevel(level);
-        // at lvl 1 supernova, it adds 30% on top of trinity's base 630%
+        // supernova adds a certain% on top of hexa trinity
         let trinityAdditional = this.#trinityBaseTotalDmg * HexaSupernova.getTrinityPercentBoost(level) / HexaTrinity.getTrinityPercentBase(0);
         return supernovaNewTotal + trinityAdditional;
     }
@@ -43,6 +43,6 @@ class HexaSupernova extends HexaMasteryNode
         {
             return 0;
         }
-        return 26 + 4 * level;
+        return (20 + 4 * level) * HexaTrinity.HexaTrinityNumHits;
     }
 }

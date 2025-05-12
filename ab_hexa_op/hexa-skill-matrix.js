@@ -92,16 +92,18 @@ class HexaSkillMatrix
         HexaSkillMatrix.#HexaSkillArray = [];
         HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
 
-        if (supernovaCurrLevel > 0)
+        if (supernovaCurrLevel > 0 || seekerCurrLevel > 0)
         {
-            // scale down trinity dmg by the amount that hexa supernova affects trinity
+            // scale down trinity dmg by the amount that hexa supernova/seeker affects trinity
             baInputTotal -= trinityInputTotal;
             let pureTrinityPercent = HexaTrinity.getTrinityPercentBase(trinityCurrLevel);
-            let totalTrinityPercent = pureTrinityPercent + HexaSupernova.getTrinityPercentBoost(supernovaCurrLevel);
+            let totalTrinityPercent = pureTrinityPercent + HexaSupernova.getTrinityPercentBoost(supernovaCurrLevel) 
+                + HexaSeeker.getTrinityPercentBoost(seekerCurrLevel);
             trinityInputTotal = trinityInputTotal * pureTrinityPercent / totalTrinityPercent;
             baInputTotal += trinityInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaTrinity(trinityInputTotal));
+        let trinityBaseAmt = HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel);
 
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Spotlight, spotlightInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaMascot(HexaSkillName.Mascot, mascotInputTotal));
@@ -109,21 +111,20 @@ class HexaSkillMatrix
         HexaSkillMatrix.#HexaSkillArray.push(new HexaBoostNode(HexaSkillName.Fusion, tfInputTotal));
         // Hexa Stat has no base damage
         HexaSkillMatrix.#HexaSkillArray.push(new ConvertedHexaStatToSkill(HexaSkillName.HexaStat, 0));
-        HexaSkillMatrix.#HexaSkillArray.push(new HexaSeeker(seekerInputTotal));
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaSeeker(seekerInputTotal, trinityBaseAmt));
 
         // Give some default value if da capo is lvl 0, or it would be registered as no damage and have no scaling
         if (daCapoCurrLevel == 0)
         {
             daCapoCurrLevel = 1;
-            // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/192430?category=%EC%97%94%EC%A0%A4%EB%A6%AD%EB%B2%84%EC%8A%A4%ED%84%B0
-            // (17.2702/560*125)/231.2848
-            // 1.6025 is from maxing out the hexa matrix without 3rd/4th mastery. I assume the 231.2848 is with maxed hexa without 3rd/4th.
-            daCapoInputTotal = baInputTotal * 0.01666756897 * 1.6025;
+            // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/200951
+            // After reversing all skills while ignoring da capo, the total ba would be 287647411221286
+            // da capo did 37,186,300,000,000 at max, so scale down by 209/760
+            // 37186300000000*209/760 / 287647411221286 = 0.03555127597
+            daCapoInputTotal = baInputTotal * 0.03555127597;
             baInputTotal += daCapoInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
-
-        let trinityBaseAmt = HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Trinity.index].calcSkillBaseTotal(trinityCurrLevel);
         HexaSkillMatrix.#HexaSkillArray.push(new HexaSupernova(supernovaInputTotal, trinityBaseAmt));
 
         // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
@@ -241,12 +242,16 @@ class HexaSkillMatrix
                 }
             }
 
-            // If hexa supernova was determined to be the most effective, check if hexa trinity has been levelled
-            // if hexa trinity is still 0, then force a level for supernova's passive to have an effect since supernova affects hexa trinity specifically
-            if (skillToLevel == HexaSkillName.Supernova && currLevels[HexaSkillName.Trinity.index].currLevel == 0)
+            // If hexa supernova or seeker was determined to be the most effective, check if hexa trinity has been levelled
+            // if hexa trinity is still 0, then force a level for supernova/seeker passive to have an effect since they affect hexa trinity specifically
+            if (skillToLevel == HexaSkillName.Supernova ||  skillToLevel == HexaSkillName.Seeker)
             {
-                skillToLevel = HexaSkillName.Trinity;
-                newSkillLevel = 1;
+                if (currLevels[HexaSkillName.Trinity.index].currLevel == 0)
+                {
+                    console.log("Invoking hack");
+                    skillToLevel = HexaSkillName.Trinity;
+                    newSkillLevel = 1;
+                }
             }
 
             levelSkillAndCheckFunction(currLevels, skillToLevel, newSkillLevel, path);
