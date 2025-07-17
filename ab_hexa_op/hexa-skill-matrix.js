@@ -116,7 +116,7 @@ class HexaSkillMatrix
         {
             daCapoCurrLevel = 1;
             // Default % of BA taken from Boom's BA after scaling everything down to 0, encore ribbon to 1
-            daCapoInputTotal = baInputTotal * 0.0264595199;
+            daCapoInputTotal = baInputTotal * 0.02717865404;
             baInputTotal += daCapoInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
