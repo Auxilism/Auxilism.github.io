@@ -117,8 +117,11 @@ class HexaSkillMatrix
         if (daCapoCurrLevel == 0)
         {
             daCapoCurrLevel = 1;
-            // Default % of BA taken from Boom's BA after scaling everything down to 0, encore ribbon to 1
-            daCapoInputTotal = baInputTotal * 0.02717865404;
+            // Default % of BA taken from https://www.inven.co.kr/board/maple/2298/200951
+            // After reversing all skills while ignoring da capo, the total ba would be 287647411221286
+            // da capo did 37,186,300,000,000 at max, so scale down by 209/760
+            // 37186300000000*209/760 / 287647411221286 = 0.03555127597
+            daCapoInputTotal = baInputTotal * 0.03555127597;
             baInputTotal += daCapoInputTotal;
         }
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));

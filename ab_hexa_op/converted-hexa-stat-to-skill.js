@@ -1,6 +1,6 @@
 class ConvertedHexaStatToSkill extends HexaSkill
 {
-    static #MaxLevel = 40;
+    static #MaxLevel = 60;
     static #NumTrials = 1000;
 
     static init(numTrials)

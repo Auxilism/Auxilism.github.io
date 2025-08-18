@@ -46,8 +46,11 @@ class HexaStatNode
             case 2:
                 unlockCost = 200;
                 break;
+            case 3:
+                unlockCost = 350;
+                break;
             default:
-                unlockCost = 200;
+                unlockCost = 350;
                 break;
         }
         return unlockCost;
