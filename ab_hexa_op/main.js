@@ -84,11 +84,11 @@ document.addEventListener("DOMContentLoaded", function ()
                             borderColor: "orange",
                             data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)
                         },
-                        {
-                            label: "Old KMS without 3rd/4th",
-                            borderColor: "purple",
-                            data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
-                        },
+                        // {
+                        //     label: "Old KMS without 3rd/4th",
+                        //     borderColor: "purple",
+                        //     data: HexaSkillMatrix.getGraphData(HexaSkillOptimisationMethod.BoostyHijack)
+                        // },
                         // {
                         //     label: "Mascot no bug",
                         //     borderColor: "black",
@@ -158,8 +158,6 @@ document.addEventListener("DOMContentLoaded", function ()
 
             document.getElementById("resultPaths").innerHTML = `
                 <b><font color='orange'>Highest remaining skill ratio:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.HighestRemainingSkillRatio)}
-                <br><br>
-                <b><font color='purple'>KMS hijack:</font></b> ${HexaSkillMatrix.getSkillOrder(HexaSkillOptimisationMethod.BoostyHijack)}
             `;
             document.getElementById("debugCounter").innerHTML = `Response counter: ${counter}`;
             calculateButton.disabled = false;
