@@ -6,15 +6,16 @@ class HexaSkillName
     static Mascot = new HexaSkillName('Mascot', 3);
     static SparkleBurst = new HexaSkillName('Sparkle Burst', 4);
     static Fusion = new HexaSkillName('Fusion', 5);
-    static HexaStat = new HexaSkillName('Hexa Stat', 6)
-    static Seeker = new HexaSkillName('Seeker', 7)
-    static DaCapo = new HexaSkillName('Roar', 8)
-    static Supernova = new HexaSkillName('Supernova', 9)
+    static HexaStat = new HexaSkillName('Hexa Stat', 6);
+    static Seeker = new HexaSkillName('Seeker', 7);
+    static DaCapo = new HexaSkillName('Roar', 8);
+    static Supernova = new HexaSkillName('Supernova', 9);
+    static Ascent = new HexaSkillName('Genuine Encore', 10);
 
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
     HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
     HexaSkillName.HexaStat, HexaSkillName.Seeker, HexaSkillName.DaCapo,
-    HexaSkillName.Supernova
+    HexaSkillName.Supernova, HexaSkillName.Ascent
     ];
 
     #name;
