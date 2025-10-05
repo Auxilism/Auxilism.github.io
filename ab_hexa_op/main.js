@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function ()
 
             let daCapoInputTotal = Number(document.getElementById("daCapoInputTotal").value);
             let supernovaInputTotal = Number(document.getElementById("supernovaInputTotal").value);
+            let ascentInputTotal = Number(document.getElementById("ascentInputTotal").value);
 
             let gfCurrLevel = Number(document.getElementById("gfCurrLevel").value);
             let trinityCurrLevel = Number(document.getElementById("trinityCurrLevel").value);
@@ -38,6 +39,14 @@ document.addEventListener("DOMContentLoaded", function ()
 
             let daCapoCurrLevel = Number(document.getElementById("daCapoCurrLevel").value);
             let supernovaCurrLevel = Number(document.getElementById("supernovaCurrLevel").value);
+
+            let baDurationMin = Number(document.getElementById("baDurationMin").value);
+            let baDurationSec = Number(document.getElementById("baDurationSec").value);
+            baDurationSec += baDurationMin * 60;
+            let fightDurationMin = Number(document.getElementById("fightDurationMin").value);
+            let fightDurationSec = Number(document.getElementById("fightDurationSec").value);
+            fightDurationSec += fightDurationMin * 60;
+            let ascentCurrLevel = Number(document.getElementById("ascentCurrLevel").value);
 
             // Scale down values by maple scouter defaults
             let fdPerAttUnit = Number(document.getElementById("fdPerAttUnit").value) * 5 / 30;
@@ -67,7 +76,8 @@ document.addEventListener("DOMContentLoaded", function ()
                 trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
                 mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
                 fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel,
-                daCapoInputTotal, daCapoCurrLevel, supernovaInputTotal, supernovaCurrLevel);
+                daCapoInputTotal, daCapoCurrLevel, supernovaInputTotal, supernovaCurrLevel,
+                baDurationSec, fightDurationSec, ascentInputTotal, ascentCurrLevel);
             await HexaSkillMatrix.computeOptimalPaths();
 
             document.getElementById("result").hidden = false;

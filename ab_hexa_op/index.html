@@ -16,6 +16,7 @@
 <body>
     <script src="../utilis.js"></script>
     <script src="hexa-skill.js"></script>
+    <script src="hexa-unique-skill.js"></script>
     <script src="hexa-mastery-node.js"></script>
     <script src="hexa-trinity.js"></script>
     <script src="hexa-seeker.js"></script>
@@ -24,6 +25,7 @@
     <script src="hexa-boost-node.js"></script>
     <script src="hexa-mascot.js"></script>
     <script src="hexa-origin-node.js"></script>
+    <script src="hexa-ascent-node.js"></script>
     <script src="converted-hexa-stat-to-skill.js"></script>
     <script src="hexa-skill-matrix.js"></script>
 
@@ -41,16 +43,35 @@
         <h4>All initial BA data was shared by Rudy (Anandea) and RB (Marllang).</h4>
         <hr>
         For each skill, put the total damage they did in the BA's column.<br>
-        It is recommended to have <b>at least lvl 1 of Encore Ribbon (Roar) and Hexa Supernova before using</b> this optimiser. <b>If they are level 0, assumptions will be made.</b><br>
+        It is recommended to have <b>at least lvl 1 of the following:<br>
+            <ul>
+                <li>Encore Ribbon (Roar)</li>
+                <li>Hexa Supernova</li>
+                <li>Geniune Encore (Ascent)</li>
+            </ul></b>
+        before using this optimiser. If they are level 0, assumptions will be made.<br>
         Having Hexa Supernova also turns supernova into a <b>30s summon for mobbing</b>, making it very useful for training regardless of its bossing damage.</br>
         <form onsubmit="return false">
             <table class="table table-bordered" style="width: auto;">
                 <tbody>
                     <tr>
                         <td>
+                            BA duration<br>
+                            <input id="baDurationMin" type="number" step=1 value=5 class="w-50">min<br>
+                            <input id="baDurationSec" type="number" step=1 value=45 class="w-50">sec<br>
+                        </td>
+                        <td>
+                            Fight duration<br>
+                            <input id="fightDurationMin" type="number" step=1 value=15 class="w-50">min<br>
+                            <input id="fightDurationSec" type="number" step=1 value=0 class="w-50">sec<br>
+                            (This is how long the whole boss fight will last.)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             BA total damage<br>
                             <input id="baInputTotal" type="number" step=1 value=335753057224601><br>
-                            (everything, including skills not listed here)
+                            (Everything, including skills not listed here)
                             <!-- 324,594,000,967,354 -->
                         </td>
                         <td>
@@ -102,7 +123,8 @@
                             <input id="daCapoInputTotal" type="number" step=1 value=14239039508392><br>
                         </td>
                         <td>
-                            -blank space-<br>
+                            Geniune Encore total<br>
+                            <input id="ascentInputTotal" type="number" step=1 value=0><br>
                         </td>
                     </tr>
                 </tbody>
@@ -132,6 +154,9 @@
                         <td>
                             -blank space-<br>
                         </td>
+                        <td>
+                            -blank space-<br>
+                        </td>
                     </tr>
                     <tr>
                         <td>
@@ -154,6 +179,10 @@
                         <td>
                             Encore Ribbon level<br>
                             <input id="daCapoCurrLevel" type="number" step=1 value=1><br>
+                        </td>
+                        <td>
+                            Geniune Encore level<br>
+                            <input id="ascentCurrLevel" type="number" step=1 value=0><br>
                         </td>
                     </tr>
                 </tbody>

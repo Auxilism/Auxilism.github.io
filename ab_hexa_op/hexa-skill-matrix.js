@@ -85,10 +85,10 @@ class HexaSkillMatrix
         trinityInputTotal, trinityCurrLevel, spotlightInputTotal, spotlightCurrLevel,
         mascotInputTotal, mascotCurrLevel, sbInputTotal, sbCurrLevel, tfInputTotal, tfCurrLevel,
         fdPerBossDmgUnit, fdPerIEDUnit, seekerInputTotal, seekerCurrLevel, daCapoInputTotal, daCapoCurrLevel,
-        supernovaInputTotal, supernovaCurrLevel)
+        supernovaInputTotal, supernovaCurrLevel, baDurationSec, fightDurationSec,
+        ascentInputTotal, ascentCurrLevel)
     {
-
-        HexaOriginNode.init(fdPerBossDmgUnit, fdPerIEDUnit);
+        HexaUniqueSkill.init(fdPerBossDmgUnit, fdPerIEDUnit);
         HexaSkillMatrix.#HexaSkillArray = [];
         HexaSkillMatrix.#HexaSkillArray.push(new HexaOriginNode(HexaSkillName.GF, gfInputTotal, cbInputTotal));
 
@@ -127,6 +127,24 @@ class HexaSkillMatrix
         HexaSkillMatrix.#HexaSkillArray.push(new HexaDaCapo(daCapoInputTotal));
         HexaSkillMatrix.#HexaSkillArray.push(new HexaSupernova(supernovaInputTotal, trinityBaseAmt));
 
+        if (ascentCurrLevel == 0)
+        {
+            // Scale the ba to be 5:45min, and from https://www.inven.co.kr/board/maple/2298/205046 , 3x ascent is about 15% of that ba
+            // 1 origin and 1 maxed ascent is 13% over 2min, so ascent is stronger for the next 4min, >13%
+            // 5:45min = 345s
+            let defaultAscentBaScaleTiming = 345;
+            ascentInputTotal = baInputTotal  * defaultAscentBaScaleTiming / baDurationSec;
+            ascentInputTotal *= 0.15;
+            baInputTotal += ascentInputTotal;
+            ascentCurrLevel = 30;
+        }
+        // Remove ascent from input ba, then scale ascent according to fight time, and add ascent back in
+        baInputTotal -= ascentInputTotal;
+        ascentInputTotal = ascentInputTotal * baDurationSec / fightDurationSec;
+        baInputTotal += ascentInputTotal;
+
+        HexaSkillMatrix.#HexaSkillArray.push(new HexaAscentNode(ascentInputTotal));
+
         // Scale down the ba total by reverting the hexa skills back to lvl 0 (1 for origin)
         baInputTotal -= (gfInputTotal + cbInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.GF.index].calcSkillBaseTotal(gfCurrLevel));
         baInputTotal -= (trinityInputTotal - trinityBaseAmt);
@@ -137,6 +155,7 @@ class HexaSkillMatrix
         baInputTotal -= (seekerInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Seeker.index].calcSkillBaseTotal(seekerCurrLevel));
         baInputTotal -= (daCapoInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.DaCapo.index].calcSkillBaseTotal(daCapoCurrLevel));
         baInputTotal -= (supernovaInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Supernova.index].calcSkillBaseTotal(supernovaCurrLevel));
+        baInputTotal -= (ascentInputTotal - HexaSkillMatrix.#HexaSkillArray[HexaSkillName.Ascent.index].calcSkillBaseTotal(ascentCurrLevel));
         // Don't need to revert hexa stat as that is universally applied
         HexaSkill.init(baInputTotal);
 
