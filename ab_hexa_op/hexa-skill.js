@@ -10,7 +10,7 @@ class HexaSkillName
     static Seeker = new HexaSkillName('Seeker', 7);
     static DaCapo = new HexaSkillName('Roar', 8);
     static Supernova = new HexaSkillName('Supernova', 9);
-    static Ascent = new HexaSkillName('Genuine Encore', 10);
+    static Ascent = new HexaSkillName('Surprise Encore', 10);
 
     static Values = [HexaSkillName.GF, HexaSkillName.Trinity, HexaSkillName.Spotlight,
     HexaSkillName.Mascot, HexaSkillName.SparkleBurst, HexaSkillName.Fusion,
