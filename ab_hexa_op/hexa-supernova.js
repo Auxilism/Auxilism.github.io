@@ -43,6 +43,6 @@ class HexaSupernova extends HexaMasteryNode
         {
             return 0;
         }
-        return (20 + 4 * level) * HexaTrinity.HexaTrinityNumHits;
+        return (0 + 4 * level) * HexaTrinity.HexaTrinityNumHits;
     }
 }

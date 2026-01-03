@@ -2,12 +2,12 @@ class HexaTrinity extends HexaMasteryNode
 {
     static #HexaTrinityMaxLevel = 30;
     // Considering dco is on
-    static #TrinityBaseScale = 641;
+    static #TrinityBaseScale = 565;
     // considering hyper where trinity hits+1 is taken
     static #TrinityNumHits = 7;
     static HexaTrinityNumHits = 8;
-    static #HexaTrinityBaseScale = 600;
-    static #HexaTrinityLevelScale = 12;
+    static #HexaTrinityBaseScale = 547;
+    static #HexaTrinityLevelScale = 10;
 
     constructor(skillInputTotal)
     {

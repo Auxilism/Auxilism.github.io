@@ -2,8 +2,8 @@ class HexaSeeker extends HexaMasteryNode
 {
     static #HexaSeekerMaxLevel = 30;
 
-    static #SeekerBaseScale = 320;
-    static #HexaSeekerBaseScale = 342;
+    static #SeekerBaseScale = 300;
+    static #HexaSeekerBaseScale = 313;
     static #HexaSeekerLevelScale = 3;
 
     #trinityBaseTotalDmg;
@@ -46,6 +46,6 @@ class HexaSeeker extends HexaMasteryNode
         {
             return 0;
         }
-        return (15 + 3 * level) * HexaTrinity.HexaTrinityNumHits;
+        return (0 + 3 * level) * HexaTrinity.HexaTrinityNumHits;
     }
 }

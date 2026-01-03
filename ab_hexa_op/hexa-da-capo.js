@@ -1,8 +1,8 @@
 class HexaDaCapo extends HexaMasteryNode
 {
     static #HexaDaCapoMaxLevel = 30;
-    static #HexaDaCapoLevelScale = 19;
-    static #HexaDaCapoBase = 190;
+    static #HexaDaCapoLevelScale = 18;
+    static #HexaDaCapoBase = 144;
 
     _skillLevel1Total;
     constructor(skillInputTotal)
